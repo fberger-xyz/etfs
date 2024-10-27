@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma db pull && prisma generate && next build",
+    "build": "prisma generate && prisma db pull && next build",
     "start": "next start",
     "lint": "next lint",
     "eslint:fix": "eslint ./src --fix",
