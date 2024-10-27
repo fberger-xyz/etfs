@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html.light {
+    --color-primary: #ef4444;
+    --color-secondary: #111827;
+    --color-discreet: #a1a1aa;
+    --color-inactive: #9ca3af;
+    --color-background: #e5e7eb;
+    --color-light-hover: #a1a1aa;
+    --color-light-border: #e5e7eb;
+}
+
+html.dark {
+    --color-primary: #a7f3d0;
+    --color-secondary: #a8a29e;
+    --color-discreet: #94a3b8;
+    --color-inactive: #4b5563;
+    --color-background: #000;
+    --color-light-hover: #1e293b;
+    --color-light-border: #374151;
+}
+
+html.degen {
+    --color-primary: red;
+    --color-secondary: green;
+    --color-discreet: pink;
+    --color-inactive: blue;
+    --color-light-hover: purple;
+    --color-light-border: yellow;
+}
+
+html.degen .background-wallpaper {
+    background: linear-gradient(rgba(0, 0, 0, 0.7),rgba(0, 0, 0, 0.6)), url("https://cdn.wallpaper.tn/large/Digital-Art-Wallpaper-4K-135547.jpg");
+    background-position: right;
+    background-size: cover;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+}
