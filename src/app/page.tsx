@@ -115,7 +115,7 @@ export default async function Page() {
             {/* table */}
             <div className="flex w-full flex-col gap-1 text-xs">
                 {/* context */}
-                <div className="flex w-full justify-center text-base text-discreet">
+                <div className="flex w-full justify-center text-base text-primary">
                     <p>Bitcoin ETF Flows $m USD</p>
                 </div>
 
@@ -153,7 +153,7 @@ export default async function Page() {
                 />
 
                 {/* rows */}
-                <div className="flex h-[420px] w-full flex-col overflow-y-scroll border border-light-hover md:h-[calc(100vh-260px)]">
+                <div className="flex h-[460px] w-full flex-col overflow-y-scroll border border-light-hover md:h-[calc(100vh-260px)]">
                     {/* for each year */}
                     {farsideDataGroupedBy.map((year, yearIndex) => (
                         <div key={`${yearIndex}-${year.index}`} className="flex flex-col py-1">
@@ -187,7 +187,7 @@ export default async function Page() {
                                     {month.weeks.map((week, weekIndex) => (
                                         <div
                                             key={`${yearIndex}-${year.index}-${monthIndex}-${month.index}-${weekIndex}-${week.index}`}
-                                            className="flex flex-col gap-0 py-0.5 sm:gap-0.5"
+                                            className="flex flex-col gap-1 p-0.5 sm:gap-0.5"
                                         >
                                             {week.days.length && dayjs(week.days[0].Date).format('ddd') === 'Fri' && (
                                                 <TableRow
