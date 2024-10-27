@@ -113,7 +113,7 @@ export default async function Page() {
     return (
         <PageWrapper>
             {/* table */}
-            <div className="flex w-full flex-col text-xs">
+            <div className="flex w-full flex-col gap-1 text-xs">
                 {/* context */}
                 <div className="flex w-full justify-center text-base text-discreet">
                     <p>Bitcoin ETF Flows $m USD</p>
@@ -126,14 +126,17 @@ export default async function Page() {
                     tickers={tickers
                         .sort((curr, next) => getConfig(curr).index - getConfig(next).index)
                         .map((ticker) => (
-                            <div
+                            <LinkWrapper
+                                href={getConfig(ticker).url}
                                 key={ticker}
-                                className="flex h-8 w-12 -rotate-45 items-center justify-center overflow-hidden text-light-hover sm:rotate-0 md:w-16"
+                                className="group flex h-8 w-12 -rotate-45 items-center justify-center overflow-hidden text-light-hover hover:bg-background sm:rotate-0 md:w-16"
+                                target="_blank"
                             >
-                                <p className="text-nowrap bg-light-hover p-0.5" style={{ color: getConfig(ticker).colors.dark }}>
+                                <p className="text-nowrap bg-light-hover p-0.5 group-hover:hidden" style={{ color: getConfig(ticker).colors.dark }}>
                                     {ticker}
                                 </p>
-                            </div>
+                                <IconWrapper icon={IconIds.IC_BASELINE_OPEN_IN_NEW} className="hidden h-4 w-4 text-primary group-hover:flex" />
+                            </LinkWrapper>
                         ))}
                     total={
                         <>
