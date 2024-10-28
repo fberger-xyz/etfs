@@ -80,9 +80,9 @@ export default function FlowsTable({ farsideData, tickers }: { farsideData: fars
 
     // html
     return (
-        <div className="flex w-full flex-col text-xs">
+        <div className="flex w-full flex-col text-xs md:gap-2">
             {/* context */}
-            <div className="flex w-full justify-center text-base text-primary">
+            <div className="mb-1 flex w-full justify-center text-base text-primary">
                 <p>Bitcoin ETF Flows $m USD</p>
             </div>
 
@@ -96,7 +96,7 @@ export default function FlowsTable({ farsideData, tickers }: { farsideData: fars
                         <LinkWrapper
                             href={getConfig(ticker).url}
                             key={ticker}
-                            className="group flex h-9 w-12 -rotate-45 items-center justify-center overflow-hidden hover:rotate-0 hover:bg-background sm:rotate-0 md:w-16"
+                            className="group flex h-9 w-12 -rotate-45 items-center justify-center overflow-hidden hover:rotate-0 sm:rotate-0 md:w-16"
                             target="_blank"
                         >
                             <TextWithTickerColor className="p-0.5 group-hover:hidden" ticker={ticker}>
@@ -219,7 +219,7 @@ export default function FlowsTable({ farsideData, tickers }: { farsideData: fars
             </div>
 
             {/* legend */}
-            <div className="flex w-full items-center justify-center">
+            <div className="mt-1 flex w-full items-center justify-between">
                 {/* <div className="flex flex-col"> */}
                 <LinkWrapper href="https://farside.co.uk/btc/" className="flex gap-1 text-inactive hover:text-primary" target="_blank">
                     <p className="truncate text-xs">Data: farside.co.uk</p>
@@ -229,10 +229,6 @@ export default function FlowsTable({ farsideData, tickers }: { farsideData: fars
                         <p>Days are ranked by flow</p>
                     </div> */}
                 {/* </div> */}
-                <div className="mt-1 flex w-full items-center justify-center">
-                    <p className="text-inactive">Scroll</p>
-                    <IconWrapper icon={IconIds.SCROLL} className="w-5 animate-pulse" />
-                </div>
                 <div className="flex gap-2">
                     <button className="flex items-center gap-1 text-inactive hover:text-primary">
                         <p className="truncate text-xs">CSV</p>

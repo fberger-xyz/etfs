@@ -20,7 +20,7 @@ export default function ThemeSwitcher() {
                         <button
                             key={theme}
                             onClick={() => setTheme(theme)}
-                            className={cn('rounded-md px-2 sm:px-2.5 py-2 hover:bg-light-hover', {
+                            className={cn('rounded-md px-2 sm:px-2.5 py-1.5 hover:bg-light-hover', {
                                 'bg-light-hover text-primary': resolvedTheme === theme,
                                 'text-inactive': resolvedTheme !== theme,
                             })}
@@ -36,7 +36,7 @@ export default function ThemeSwitcher() {
                 {Object.entries(APP_THEMES)
                     .sort((curr, next) => curr[1].index - next[1].index)
                     .map(([theme, config]) => (
-                        <button key={theme} className="rounded-md p-2 hover:bg-light-hover sm:px-2.5">
+                        <button key={theme} className="rounded-md px-2 py-1.5 hover:bg-light-hover sm:px-2.5">
                             <SvgMapper icon={config.iconId} className="h-5 w-5" />
                         </button>
                     ))}

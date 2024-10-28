@@ -1,5 +1,5 @@
 import PageWrapper from '@/components/common/PageWrapper'
-import { EtfTickers } from '@/enums'
+import { EtfTickers, IconIds } from '@/enums'
 import { farsideData } from '@/interfaces'
 import dayjs from 'dayjs'
 import { promises as fs } from 'fs'
@@ -10,6 +10,7 @@ dayjs.extend(weekOfYear)
 import { cloneDeep } from 'lodash'
 import FarsidePercentChart from '@/components/charts/FarsidePercentChart'
 import FlowsTable from '@/components/farside/FlowsTable'
+import IconWrapper from '@/components/common/IconWrapper'
 
 export default async function Page() {
     // load json
@@ -67,8 +68,12 @@ export default async function Page() {
     return (
         <PageWrapper>
             <FlowsTable farsideData={farsideData} tickers={tickers} />
-            <FarsidePercentChart className="mt-20 h-[520px]" farsideData={cumulatedFarsideData} tickers={tickers} />
-            <FarsideAreaChart className="my-20 h-[520px]" farsideData={cumulatedFarsideData} tickers={tickers} />
+            <div className="flex w-full items-center justify-center gap-1 text-sm">
+                <p className="text-light-hover">Charts</p>
+                <IconWrapper icon={IconIds.SCROLL} className="w-5 animate-pulse" />
+            </div>
+            <FarsidePercentChart className="-z-0 mt-10 h-[520px]" farsideData={cumulatedFarsideData} tickers={tickers} />
+            <FarsideAreaChart className="-z-0 my-20 h-[520px]" farsideData={cumulatedFarsideData} tickers={tickers} />
         </PageWrapper>
     )
 }

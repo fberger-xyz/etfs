@@ -50,5 +50,5 @@ export default function EchartWrapper(props: InterfaceEchartWrapperProps) {
         }
     }, [props.options])
 
-    return <div ref={chartRef} className={cn('z-10 m-0 p-0', props.className)} style={{ width: '100%', height: '100%' }}></div>
+    return <div ref={chartRef} className={cn('m-0 p-0', props.className)} style={{ width: '100%', height: '100%' }}></div>
 }

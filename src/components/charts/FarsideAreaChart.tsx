@@ -63,9 +63,10 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
                 textStyle: {
                     fontSize: 10,
                     padding: [0, 0, 0, -2], // adjust the last value to reduce the gap between the color rectangle and the text
+                    color: colors.text[resolvedTheme as AppThemes],
                 },
-                itemGap: 9,
-                itemWidth: 16,
+                // itemGap: 9,
+                // itemWidth: 16,
                 itemHeight: 10,
                 // formatter: (name: string) => shortenStr(name, 9),
                 selected: {
@@ -74,8 +75,8 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
                 },
             },
             toolbox: {
-                show: true,
-                top: 30,
+                show: false,
+                top: 20,
                 itemSize: 10,
                 feature: {
                     dataZoom: { show: true, yAxisIndex: 'none' },
@@ -97,7 +98,7 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
                 },
             ],
             textStyle: {
-                color: '#9ca3af',
+                color: colors.text[resolvedTheme as AppThemes],
             },
             xAxis: {
                 type: 'category',
@@ -111,6 +112,7 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
                     alignWithLabel: true,
                 },
                 axisLabel: {
+                    margin: 15,
                     show: true,
                     color: colors.text[resolvedTheme as AppThemes],
                     fontSize: 11,
@@ -122,21 +124,24 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
                 type: 'value',
                 axisLabel: {
                     show: true,
-                    color: '#9ca3af',
+                    color: colors.text[resolvedTheme as AppThemes],
                     fontSize: 10,
                     formatter: (...a: unknown[]) => {
-                        return numeral(a[0]).multiply(1000000).format('0,0a')
+                        return numeral(a[0]).multiply(1000000).format('0,0a$')
                     },
                 },
-                splitLine: { show: true },
                 scale: true,
-                // min: 0,
+                splitLine: {
+                    lineStyle: {
+                        color: colors.line[resolvedTheme as AppThemes],
+                    },
+                },
             },
             grid: {
                 left: '10%',
                 right: 40,
                 top: 60,
-                bottom: 60,
+                bottom: 70,
             },
             // @ts-expect-error: poorly typed
             series: flows.map((etf) => {
@@ -223,7 +228,7 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
     }, [resolvedTheme])
     return (
         <ErrorBoundary FallbackComponent={Fallback}>
-            <div className={cn('w-full z-10', props.className)}>
+            <div className={cn('w-full', props.className)}>
                 {Array.isArray(options.series) && options.series ? <EchartWrapper options={options} /> : <LoadingArea message="Loading data..." />}
             </div>
         </ErrorBoundary>

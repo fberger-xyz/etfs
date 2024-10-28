@@ -9,6 +9,7 @@ import { AppThemes, EtfTickers } from '@/enums'
 import { useTheme } from 'next-themes'
 import { cn, getConfig, roundNToXDecimals } from '@/utils'
 import EchartWrapper from './EchartWrapper'
+import { colors } from '@/config/charts.config'
 
 interface GetOptionsParams {
     timestamps: string[]
@@ -44,29 +45,29 @@ export default function FarsidePercentChart(props: { className?: string; farside
      * methods
      */
 
+    const { resolvedTheme } = useTheme()
     const getOptions = ({ timestamps, flows }: GetOptionsParams): echarts.EChartsOption => {
         return {
             tooltip: {
                 trigger: 'axis',
-                axisPointer: {
-                    type: 'cross',
-                },
+                axisPointer: { type: 'cross' },
                 backgroundColor: 'rgba(255, 255, 255, 0.6)',
             },
             legend: {
                 selectedMode: true,
                 textStyle: {
-                    fontSize: 10,
+                    fontSize: 12,
                     padding: [0, 0, 0, -2], // adjust the last value to reduce the gap between the color rectangle and the text
+                    color: colors.text[resolvedTheme as AppThemes],
                 },
-                itemGap: 9,
-                itemWidth: 16,
+                // itemGap: 9,
+                // itemWidth: 16,
                 itemHeight: 10,
                 // formatter: (name: string) => shortenStr(name, 9),
             },
             toolbox: {
-                show: true,
-                top: 30,
+                show: false,
+                top: 20,
                 itemSize: 10,
                 feature: {
                     dataZoom: { show: true, yAxisIndex: 'none' },
@@ -83,27 +84,32 @@ export default function FarsidePercentChart(props: { className?: string; farside
                     bottom: '3%',
                     left: '15%',
                     right: '15%',
-                    startValue: timestamps.length ? timestamps[Math.max(0, timestamps.length - 10)] : undefined,
+                    startValue: timestamps.length ? timestamps[Math.max(0, timestamps.length - 20)] : undefined,
                     fillerColor: 'transparent',
+
+                    labelFormatter: function (value) {
+                        return dayjs(new Date(timestamps[value])).format('D MMM. YY')
+                    },
+                    textStyle: { color: colors.text[resolvedTheme as AppThemes] },
                 },
             ],
             textStyle: {
-                color: '#9ca3af',
+                color: colors.text[resolvedTheme as AppThemes],
             },
             xAxis: {
                 type: 'category',
-                // data: timestamps.map((timestamp) => toCobDayjs(timestamp).format('DD MMM. YY')),
                 data: timestamps,
                 axisTick: {
                     show: true,
                     lineStyle: {
-                        color: '#e4e4e7',
+                        color: colors.line[resolvedTheme as AppThemes],
                     },
                     alignWithLabel: true,
                 },
                 axisLabel: {
+                    margin: 15,
                     show: true,
-                    color: '#9ca3af',
+                    color: colors.text[resolvedTheme as AppThemes],
                     fontSize: 11,
                     showMinLabel: true,
                     showMaxLabel: true,
@@ -117,19 +123,25 @@ export default function FarsidePercentChart(props: { className?: string; farside
                 // see https://github.com/apache/echarts/blob/13c2d062e6bcd49ab6da87eb4032ac01ec9fe467/src/coord/axisDefault.ts
                 axisLabel: {
                     show: true,
-                    color: '#9ca3af',
+                    color: colors.text[resolvedTheme as AppThemes],
                     fontSize: 11,
                     formatter: (...a: unknown[]) => {
                         return `${Number(a[0])}%`
                     },
                 },
+                splitLine: {
+                    lineStyle: {
+                        color: colors.line[resolvedTheme as AppThemes],
+                    },
+                },
             },
             // @ts-expect-error: poorly typed
-            series: flows.map((exposure) => ({
-                name: exposure.key,
+            series: flows.map((flow) => ({
+                name: flow.key,
                 type: 'bar',
                 showBackground: true,
-                backgroundStyle: { color: 'rgba(250, 250, 250, 0.1)' },
+                backgroundStyle: { color: resolvedTheme === AppThemes.LIGHT ? 'rgba(250, 250, 250, 0.1)' : 'rgba(50, 50, 50, 0.1)' },
+                // backgroundStyle: 'transparent',
                 stack: 'total',
                 barWidth: '80%',
 
@@ -137,18 +149,19 @@ export default function FarsidePercentChart(props: { className?: string; farside
                     show: true,
                     formatter: (params: { value: number; dataIndex: number }) => {
                         const data = Math.round(params.value)
-                        if (data < 5) return ''
-                        return data + ''
+                        if (params.dataIndex % 5 !== 1) return ''
+                        if (data >= 5) return data
+                        else return ''
                     },
                 },
-                color: exposure.hexColor,
-                data: exposure.flowsPercent.map((value) => roundNToXDecimals(value, 1)),
+                color: flow.hexColor,
+                data: flow.flowsPercent.map((value) => roundNToXDecimals(value, 1)),
             })),
             grid: {
-                left: 50,
+                left: '10%',
                 right: 40,
                 top: 60,
-                bottom: 60,
+                bottom: 70,
             },
         }
     }
@@ -159,7 +172,6 @@ export default function FarsidePercentChart(props: { className?: string; farside
 
     const getOptionsParams = (): GetOptionsParams => ({ timestamps: [], flows: [] })
     const [options, setOptions] = useState<echarts.EChartsOption>(getOptions(getOptionsParams()))
-    const { resolvedTheme } = useTheme()
     useEffect(() => {
         // prepare
         const optionsParams = getOptionsParams()
