@@ -9,6 +9,7 @@ html.light {
     --color-inactive: #9ca3af;
     --color-background: #e4e4e7;
     --color-light-hover: #d4d4d8;
+    --color-very-light-hover: #e4e4e7;
     --color-light-border: #e5e7eb;
 
     /* tickers */
@@ -32,6 +33,7 @@ html.dark {
     --color-inactive: #4b5563;
     --color-background: #000;
     --color-light-hover: #1e293b;
+    --color-very-light-hover: #020617;
     --color-light-border: #374151;
 
     /* tickers */

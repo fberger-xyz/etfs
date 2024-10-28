@@ -14,11 +14,11 @@ export function TableRow(props: {
     className?: string
 }) {
     return (
-        <div className={cn('flex items-center sm:gap-1 px-1', { 'hover:bg-light-hover': props.activateHover }, props.className)}>
-            <div className="flex w-[90px] justify-start overflow-hidden text-discreet md:w-32">{props.date}</div>
+        <div className={cn('flex items-center sm:gap-1 px-1 md:px-2', { 'hover:bg-light-hover': props.activateHover }, props.className)}>
+            <div className="flex w-[95px] justify-start overflow-hidden text-discreet md:w-32">{props.date}</div>
             {...props.tickers}
-            <div className="flex w-20 justify-end overflow-hidden text-discreet md:w-20">{props.total}</div>
-            <div className="flex w-12 justify-end overflow-hidden text-discreet md:w-20">{props.rank}</div>
+            <div className="flex w-20 justify-end overflow-hidden text-discreet md:w-24">{props.total}</div>
+            <div className="flex w-12 justify-end overflow-hidden text-discreet md:w-24">{props.rank}</div>
         </div>
     )
 }

@@ -12,6 +12,7 @@ const config: Config = {
                 inactive: 'var(--color-inactive)',
                 background: 'var(--color-background)',
                 'light-hover': 'var(--color-light-hover)',
+                'very-light-hover': 'var(--color-very-light-hover)',
                 'light-border': 'var(--color-light-border)',
 
                 // tickers

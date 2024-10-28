@@ -189,16 +189,16 @@ export default async function Page() {
                                     {month.weeks.map((week, weekIndex) => (
                                         <div
                                             key={`${yearIndex}-${year.index}-${monthIndex}-${month.index}-${weekIndex}-${week.index}`}
-                                            className="flex flex-col sm:gap-0.5 md:p-1"
+                                            className="flex flex-col sm:gap-0.5"
                                         >
                                             {week.days.length && dayjs(week.days[0].Date).format('ddd') === 'Fri' && (
                                                 <TableRow
                                                     className="border-b border-dashed border-light-hover"
-                                                    date={<p className="w-fit italic text-inactive">Week {week.index}</p>}
+                                                    date={<p className="w-fit text-inactive">Week {week.index}</p>}
                                                     tickers={tickers.map(() => (
                                                         <div className="flex w-12 md:w-16" />
                                                     ))}
-                                                    total={<p className="italic text-inactive">{numeral(week.totalPeriod).format('0,0')}</p>}
+                                                    total={<p className="text-inactive">{numeral(week.totalPeriod).format('0,0')}</p>}
                                                     rank={null}
                                                 />
                                             )}
@@ -206,6 +206,7 @@ export default async function Page() {
                                             {/* for each day */}
                                             {week.days.map((day, dayIndex) => (
                                                 <TableRow
+                                                    // className="bg-very-light-hover"
                                                     activateHover={true}
                                                     key={`${yearIndex}-${year.index}-${monthIndex}-${month.index}-${weekIndex}-${week.index}-${dayIndex}-${day.Date}`}
                                                     date={
@@ -240,7 +241,7 @@ export default async function Page() {
                                                             {numeral(day.TotalCheck).format('0,0')}
                                                         </p>
                                                     }
-                                                    rank={<p className="text-inactive">{day.rank}</p>}
+                                                    rank={<p className="italic text-inactive">{day.rank}</p>}
                                                 />
                                             ))}
                                         </div>
