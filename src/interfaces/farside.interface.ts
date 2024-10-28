@@ -1,4 +1,4 @@
-export interface FarsideDayData {
+export interface farsideData {
     Date: string | number
     IBIT: string | number
     FBTC: string | number

@@ -19,3 +19,5 @@ export const formatNumberWithDecimals = (numberAsString: string | number, decima
         return JSON.stringify(error)
     }
 }
+
+export const roundNToXDecimals = (n: number | string, x = 0) => Number(parseFloat(String(n)).toFixed(x))
