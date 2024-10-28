@@ -189,7 +189,7 @@ export default async function Page() {
                                     {month.weeks.map((week, weekIndex) => (
                                         <div
                                             key={`${yearIndex}-${year.index}-${monthIndex}-${month.index}-${weekIndex}-${week.index}`}
-                                            className="flex flex-col p-0.5 sm:gap-0.5"
+                                            className="flex flex-col sm:gap-0.5 md:p-1"
                                         >
                                             {week.days.length && dayjs(week.days[0].Date).format('ddd') === 'Fri' && (
                                                 <TableRow
@@ -226,7 +226,7 @@ export default async function Page() {
                                                                         {numeral(day[ticker as keyof typeof day]).format('0,0')}
                                                                     </TextWithTickerColor>
                                                                 ) : (
-                                                                    <p className="p-0.5 text-inactive group-hover:hidden">-</p>
+                                                                    <p className="p-0.5 text-inactive group-hover:hidden">.</p>
                                                                 )}
                                                             </div>
                                                         ))}
