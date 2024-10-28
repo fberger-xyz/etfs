@@ -5,11 +5,24 @@
 html.light {
     --color-primary: #ef4444;
     --color-secondary: #111827;
-    --color-discreet: #a1a1aa;
+    --color-discreet: #71717a;
     --color-inactive: #9ca3af;
-    --color-background: #e5e7eb;
-    --color-light-hover: #a1a1aa;
+    --color-background: #e4e4e7;
+    --color-light-hover: #d4d4d8;
     --color-light-border: #e5e7eb;
+
+    /* tickers */
+    --color-ticker-ibit: #616161;
+    --color-ticker-fbtc: #368727;
+    --color-ticker-bitb: #22c96a;
+    --color-ticker-arkb: #8264FF;
+    --color-ticker-btco: #000AD2;
+    --color-ticker-ezbc: #b3d4fc;
+    --color-ticker-brrr: #cfff24;
+    --color-ticker-hodl: #17468F;
+    --color-ticker-btcw: #05a9b1;
+    --color-ticker-gbtc: #c5bfe4;
+    --color-ticker-btc: #c5bfe4;
 }
 
 html.dark {
@@ -20,21 +33,17 @@ html.dark {
     --color-background: #000;
     --color-light-hover: #1e293b;
     --color-light-border: #374151;
-}
 
-html.degen {
-    --color-primary: red;
-    --color-secondary: green;
-    --color-discreet: pink;
-    --color-inactive: blue;
-    --color-light-hover: purple;
-    --color-light-border: yellow;
-}
-
-html.degen .background-wallpaper {
-    background: linear-gradient(rgba(0, 0, 0, 0.7),rgba(0, 0, 0, 0.6)), url("https://cdn.wallpaper.tn/large/Digital-Art-Wallpaper-4K-135547.jpg");
-    background-position: right;
-    background-size: cover;
-    background-attachment: fixed;
-    background-repeat: no-repeat;
+    /* tickers */
+    --color-ibit: #616161;
+    --color-fbtc: #368727;
+    --color-bitb: #22c96a;
+    --color-arkb: #8264FF;
+    --color-btco: #000AD2;
+    --color-ezbc: #b3d4fc;
+    --color-brrr: #cfff24;
+    --color-hodl: #17468F;
+    --color-btcw: #05a9b1;
+    --color-gbtc: #c5bfe4;
+    --color-btc: #c5bfe4;
 }

@@ -52,16 +52,7 @@ export default function RootLayout({
             <body className={cn(font.className, 'h-screen w-screen overflow-hidden')}>
                 <ThemeProvider attribute="class" defaultTheme={AppThemes.DARK} disableTransitionOnChange themes={Object.values(AppThemes)}>
                     <ReactQueryProvider>
-                        <main
-                            className="background-wallpaper flex h-full w-full flex-col bg-background text-lg text-primary transition-all md:text-base"
-                            // style={{
-                            //     // backgroundImage: `url('/images/iqcurve.png')`,
-                            //     backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/images/iqcurve.png')`,
-                            //     backgroundSize: '400px',
-                            //     backgroundRepeat: 'no-repeat',
-                            //     backgroundPosition: 'bottom center',
-                            // }}
-                        >
+                        <main className="flex h-full w-full flex-col bg-background text-lg text-primary transition-all md:text-base">
                             <Header className="h-16 px-4 text-base sm:h-20 sm:text-lg" />
                             <Suspense
                                 fallback={

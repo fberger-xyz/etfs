@@ -5,10 +5,11 @@ import dayjs from 'dayjs'
 import { promises as fs } from 'fs'
 import numeral from 'numeral'
 import weekOfYear from 'dayjs/plugin/weekOfYear'
-import { monthName, getConfig, TableRow } from '@/components/farside/table'
 import IconWrapper from '@/components/common/IconWrapper'
 import LinkWrapper from '@/components/common/LinkWrapper'
-import { cn } from '@/utils'
+import { cn, getConfig, monthName } from '@/utils'
+import TextWithTickerColor from '@/components/farside/ColorWrapper'
+import { TableRow } from '@/components/farside/Table'
 dayjs.extend(weekOfYear)
 
 export default async function Page() {
@@ -113,7 +114,7 @@ export default async function Page() {
     return (
         <PageWrapper>
             {/* table */}
-            <div className="flex w-full flex-col gap-1 text-xs">
+            <div className="flex w-full flex-col text-xs">
                 {/* context */}
                 <div className="flex w-full justify-center text-base text-primary">
                     <p>Bitcoin ETF Flows $m USD</p>
@@ -121,7 +122,7 @@ export default async function Page() {
 
                 {/* headers */}
                 <TableRow
-                    className="bg-light-hover"
+                    className="border-x border-t border-inactive bg-light-hover"
                     date={<p>Date</p>}
                     tickers={tickers
                         .sort((curr, next) => getConfig(curr).index - getConfig(next).index)
@@ -129,19 +130,19 @@ export default async function Page() {
                             <LinkWrapper
                                 href={getConfig(ticker).url}
                                 key={ticker}
-                                className="group flex h-8 w-12 -rotate-45 items-center justify-center overflow-hidden text-light-hover hover:bg-background sm:rotate-0 md:w-16"
+                                className="group flex h-9 w-12 -rotate-45 items-center justify-center overflow-hidden hover:rotate-0 hover:bg-background sm:rotate-0 md:w-16"
                                 target="_blank"
                             >
-                                <p className="text-nowrap bg-light-hover p-0.5 group-hover:hidden" style={{ color: getConfig(ticker).colors.dark }}>
+                                <TextWithTickerColor className="p-0.5 group-hover:hidden" ticker={ticker}>
                                     {ticker}
-                                </p>
+                                </TextWithTickerColor>
                                 <IconWrapper icon={IconIds.IC_BASELINE_OPEN_IN_NEW} className="hidden h-4 w-4 text-primary group-hover:flex" />
                             </LinkWrapper>
                         ))}
                     total={
                         <>
                             <p className="hidden text-nowrap md:flex">∑ Flows</p>
-                            <p className="mx-auto md:hidden">∑</p>
+                            <p className="pr-2 md:hidden">∑</p>
                         </>
                     }
                     rank={
@@ -153,16 +154,16 @@ export default async function Page() {
                 />
 
                 {/* rows */}
-                <div className="flex h-[460px] w-full flex-col overflow-y-scroll border border-light-hover md:h-[calc(100vh-260px)]">
+                <div className="flex h-[460px] w-full flex-col overflow-y-scroll border border-inactive md:h-[calc(100vh-260px)]">
                     {/* for each year */}
                     {farsideDataGroupedBy.map((year, yearIndex) => (
                         <div key={`${yearIndex}-${year.index}`} className="flex flex-col py-1">
                             <TableRow
                                 date={<p className="text-primary">{year.index}</p>}
                                 tickers={tickers.map(() => (
-                                    <div className="flex w-12 items-center justify-center overflow-hidden text-light-hover md:w-16" />
+                                    <div className="flex w-12 md:w-16" />
                                 ))}
-                                total={<p className="text-nowrap">{numeral(year.totalPeriod).format('0,0')}</p>}
+                                total={<p className="text-inactive">{numeral(year.totalPeriod).format('0,0')}</p>}
                                 rank={null}
                             />
 
@@ -177,30 +178,27 @@ export default async function Page() {
                                             </p>
                                         }
                                         tickers={tickers.map(() => (
-                                            <div className="flex w-12 items-center justify-center overflow-hidden text-light-hover md:w-16" />
+                                            <div className="flex w-12 items-center justify-center overflow-hidden text-inactive md:w-16" />
                                         ))}
-                                        total={<p className="text-nowrap">{numeral(month.totalPeriod).format('0,0')}</p>}
-                                        rank={<p className="text-nowrap">{month.rank}</p>}
+                                        total={<p className="text-inactive">{numeral(month.totalPeriod).format('0,0')}</p>}
+                                        // rank={<p className="text-inactive">{month.rank}</p>}
+                                        rank={null}
                                     />
 
                                     {/* for each week */}
                                     {month.weeks.map((week, weekIndex) => (
                                         <div
                                             key={`${yearIndex}-${year.index}-${monthIndex}-${month.index}-${weekIndex}-${week.index}`}
-                                            className="flex flex-col gap-1 p-0.5 sm:gap-0.5"
+                                            className="flex flex-col p-0.5 sm:gap-0.5"
                                         >
                                             {week.days.length && dayjs(week.days[0].Date).format('ddd') === 'Fri' && (
                                                 <TableRow
                                                     className="border-b border-dashed border-light-hover"
-                                                    date={<p className="w-fit italic text-light-hover">Week {week.index}</p>}
+                                                    date={<p className="w-fit italic text-inactive">Week {week.index}</p>}
                                                     tickers={tickers.map(() => (
-                                                        <div className="flex w-12 items-center justify-center overflow-hidden italic text-light-hover md:w-16" />
+                                                        <div className="flex w-12 md:w-16" />
                                                     ))}
-                                                    total={
-                                                        <p className="text-nowrap italic text-light-hover">
-                                                            {numeral(week.totalPeriod).format('0,0')}
-                                                        </p>
-                                                    }
+                                                    total={<p className="italic text-inactive">{numeral(week.totalPeriod).format('0,0')}</p>}
                                                     rank={null}
                                                 />
                                             )}
@@ -208,7 +206,7 @@ export default async function Page() {
                                             {/* for each day */}
                                             {week.days.map((day, dayIndex) => (
                                                 <TableRow
-                                                    // className="border-b border-dashed border-light-hover"
+                                                    activateHover={true}
                                                     key={`${yearIndex}-${year.index}-${monthIndex}-${month.index}-${weekIndex}-${week.index}-${dayIndex}-${day.Date}`}
                                                     date={
                                                         <>
@@ -223,27 +221,13 @@ export default async function Page() {
                                                                 key={`${yearIndex}-${year.index}-${monthIndex}-${month.index}-${weekIndex}-${week.index}-${dayIndex}-${day.Date}-${ticker}`}
                                                                 className="flex w-12 items-center justify-center overflow-hidden text-light-hover md:w-16"
                                                             >
-                                                                <p
-                                                                    className="text-nowrap"
-                                                                    style={{
-                                                                        color:
-                                                                            !isNaN(Number(day[ticker as keyof typeof day])) &&
-                                                                            Number(day[ticker as keyof typeof day]) !== 0
-                                                                                ? getConfig(ticker).colors.dark
-                                                                                : '', // https://tailwindcss.com/docs/customizing-colors
-                                                                        // !isNaN(Number(day[ticker as keyof typeof day])) &&
-                                                                        // Number(day[ticker as keyof typeof day]) > 0
-                                                                        //     ? getConfig(ticker).colors.dark
-                                                                        //     : !isNaN(Number(day[ticker as keyof typeof day])) &&
-                                                                        //         Number(day[ticker as keyof typeof day]) < 0
-                                                                        //       ? '#ef4444'
-                                                                        //       : '', // https://tailwindcss.com/docs/customizing-colors
-                                                                    }}
-                                                                >
-                                                                    {day[ticker as keyof typeof day]
-                                                                        ? numeral(day[ticker as keyof typeof day]).format('0,0')
-                                                                        : '-'}
-                                                                </p>
+                                                                {day[ticker as keyof typeof day] ? (
+                                                                    <TextWithTickerColor className="p-0.5 group-hover:hidden" ticker={ticker}>
+                                                                        {numeral(day[ticker as keyof typeof day]).format('0,0')}
+                                                                    </TextWithTickerColor>
+                                                                ) : (
+                                                                    <p className="p-0.5 text-inactive group-hover:hidden">-</p>
+                                                                )}
                                                             </div>
                                                         ))}
                                                     total={
@@ -256,7 +240,7 @@ export default async function Page() {
                                                             {numeral(day.TotalCheck).format('0,0')}
                                                         </p>
                                                     }
-                                                    rank={<p className="text-nowrap">{day.rank}</p>}
+                                                    rank={<p className="text-inactive">{day.rank}</p>}
                                                 />
                                             ))}
                                         </div>
@@ -269,24 +253,24 @@ export default async function Page() {
 
                 <div className="flex w-full items-center justify-center">
                     {/* <div className="flex flex-col"> */}
-                    <LinkWrapper href="https://farside.co.uk/btc/" className="flex gap-1 text-light-hover hover:text-primary" target="_blank">
+                    <LinkWrapper href="https://farside.co.uk/btc/" className="flex gap-1 text-inactive hover:text-primary" target="_blank">
                         <p className="truncate text-xs">Data: farside.co.uk</p>
                     </LinkWrapper>
-                    {/* <div className="flex w-[250px] text-xs text-light-hover">
+                    {/* <div className="flex w-[250px] text-xs text-inactive">
                         <IconWrapper icon={IconIds.RANK} className="h-4 w-4" />
                         <p>Days are ranked by flow</p>
                     </div> */}
                     {/* </div> */}
                     <div className="mt-1 flex w-full items-center justify-center">
-                        <p className="text-light-hover">Scroll</p>
+                        <p className="text-inactive">Scroll</p>
                         <IconWrapper icon={IconIds.SCROLL} className="w-5 animate-pulse" />
                     </div>
                     <div className="flex gap-2">
-                        <button className="flex items-center gap-1 text-light-hover hover:text-primary">
+                        <button className="flex items-center gap-1 text-inactive hover:text-primary">
                             <p className="truncate text-xs">CSV</p>
                             <IconWrapper icon={IconIds.CARBON_DOWNLOAD} className="w-4 animate-pulse text-primary" />
                         </button>
-                        <button className="flex items-center gap-1 text-light-hover hover:text-primary">
+                        <button className="flex items-center gap-1 text-inactive hover:text-primary">
                             <p className="truncate text-xs">Copy</p>
                             <IconWrapper icon={IconIds.CARBON_COPY} className="w-4 animate-pulse text-primary" />
                         </button>
