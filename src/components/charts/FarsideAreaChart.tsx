@@ -61,7 +61,7 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
             legend: {
                 selectedMode: true,
                 textStyle: {
-                    fontSize: 10,
+                    fontSize: 12,
                     padding: [0, 0, 0, -2], // adjust the last value to reduce the gap between the color rectangle and the text
                     color: colors.text[resolvedTheme as AppThemes],
                 },
