@@ -9,7 +9,7 @@ import IconWrapper from '@/components/common/IconWrapper'
 import LinkWrapper from '@/components/common/LinkWrapper'
 import { cn, getConfig, monthName } from '@/utils'
 import TextWithTickerColor from '@/components/farside/ColorWrapper'
-import { TableRow } from '@/components/farside/Table'
+import { TableRow } from '@/components/farside/FlowsTable'
 dayjs.extend(weekOfYear)
 
 export default async function Page() {
