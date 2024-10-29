@@ -74,9 +74,10 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
                         offset: [-0, -10],
                         fontSize: 10,
                         // align: 'right',
+                        color: colors.text[resolvedTheme as AppThemes],
                         formatter: function (params: { seriesName: string; data: number | string }) {
                             return !isNaN(Number(params.data))
-                                ? `${shortenStr(params.seriesName, 30)}: ${numeral(params.data).multiply(1000000).format('0,0 a$')}`
+                                ? `${shortenStr(params.seriesName, 30)} = ${numeral(params.data).multiply(1000000).format('0,0 a$')}`
                                 : ''
                         },
                     },
