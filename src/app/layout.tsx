@@ -57,7 +57,7 @@ export default function RootLayout({
                             <Suspense
                                 fallback={
                                     <div className="flex h-full w-full items-center justify-center">
-                                        <p className="text-orange-500">App loading...</p>
+                                        <p className="text-orange-500">Data loading...</p>
                                     </div>
                                 }
                             >

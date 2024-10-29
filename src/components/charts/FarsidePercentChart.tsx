@@ -66,7 +66,7 @@ export default function FarsidePercentChart(props: { className?: string; farside
                 // formatter: (name: string) => shortenStr(name, 9),
             },
             toolbox: {
-                show: false,
+                show: true,
                 top: 20,
                 itemSize: 10,
                 feature: {
@@ -149,7 +149,7 @@ export default function FarsidePercentChart(props: { className?: string; farside
                     show: true,
                     formatter: (params: { value: number; dataIndex: number }) => {
                         const data = Math.round(params.value)
-                        if (params.dataIndex !== flows.length && params.dataIndex % 10 !== 1) return ''
+                        if (params.dataIndex !== props.farsideData.length - 1 && params.dataIndex % 10 !== 1) return ''
                         if (data >= 10) return data
                         else return ''
                     },

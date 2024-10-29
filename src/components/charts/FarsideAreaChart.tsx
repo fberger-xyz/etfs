@@ -75,7 +75,7 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
                 },
             },
             toolbox: {
-                show: false,
+                show: true,
                 top: 20,
                 itemSize: 10,
                 feature: {
