@@ -169,7 +169,7 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
                     ],
                 },
             },
-        ]
+        ] as echarts.SeriesOption[]
         return {
             tooltip: {
                 trigger: 'axis',
@@ -262,10 +262,9 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
             grid: {
                 left: '12%',
                 right: '15%',
-                top: 60,
+                top: 80,
                 bottom: 70,
             },
-            // @ts-expect-error: poorly typed
             series,
         }
     }
