@@ -174,7 +174,7 @@ export default function FarsidePercentChart(props: { className?: string; farside
                     show: true,
                     formatter: (params: { value: number; dataIndex: number }) => {
                         const data = Math.round(params.value)
-                        if (params.dataIndex !== props.farsideData.length - 1 && params.dataIndex % 10 !== 1) return ''
+                        if (params.dataIndex !== props.farsideData.length - 2 && params.dataIndex % 10 !== 1) return ''
                         if (data >= 10) return data
                         else return ''
                     },
@@ -185,7 +185,7 @@ export default function FarsidePercentChart(props: { className?: string; farside
             grid: {
                 left: '12%',
                 right: '5%',
-                top: 80,
+                top: 70,
                 bottom: 70,
             },
         }
