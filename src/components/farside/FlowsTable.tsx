@@ -231,12 +231,12 @@ export default function FlowsTable({ farsideData, tickers }: { farsideData: fars
                 {/* </div> */}
                 <div className="flex gap-2">
                     <button className="flex items-center gap-1 text-inactive hover:text-primary">
-                        <p className="truncate text-xs">CSV</p>
-                        <IconWrapper icon={IconIds.CARBON_DOWNLOAD} className="w-4 animate-pulse text-primary" />
+                        <p className="text-xs">CSV</p>
+                        <IconWrapper icon={IconIds.CARBON_DOWNLOAD} className="w-4" />
                     </button>
                     <button className="flex items-center gap-1 text-inactive hover:text-primary">
-                        <p className="truncate text-xs">Copy</p>
-                        <IconWrapper icon={IconIds.CARBON_COPY} className="w-4 animate-pulse text-primary" />
+                        <p className="text-xs">Copy</p>
+                        <IconWrapper icon={IconIds.CARBON_COPY} className="w-4" />
                     </button>
                 </div>
             </div>

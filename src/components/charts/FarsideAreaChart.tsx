@@ -98,7 +98,7 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
                 },
             ],
             textStyle: {
-                color: colors.text[resolvedTheme as AppThemes],
+                color: colors.dztext[resolvedTheme as AppThemes],
             },
             xAxis: {
                 type: 'category',
@@ -115,7 +115,7 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
                     margin: 15,
                     show: true,
                     color: colors.text[resolvedTheme as AppThemes],
-                    fontSize: 11,
+                    fontSize: 9,
                     showMinLabel: true,
                     showMaxLabel: true,
                 },
@@ -127,7 +127,9 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
                     color: colors.text[resolvedTheme as AppThemes],
                     fontSize: 10,
                     formatter: (...a: unknown[]) => {
-                        return numeral(a[0]).multiply(1000000).format('0,0 a$')
+                        const formatted = numeral(a[0]).multiply(1000000).format('0,0 a$')
+                        if (formatted === '50 b$') return ''
+                        return formatted
                     },
                 },
                 scale: true,
@@ -144,37 +146,127 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
                 bottom: 70,
             },
             // @ts-expect-error: poorly typed
-            series: flows.map((etf) => {
-                const showEndlabel =
-                    etf.key === EtfTickers.BRRR || (etf.flowsPercent.length > 0 && Math.abs(etf.flowsPercent[etf.flowsPercent.length - 1]) > 20) // 5 %
-                return {
-                    showSymbol: false,
-                    name: etf.key,
-                    type: 'line',
-                    lineStyle: { color: 'transparent' },
-                    stack: 'Total',
-                    areaStyle: {},
-                    emphasis: { focus: 'series' },
-                    color: etf.hexColor,
-                    data: etf.flows.map((flow) => roundNToXDecimals(flow)),
-                    itemStyle: {
+            series: [
+                ...flows.map((etf) => {
+                    const showEndlabel =
+                        etf.key === EtfTickers.BRRR || (etf.flowsPercent.length > 0 && Math.abs(etf.flowsPercent[etf.flowsPercent.length - 1]) > 20) // 5 %
+                    return {
+                        showSymbol: false,
+                        name: etf.key,
+                        type: 'line',
+                        lineStyle: { color: 'transparent' },
+                        stack: 'Total',
+                        areaStyle: {},
+                        emphasis: { focus: 'series' },
                         color: etf.hexColor,
-                        borderColor: etf.hexColor,
-                        borderWidth: 2,
-                    },
-                    endLabel: {
-                        show: showEndlabel,
-                        offset: [10, 10],
-                        fontSize: 10,
-                        align: 'right',
-                        formatter: function (params: { seriesName: string; data: number | string }) {
-                            return !isNaN(Number(params.data))
-                                ? `${shortenStr(params.seriesName, 30)}: ${numeral(params.data).multiply(1000000).format('0,0 a$')}`
-                                : ''
+                        data: etf.flows.map((flow) => roundNToXDecimals(flow)),
+                        itemStyle: {
+                            color: etf.hexColor,
+                            borderColor: etf.hexColor,
+                            borderWidth: 2,
                         },
+                        endLabel: {
+                            show: showEndlabel,
+                            offset: [10, 10],
+                            fontSize: 10,
+                            align: 'right',
+                            formatter: function (params: { seriesName: string; data: number | string }) {
+                                return !isNaN(Number(params.data))
+                                    ? `${shortenStr(params.seriesName, 30)}: ${numeral(params.data).multiply(1000000).format('0,0 a$')}`
+                                    : ''
+                            },
+                        },
+                    }
+                }),
+                {
+                    itemStyle: { color: 'transparent' },
+                    lineStyle: { color: 'transparent' },
+                    showSymbol: false,
+                    name: '',
+                    type: 'line',
+                    data: [],
+                    markLine: {
+                        animation: true,
+                        symbol: 'none',
+                        lineStyle: { color: 'gray', opacity: 0.6 },
+                        data: [
+                            {
+                                xAxis: dayjs(new Date('2024-01-11')).format('ddd DD MMM YY'),
+                                lineStyle: { color: colors.text[resolvedTheme as AppThemes], opacity: 0.5 },
+                                label: {
+                                    show: true,
+                                    color: colors.text[resolvedTheme as AppThemes],
+                                    formatter: () => `11 Jan 24`,
+                                    position: 'insideMiddleTop',
+                                    // offset: [0, 15],
+                                    offset: [0, -1],
+                                    rotate: 90,
+                                    fontSize: 10,
+                                    opacity: 1,
+                                },
+                            },
+                            {
+                                xAxis: dayjs(new Date('2024-01-11')).format('ddd DD MMM YY'),
+                                lineStyle: { color: colors.text[resolvedTheme as AppThemes], opacity: 0.5 },
+                                label: {
+                                    show: true,
+                                    color: colors.text[resolvedTheme as AppThemes],
+                                    formatter: () => `Spot BTC\nETFs approved`,
+                                    fontSize: 10,
+                                    opacity: 1,
+                                },
+                            },
+                            {
+                                xAxis: dayjs(new Date('2024-04-15')).format('ddd DD MMM YY'),
+                                lineStyle: { color: colors.text[resolvedTheme as AppThemes], opacity: 0.5 },
+                                label: {
+                                    show: true,
+                                    color: colors.text[resolvedTheme as AppThemes],
+                                    formatter: () => `Start of \nUS tax season`,
+                                    fontSize: 10,
+                                    opacity: 1,
+                                },
+                            },
+                            {
+                                xAxis: dayjs(new Date('2024-08-05')).format('ddd DD MMM YY'),
+                                lineStyle: { color: colors.text[resolvedTheme as AppThemes], opacity: 0.5 },
+                                label: {
+                                    show: true,
+                                    color: colors.text[resolvedTheme as AppThemes],
+                                    formatter: () => `$/¥ carry\ntrade unwind`,
+                                    fontSize: 10,
+                                    opacity: 1,
+                                },
+                            },
+                            {
+                                xAxis: dayjs(new Date('2024-09-18')).format('ddd DD MMM YY'),
+                                lineStyle: { color: colors.text[resolvedTheme as AppThemes], opacity: 0.5 },
+                                label: {
+                                    show: true,
+                                    color: colors.text[resolvedTheme as AppThemes],
+                                    formatter: () => `FED cuts\n50 bps`,
+                                    fontSize: 10,
+                                    opacity: 1,
+                                },
+                            },
+                            {
+                                xAxis: dayjs(new Date('2024-09-18')).format('ddd DD MMM YY'),
+                                lineStyle: { color: colors.text[resolvedTheme as AppThemes], opacity: 0.5 },
+                                label: {
+                                    show: true,
+                                    color: colors.text[resolvedTheme as AppThemes],
+                                    formatter: () => `18 Sept 24`,
+                                    position: 'insideMiddleTop',
+                                    offset: [0, -1],
+                                    rotate: 90,
+                                    fontSize: 10,
+                                    opacity: 1,
+                                },
+                            },
+                        ],
                     },
-                }
-            }),
+                },
+            ],
         }
     }
     const [options, setOptions] = useState<echarts.EChartsOption>(getOptions(getOptionsParams()))
@@ -232,7 +324,7 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
         setOptions(newOptions)
     }, [resolvedTheme])
     return (
-        <div className="mb-20 mt-10 flex w-full flex-col text-xs">
+        <div className="mt-10 flex w-full flex-col text-xs">
             <div className="mb-1 flex w-full justify-center text-base text-primary md:mb-2">
                 <p>Cumulated Bitcoin ETF Flows $m USD</p>
             </div>

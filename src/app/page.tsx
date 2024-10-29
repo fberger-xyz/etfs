@@ -72,8 +72,9 @@ export default async function Page() {
                 <p className="">Charts</p>
                 <IconWrapper icon={IconIds.SCROLL} className="w-5" />
             </div>
-            <FarsidePercentChart farsideData={cumulatedFarsideData} tickers={tickers} />
             <FarsideAreaChart farsideData={cumulatedFarsideData} tickers={tickers} />
+            <FarsidePercentChart farsideData={cumulatedFarsideData} tickers={tickers} />
+            <div className="mb-20" />
         </PageWrapper>
     )
 }

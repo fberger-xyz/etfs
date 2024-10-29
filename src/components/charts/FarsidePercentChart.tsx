@@ -86,11 +86,7 @@ export default function FarsidePercentChart(props: { className?: string; farside
                     right: '15%',
                     startValue: timestamps.length ? timestamps[Math.max(0, timestamps.length - 20)] : undefined,
                     fillerColor: 'transparent',
-
-                    labelFormatter: function (value) {
-                        return dayjs(new Date(timestamps[value])).format('D MMM. YY')
-                    },
-                    textStyle: { color: colors.text[resolvedTheme as AppThemes] },
+                    textStyle: { color: colors.dztext[resolvedTheme as AppThemes] },
                 },
             ],
             textStyle: {
@@ -110,7 +106,7 @@ export default function FarsidePercentChart(props: { className?: string; farside
                     margin: 15,
                     show: true,
                     color: colors.text[resolvedTheme as AppThemes],
-                    fontSize: 11,
+                    fontSize: 10,
                     showMinLabel: true,
                     showMaxLabel: true,
                 },
