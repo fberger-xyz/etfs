@@ -103,20 +103,20 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
                     symbol: 'none',
                     lineStyle: { color: 'gray', opacity: 0.6 },
                     data: [
-                        {
-                            xAxis: dayjs(new Date('2024-01-11')).format('ddd DD MMM YY'),
-                            lineStyle: { color: colors.text[resolvedTheme as AppThemes], opacity: 0.5 },
-                            label: {
-                                show: true,
-                                color: colors.text[resolvedTheme as AppThemes],
-                                formatter: () => `11 Jan 24`,
-                                position: 'insideMiddleTop',
-                                offset: [0, -1],
-                                rotate: 90,
-                                fontSize: 9,
-                                opacity: 1,
-                            },
-                        },
+                        // {
+                        //     xAxis: dayjs(new Date('2024-01-11')).format('ddd DD MMM YY'),
+                        //     lineStyle: { color: colors.text[resolvedTheme as AppThemes], opacity: 0.5 },
+                        //     label: {
+                        //         show: true,
+                        //         color: colors.text[resolvedTheme as AppThemes],
+                        //         formatter: () => `11 Jan 24`,
+                        //         position: 'insideMiddleTop',
+                        //         offset: [0, -1],
+                        //         rotate: 90,
+                        //         fontSize: 9,
+                        //         opacity: 1,
+                        //     },
+                        // },
                         {
                             xAxis: dayjs(new Date('2024-01-11')).format('ddd DD MMM YY'),
                             lineStyle: { color: colors.text[resolvedTheme as AppThemes], opacity: 0.5 },
