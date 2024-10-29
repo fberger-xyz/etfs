@@ -74,7 +74,7 @@ export default async function Page() {
             </div>
             <FarsideAreaChart farsideData={cumulatedFarsideData} tickers={tickers} />
             <FarsidePercentChart farsideData={cumulatedFarsideData} tickers={tickers} />
-            <div className="mb-20" />
+            <div className="mb-10" />
         </PageWrapper>
     )
 }

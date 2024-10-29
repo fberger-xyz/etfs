@@ -62,7 +62,13 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
                     lineStyle: { color: 'transparent' },
                     stack: 'Total',
                     areaStyle: {},
-                    emphasis: { focus: 'series' },
+                    emphasis: {
+                        focus: 'series',
+                        itemStyle: { opacity: 1 },
+                    },
+                    blur: {
+                        itemStyle: { opacity: 0.2 },
+                    },
                     color: etf.hexColor,
                     data: etf.flows.map((flow) => roundNToXDecimals(flow)),
                     itemStyle: {
@@ -72,9 +78,10 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
                     },
                     endLabel: {
                         show: showEndlabel,
-                        offset: [-0, -0],
+                        // offset: [-0, 10],
                         fontSize: 10,
                         align: 'right',
+                        // declare type BuiltinTextPosition = 'left' | 'right' | 'top' | 'bottom' | 'inside' | 'insideLeft' | 'insideRight' | 'insideTop' | 'insideBottom' | 'insideTopLeft' | 'insideTopRight' | 'insideBottomLeft' | 'insideBottomRight';
                         color: colors.text[resolvedTheme as AppThemes],
                         formatter: function (params: { seriesName: string; data: number | string }) {
                             return !isNaN(Number(params.data))
@@ -127,7 +134,7 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
                             label: {
                                 show: true,
                                 color: colors.text[resolvedTheme as AppThemes],
-                                formatter: () => `Start of US\ntax season`,
+                                formatter: () => `US tax\nseason`,
                                 fontSize: 9,
                                 opacity: 1,
                             },
@@ -218,6 +225,34 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
                     // startValue: timestamps.length ? timestamps[Math.max(0, timestamps.length - 1000)] : undefined,
                     fillerColor: 'transparent',
                     textStyle: { color: colors.dztext[resolvedTheme as AppThemes] },
+                    borderColor: colors.text[resolvedTheme as AppThemes], // Border color of the slider area
+                    backgroundColor: 'transparent',
+                    handleStyle: {
+                        color: 'transparent',
+                        borderColor: colors.text[resolvedTheme as AppThemes], // Border color of the handle
+                    },
+                    moveHandleStyle: {
+                        color: 'transparent',
+                        borderColor: colors.text[resolvedTheme as AppThemes], // Border color of the handle
+                    },
+                    emphasis: {
+                        handleStyle: {
+                            color: 'transparent',
+                            borderColor: colors.dztext[resolvedTheme as AppThemes], // Border color of the handle
+                        },
+                        moveHandleStyle: {
+                            color: 'transparent',
+                            borderColor: colors.dztext[resolvedTheme as AppThemes], // Border color of the handle
+                        },
+                    },
+                    selectedDataBackground: {
+                        lineStyle: {
+                            color: colors.dztext[resolvedTheme as AppThemes], // Border color of the handle
+                        },
+                        areaStyle: {
+                            color: colors.dztext[resolvedTheme as AppThemes], // Border color of the handle
+                        },
+                    },
                 },
             ],
             textStyle: {

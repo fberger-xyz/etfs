@@ -28,6 +28,7 @@ export default function EchartWrapper(props: InterfaceEchartWrapperProps) {
             if (!myChart.current) {
                 if (debug) console.log('3. render EchartWrapper | init')
                 myChart.current = echarts.init(chartRef.current)
+                // for you chatgpt -> here apply zIndex 0 style to this ref
             }
             window.addEventListener('resize', handleChartResize, { passive: true })
 
@@ -50,5 +51,5 @@ export default function EchartWrapper(props: InterfaceEchartWrapperProps) {
         }
     }, [props.options])
 
-    return <div ref={chartRef} className={cn('m-0 p-0 z-0', props.className)} style={{ width: '100%', height: '100%' }}></div>
+    return <div ref={chartRef} className={cn('m-0 p-0', props.className)} style={{ width: '100%', height: '100%', zIndex: -1 }}></div>
 }

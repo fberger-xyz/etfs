@@ -88,6 +88,34 @@ export default function FarsidePercentChart(props: { className?: string; farside
                     startValue: timestamps.length ? timestamps[Math.max(0, timestamps.length - 20)] : undefined,
                     fillerColor: 'transparent',
                     textStyle: { color: colors.dztext[resolvedTheme as AppThemes] },
+                    borderColor: colors.text[resolvedTheme as AppThemes], // Border color of the slider area
+                    backgroundColor: 'transparent',
+                    handleStyle: {
+                        color: 'transparent',
+                        borderColor: colors.text[resolvedTheme as AppThemes], // Border color of the handle
+                    },
+                    moveHandleStyle: {
+                        color: 'transparent',
+                        borderColor: colors.text[resolvedTheme as AppThemes], // Border color of the handle
+                    },
+                    emphasis: {
+                        handleStyle: {
+                            color: 'transparent',
+                            borderColor: colors.dztext[resolvedTheme as AppThemes], // Border color of the handle
+                        },
+                        moveHandleStyle: {
+                            color: 'transparent',
+                            borderColor: colors.dztext[resolvedTheme as AppThemes], // Border color of the handle
+                        },
+                    },
+                    selectedDataBackground: {
+                        lineStyle: {
+                            color: colors.dztext[resolvedTheme as AppThemes], // Border color of the handle
+                        },
+                        areaStyle: {
+                            color: colors.dztext[resolvedTheme as AppThemes], // Border color of the handle
+                        },
+                    },
                 },
             ],
             textStyle: {
@@ -224,7 +252,7 @@ export default function FarsidePercentChart(props: { className?: string; farside
         setOptions(newOptions)
     }, [resolvedTheme])
     return (
-        <div className="mb-5 mt-10 flex w-full flex-col text-xs">
+        <div className="mb-5 mt-14 flex w-full flex-col text-xs">
             <div className="mb-1 flex w-full justify-center text-base text-primary md:mb-2">
                 <p>Cumulated Bitcoin ETF Flows %</p>
             </div>

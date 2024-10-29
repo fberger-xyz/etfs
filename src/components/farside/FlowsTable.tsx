@@ -12,7 +12,7 @@ dayjs.extend(weekOfYear)
 
 function TableRow(props: { activateHover?: boolean; date: ReactNode; tickers: ReactNode[]; total: ReactNode; rank: ReactNode; className?: string }) {
     return (
-        <div className={cn('flex items-center sm:gap-1 px-1 md:px-2', { 'hover:bg-light-hover': props.activateHover }, props.className)}>
+        <div className={cn('flex items-center sm:gap-1 px-1 md:px-2', { 'hover:bg-light-hover leading-3': props.activateHover }, props.className)}>
             <div className="flex w-[95px] justify-start overflow-hidden text-discreet md:w-32">{props.date}</div>
             {...props.tickers}
             <div className="flex w-20 justify-end overflow-hidden text-discreet md:w-24">{props.total}</div>
