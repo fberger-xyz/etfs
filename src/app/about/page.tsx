@@ -4,8 +4,8 @@ import PageWrapper from '@/components/common/PageWrapper'
 export default function Page() {
     return (
         <PageWrapper>
-            <div className="mt-10 flex w-full justify-center gap-1">
-                <p>Just better.</p>
+            <div className="mt-10 flex w-full flex-col justify-center gap-1 md:flex-row">
+                <p>Just better than the original.</p>
                 <LinkWithIcon href="https://web.telegram.org/a/#-1002417234515">
                     <p>Telegram</p>
                 </LinkWithIcon>

@@ -54,7 +54,7 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
         const series = [
             ...flows.map((etf) => {
                 const showEndlabel =
-                    etf.key === EtfTickers.BRRR || (etf.flowsPercent.length > 0 && Math.abs(etf.flowsPercent[etf.flowsPercent.length - 1]) > 20) // 5 %
+                    etf.key === EtfTickers.BRRR || (etf.flowsPercent.length > 0 && Math.abs(etf.flowsPercent[etf.flowsPercent.length - 1]) > 15) // 5 %
                 return {
                     showSymbol: false,
                     name: etf.key,
