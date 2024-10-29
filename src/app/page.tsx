@@ -68,12 +68,12 @@ export default async function Page() {
     return (
         <PageWrapper>
             <FlowsTable farsideData={farsideData} tickers={tickers} />
-            <div className="flex w-full items-center justify-center gap-1 text-sm">
-                <p className="text-light-hover">Charts</p>
-                <IconWrapper icon={IconIds.SCROLL} className="w-5 animate-pulse" />
+            <div className="mb-5 flex w-full animate-pulse items-center justify-center gap-1 text-sm">
+                <p className="">Charts</p>
+                <IconWrapper icon={IconIds.SCROLL} className="w-5" />
             </div>
-            <FarsidePercentChart className="-z-0 mt-10 h-[520px]" farsideData={cumulatedFarsideData} tickers={tickers} />
-            <FarsideAreaChart className="-z-0 my-20 h-[520px]" farsideData={cumulatedFarsideData} tickers={tickers} />
+            <FarsidePercentChart farsideData={cumulatedFarsideData} tickers={tickers} />
+            <FarsideAreaChart farsideData={cumulatedFarsideData} tickers={tickers} />
         </PageWrapper>
     )
 }

@@ -80,9 +80,9 @@ export default function FlowsTable({ farsideData, tickers }: { farsideData: fars
 
     // html
     return (
-        <div className="flex w-full flex-col text-xs md:gap-2">
+        <div className="flex w-full flex-col text-xs">
             {/* context */}
-            <div className="mb-1 flex w-full justify-center text-base text-primary">
+            <div className="mb-1 flex w-full justify-center text-base text-primary md:mb-2">
                 <p>Bitcoin ETF Flows $m USD</p>
             </div>
 

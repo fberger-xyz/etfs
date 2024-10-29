@@ -16,7 +16,7 @@ export default function PageWrapper({ children, ...props }: { children: React.Re
         >
             <div
                 {...props}
-                className="mx-auto mt-16 flex max-w-[600px] flex-col items-start gap-2 overflow-auto px-3 sm:max-w-[800px] sm:px-16 md:mt-20 md:max-w-[900px] md:gap-6"
+                className="mx-auto mt-16 flex max-w-[600px] flex-col items-start gap-3 overflow-auto px-3 sm:max-w-[800px] sm:px-16 md:mt-20 md:max-w-[900px] md:gap-6"
             >
                 {/* {pathname !== '/' && <GoBack />} */}
                 {children}

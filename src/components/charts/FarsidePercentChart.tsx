@@ -61,7 +61,7 @@ export default function FarsidePercentChart(props: { className?: string; farside
                     color: colors.text[resolvedTheme as AppThemes],
                 },
                 // itemGap: 9,
-                // itemWidth: 16,
+                itemWidth: 12,
                 itemHeight: 10,
                 // formatter: (name: string) => shortenStr(name, 9),
             },
@@ -149,8 +149,8 @@ export default function FarsidePercentChart(props: { className?: string; farside
                     show: true,
                     formatter: (params: { value: number; dataIndex: number }) => {
                         const data = Math.round(params.value)
-                        if (params.dataIndex % 5 !== 1) return ''
-                        if (data >= 5) return data
+                        if (params.dataIndex !== flows.length && params.dataIndex % 10 !== 1) return ''
+                        if (data >= 10) return data
                         else return ''
                     },
                 },
@@ -158,8 +158,8 @@ export default function FarsidePercentChart(props: { className?: string; farside
                 data: flow.flowsPercent.map((value) => roundNToXDecimals(value, 1)),
             })),
             grid: {
-                left: '10%',
-                right: 40,
+                left: '12%',
+                right: '10%',
                 top: 60,
                 bottom: 70,
             },
@@ -227,10 +227,19 @@ export default function FarsidePercentChart(props: { className?: string; farside
         setOptions(newOptions)
     }, [resolvedTheme])
     return (
-        <ErrorBoundary FallbackComponent={Fallback}>
-            <div className={cn('w-full', props.className)}>
-                {Array.isArray(options.series) && options.series ? <EchartWrapper options={options} /> : <LoadingArea message="Loading data..." />}
+        <div className="mb-5 mt-10 flex w-full flex-col text-xs">
+            <div className="mb-1 flex w-full justify-center text-base text-primary md:mb-2">
+                <p>Cumulated Bitcoin ETF Flows %</p>
             </div>
-        </ErrorBoundary>
+            <ErrorBoundary FallbackComponent={Fallback}>
+                <div className={cn('h-[520px] w-full border border-inactive py-1 z-0', props.className)}>
+                    {Array.isArray(options.series) && options.series ? (
+                        <EchartWrapper options={options} />
+                    ) : (
+                        <LoadingArea message="Loading data..." />
+                    )}
+                </div>
+            </ErrorBoundary>
+        </div>
     )
 }

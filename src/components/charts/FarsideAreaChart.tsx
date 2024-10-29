@@ -66,7 +66,7 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
                     color: colors.text[resolvedTheme as AppThemes],
                 },
                 // itemGap: 9,
-                // itemWidth: 16,
+                itemWidth: 12,
                 itemHeight: 10,
                 // formatter: (name: string) => shortenStr(name, 9),
                 selected: {
@@ -138,8 +138,8 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
                 },
             },
             grid: {
-                left: '10%',
-                right: 40,
+                left: '12%',
+                right: '10%',
                 top: 60,
                 bottom: 70,
             },
@@ -157,6 +157,11 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
                     emphasis: { focus: 'series' },
                     color: etf.hexColor,
                     data: etf.flows.map((flow) => roundNToXDecimals(flow)),
+                    itemStyle: {
+                        color: 'green', // Fill color
+                        borderColor: 'red', // Border color
+                        borderWidth: 2, // Thickness of the border
+                    },
                     endLabel: {
                         show: showEndlabel,
                         offset: [10, 10],
@@ -227,10 +232,19 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
         setOptions(newOptions)
     }, [resolvedTheme])
     return (
-        <ErrorBoundary FallbackComponent={Fallback}>
-            <div className={cn('w-full', props.className)}>
-                {Array.isArray(options.series) && options.series ? <EchartWrapper options={options} /> : <LoadingArea message="Loading data..." />}
+        <div className="mb-20 mt-10 flex w-full flex-col text-xs">
+            <div className="mb-1 flex w-full justify-center text-base text-primary md:mb-2">
+                <p>Cumulated Bitcoin ETF Flows $m USD</p>
             </div>
-        </ErrorBoundary>
+            <ErrorBoundary FallbackComponent={Fallback}>
+                <div className={cn('h-[520px] w-full border border-inactive py-1 z-0', props.className)}>
+                    {Array.isArray(options.series) && options.series ? (
+                        <EchartWrapper options={options} />
+                    ) : (
+                        <LoadingArea message="Loading data..." />
+                    )}
+                </div>
+            </ErrorBoundary>
+        </div>
     )
 }
