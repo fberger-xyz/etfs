@@ -198,7 +198,6 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
                                     color: colors.text[resolvedTheme as AppThemes],
                                     formatter: () => `11 Jan 24`,
                                     position: 'insideMiddleTop',
-                                    // offset: [0, 15],
                                     offset: [0, -1],
                                     rotate: 90,
                                     fontSize: 10,
