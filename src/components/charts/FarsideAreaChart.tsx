@@ -141,7 +141,7 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
             },
             grid: {
                 left: '12%',
-                right: '10%',
+                right: '15%',
                 top: 60,
                 bottom: 70,
             },
@@ -167,9 +167,9 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
                         },
                         endLabel: {
                             show: showEndlabel,
-                            offset: [10, 10],
+                            offset: [-0, -10],
                             fontSize: 10,
-                            align: 'right',
+                            // align: 'right',
                             formatter: function (params: { seriesName: string; data: number | string }) {
                                 return !isNaN(Number(params.data))
                                     ? `${shortenStr(params.seriesName, 30)}: ${numeral(params.data).multiply(1000000).format('0,0 a$')}`
