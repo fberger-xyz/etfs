@@ -66,9 +66,9 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
                     color: colors.text[resolvedTheme as AppThemes],
                 },
                 // itemGap: 9,
-                itemWidth: 12,
-                itemHeight: 10,
-                // formatter: (name: string) => shortenStr(name, 9),
+                itemWidth: 10,
+                itemHeight: 8,
+                icon: 'rect',
                 selected: {
                     ...props.tickers.reduce((acc, curr) => ({ ...acc, [curr]: true }), {}),
                     [EtfTickers.GBTC]: false,
@@ -127,7 +127,7 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
                     color: colors.text[resolvedTheme as AppThemes],
                     fontSize: 10,
                     formatter: (...a: unknown[]) => {
-                        return numeral(a[0]).multiply(1000000).format('0,0a$')
+                        return numeral(a[0]).multiply(1000000).format('0,0 a$')
                     },
                 },
                 scale: true,
@@ -146,7 +146,7 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
             // @ts-expect-error: poorly typed
             series: flows.map((etf) => {
                 const showEndlabel =
-                    etf.key === EtfTickers.BRRR || (etf.flowsPercent.length > 0 && etf.flowsPercent[etf.flowsPercent.length - 1] > 20) // 5 %
+                    etf.key === EtfTickers.BRRR || (etf.flowsPercent.length > 0 && Math.abs(etf.flowsPercent[etf.flowsPercent.length - 1]) > 20) // 5 %
                 return {
                     showSymbol: false,
                     name: etf.key,
@@ -158,18 +158,18 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
                     color: etf.hexColor,
                     data: etf.flows.map((flow) => roundNToXDecimals(flow)),
                     itemStyle: {
-                        color: 'green', // Fill color
-                        borderColor: 'red', // Border color
-                        borderWidth: 2, // Thickness of the border
+                        color: etf.hexColor,
+                        borderColor: etf.hexColor,
+                        borderWidth: 2,
                     },
                     endLabel: {
                         show: showEndlabel,
                         offset: [10, 10],
-                        fontSize: 8,
+                        fontSize: 10,
                         align: 'right',
                         formatter: function (params: { seriesName: string; data: number | string }) {
                             return !isNaN(Number(params.data))
-                                ? `${shortenStr(params.seriesName, 30)}: ${numeral(params.data).format('0,0a')} $m`
+                                ? `${shortenStr(params.seriesName, 30)}: ${numeral(params.data).multiply(1000000).format('0,0 a$')}`
                                 : ''
                         },
                     },
