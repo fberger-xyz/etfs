@@ -10,6 +10,7 @@ import { useTheme } from 'next-themes'
 import { cn, getConfig, roundNToXDecimals } from '@/utils'
 import EchartWrapper from './EchartWrapper'
 import { colors } from '@/config/charts.config'
+import LinkWrapper from '../common/LinkWrapper'
 
 interface GetOptionsParams {
     timestamps: string[]
@@ -70,9 +71,9 @@ export default function FarsidePercentChart(props: { className?: string; farside
                 top: 20,
                 itemSize: 10,
                 feature: {
-                    dataZoom: { show: true, yAxisIndex: 'none' },
+                    dataZoom: { show: false, yAxisIndex: 'none' },
                     restore: { show: true },
-                    saveAsImage: { show: true },
+                    saveAsImage: { show: false },
                     dataView: { show: true, readOnly: false },
                 },
             },
@@ -155,8 +156,8 @@ export default function FarsidePercentChart(props: { className?: string; farside
             })),
             grid: {
                 left: '12%',
-                right: '10%',
-                top: 60,
+                right: '5%',
+                top: 80,
                 bottom: 70,
             },
         }
@@ -235,6 +236,9 @@ export default function FarsidePercentChart(props: { className?: string; farside
                         <LoadingArea message="Loading data..." />
                     )}
                 </div>
+                <LinkWrapper href="https://farside.co.uk/btc/" className="flex gap-1 text-inactive hover:text-primary" target="_blank">
+                    <p className="truncate text-xs">Data: farside.co.uk</p>
+                </LinkWrapper>
             </ErrorBoundary>
         </div>
     )

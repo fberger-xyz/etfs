@@ -11,6 +11,7 @@ import { cn, getConfig, roundNToXDecimals, shortenStr } from '@/utils'
 import EchartWrapper from './EchartWrapper'
 import numeral from 'numeral'
 import { colors } from '@/config/charts.config'
+import LinkWrapper from '../common/LinkWrapper'
 
 interface GetOptionsParams {
     timestamps: string[]
@@ -71,9 +72,9 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
                     },
                     endLabel: {
                         show: showEndlabel,
-                        offset: [-0, -10],
+                        offset: [-0, -0],
                         fontSize: 10,
-                        // align: 'right',
+                        align: 'right',
                         color: colors.text[resolvedTheme as AppThemes],
                         formatter: function (params: { seriesName: string; data: number | string }) {
                             return !isNaN(Number(params.data))
@@ -105,7 +106,7 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
                                 position: 'insideMiddleTop',
                                 offset: [0, -1],
                                 rotate: 90,
-                                fontSize: 10,
+                                fontSize: 9,
                                 opacity: 1,
                             },
                         },
@@ -115,8 +116,8 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
                             label: {
                                 show: true,
                                 color: colors.text[resolvedTheme as AppThemes],
-                                formatter: () => `Spot BTC\nETFs approved`,
-                                fontSize: 10,
+                                formatter: () => `Spot ETFs\napproved`,
+                                fontSize: 9,
                                 opacity: 1,
                             },
                         },
@@ -126,8 +127,8 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
                             label: {
                                 show: true,
                                 color: colors.text[resolvedTheme as AppThemes],
-                                formatter: () => `Start of \nUS tax season`,
-                                fontSize: 10,
+                                formatter: () => `Start of US\ntax season`,
+                                fontSize: 9,
                                 opacity: 1,
                             },
                         },
@@ -138,7 +139,7 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
                                 show: true,
                                 color: colors.text[resolvedTheme as AppThemes],
                                 formatter: () => `$/¥ carry\ntrade unwind`,
-                                fontSize: 10,
+                                fontSize: 9,
                                 opacity: 1,
                             },
                         },
@@ -149,24 +150,24 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
                                 show: true,
                                 color: colors.text[resolvedTheme as AppThemes],
                                 formatter: () => `FED cuts\n50 bps`,
-                                fontSize: 10,
+                                fontSize: 9,
                                 opacity: 1,
                             },
                         },
-                        {
-                            xAxis: dayjs(new Date('2024-09-18')).format('ddd DD MMM YY'),
-                            lineStyle: { color: colors.text[resolvedTheme as AppThemes], opacity: 0.5 },
-                            label: {
-                                show: true,
-                                color: colors.text[resolvedTheme as AppThemes],
-                                formatter: () => `18 Sept 24`,
-                                position: 'insideMiddleTop',
-                                offset: [0, -1],
-                                rotate: 90,
-                                fontSize: 10,
-                                opacity: 1,
-                            },
-                        },
+                        // {
+                        //     xAxis: dayjs(new Date('2024-09-18')).format('ddd DD MMM YY'),
+                        //     lineStyle: { color: colors.text[resolvedTheme as AppThemes], opacity: 0.5 },
+                        //     label: {
+                        //         show: true,
+                        //         color: colors.text[resolvedTheme as AppThemes],
+                        //         formatter: () => `18 Sept 24`,
+                        //         position: 'insideMiddleTop',
+                        //         offset: [0, -1],
+                        //         rotate: 90,
+                        //         fontSize: 10,
+                        //         opacity: 1,
+                        //     },
+                        // },
                     ],
                 },
             },
@@ -200,9 +201,9 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
                 top: 20,
                 itemSize: 10,
                 feature: {
-                    dataZoom: { show: true, yAxisIndex: 'none' },
+                    dataZoom: { show: false, yAxisIndex: 'none' },
                     restore: { show: true },
-                    saveAsImage: { show: true },
+                    saveAsImage: { show: false },
                     dataView: { show: true, readOnly: false },
                 },
             },
@@ -216,6 +217,7 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
                     right: '15%',
                     // startValue: timestamps.length ? timestamps[Math.max(0, timestamps.length - 1000)] : undefined,
                     fillerColor: 'transparent',
+                    textStyle: { color: colors.dztext[resolvedTheme as AppThemes] },
                 },
             ],
             textStyle: {
@@ -262,7 +264,7 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
             },
             grid: {
                 left: '12%',
-                right: '15%',
+                right: '5%',
                 top: 80,
                 bottom: 70,
             },
@@ -337,6 +339,9 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
                     )}
                 </div>
             </ErrorBoundary>
+            <LinkWrapper href="https://farside.co.uk/btc/" className="flex gap-1 text-inactive hover:text-primary" target="_blank">
+                <p className="truncate text-xs">Data: farside.co.uk</p>
+            </LinkWrapper>
         </div>
     )
 }
