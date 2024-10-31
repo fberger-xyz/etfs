@@ -80,7 +80,7 @@ export default function FlowsTable({ farsideData, tickers }: { farsideData: fars
 
     // html
     return (
-        <div className="flex w-full flex-col text-xs">
+        <div className="flex w-full flex-col text-xs lg:text-sm">
             {/* context */}
             <div className="mb-1 flex w-full justify-center text-base text-primary md:mb-2">
                 <p>Bitcoin ETF Flows $m USD</p>
@@ -177,8 +177,8 @@ export default function FlowsTable({ farsideData, tickers }: { farsideData: fars
                                                 key={`${yearIndex}-${year.index}-${monthIndex}-${month.index}-${weekIndex}-${week.index}-${dayIndex}-${day.Date}`}
                                                 date={
                                                     <>
-                                                        <p className="hidden text-nowrap md:flex">{dayjs(day.Date).format('ddd DD MMM YY')}</p>
                                                         <p className="text-nowrap md:hidden">{dayjs(day.Date).format('ddd DD')}</p>
+                                                        <p className="hidden text-nowrap md:flex">{dayjs(day.Date).format('ddd DD MMM')}</p>
                                                     </>
                                                 }
                                                 tickers={tickers
