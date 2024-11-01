@@ -124,7 +124,7 @@ export const scrapFarsideBtcAndStoreIt = inngest.createFunction(
                 `<u><b>Data updated</b></u>`,
                 `Time: ${timestamp()} UTC`,
                 `Trigger: ${event.data?.cron ?? 'invoked'} (${env})`,
-                `Action: upserted <b>${xata_id}</b> entry`,
+                `Action: upserted <b>${xata_id}</b>`,
                 total ? `<pre>${JSON.stringify(flows)}</pre>` : null,
                 `Flows: ${numeral(total).format('0,0')} m$`,
             ]
