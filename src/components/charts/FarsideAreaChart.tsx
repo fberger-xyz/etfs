@@ -2,7 +2,7 @@
 
 import * as echarts from 'echarts'
 import { ErrorBoundary } from 'react-error-boundary'
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import dayjs from 'dayjs'
 import { AppThemes, EtfTickers } from '@/enums'
 import { useTheme } from 'next-themes'
@@ -12,6 +12,8 @@ import numeral from 'numeral'
 import { colors } from '@/config/charts.config'
 import LinkWrapper from '../common/LinkWrapper'
 import { FarsideRawData } from '@/interfaces'
+import { Flows } from '@prisma/client'
+import CustomFallback from '../common/CustomFallback'
 
 interface GetOptionsParams {
     timestamps: string[]
@@ -42,7 +44,7 @@ export function LoadingArea({ message = 'Loading...' }: { message?: string }) {
     )
 }
 
-export default function FarsideAreaChart(props: { className?: string; areaData: FarsideRawData[]; tickers: (EtfTickers | string)[] }) {
+export default function FarsideAreaChart(props: { className?: string; areaData: Flows[]; tickers: (EtfTickers | string)[] }) {
     const getOptionsParams = (): GetOptionsParams => ({ timestamps: [], flows: [] })
     const { resolvedTheme } = useTheme()
 
@@ -299,13 +301,13 @@ export default function FarsideAreaChart(props: { className?: string; areaData: 
         // 1. for each day
         for (let dayIndex = 0; dayIndex < props.areaData.length; dayIndex++) {
             // store ts
-            const ts = dayjs(props.areaData[dayIndex].Date).format('ddd DD MMM YY')
+            const ts = dayjs(props.areaData[dayIndex].day).format('ddd DD MMM YY')
             optionsParams.timestamps.push(ts)
 
             // 2. for each ticker
             let totalFlowsForDay = 0
             for (let tickerIndex = 0; tickerIndex < props.tickers.length; tickerIndex++) {
-                const ticker = props.tickers[tickerIndex] as keyof FarsideRawData
+                const ticker = props.tickers[tickerIndex] as EtfTickers
                 const flow = Number(props.areaData[dayIndex][ticker] ?? 0)
                 let serieIndex = optionsParams.flows.findIndex((serie) => serie.key === ticker)
                 if (serieIndex < 0) {
@@ -330,7 +332,7 @@ export default function FarsideAreaChart(props: { className?: string; areaData: 
                 const serieIndex = optionsParams.flows.findIndex((serie) => serie.key === ticker)
                 if (serieIndex < 0) continue
                 let percent = optionsParams.flows[serieIndex].flows[dayIndex] / totalFlowsForDay
-                if (props.areaData[dayIndex].Total === 0 || isNaN(percent)) percent = 0 // prevent errors
+                if (props.areaData[dayIndex].total === 0 || isNaN(percent)) percent = 0 // prevent errors
                 optionsParams.flows[serieIndex].flowsPercent.push(roundNToXDecimals(percent * 100))
             }
         }
@@ -346,22 +348,24 @@ export default function FarsideAreaChart(props: { className?: string; areaData: 
         setOptions(newOptions)
     }, [resolvedTheme])
     return (
-        <div className="mt-10 flex w-full flex-col text-xs">
-            <div className="mb-1 flex w-full justify-center text-base text-primary md:mb-2">
-                <p>Cumulated Bitcoin ETF Flows $m USD</p>
-            </div>
-            <ErrorBoundary FallbackComponent={Fallback}>
-                <div className={cn('h-[520px] w-full border border-inactive py-1 z-0', props.className)}>
-                    {Array.isArray(options.series) && options.series ? (
-                        <EchartWrapper options={options} />
-                    ) : (
-                        <LoadingArea message="Loading data..." />
-                    )}
+        <Suspense fallback={<CustomFallback loadingText="Area chart loading..." />}>
+            <div className="mt-10 flex w-full flex-col text-xs">
+                <div className="mb-1 flex w-full justify-center text-base text-primary md:mb-2">
+                    <p>Cumulated Bitcoin ETF Flows $m USD</p>
                 </div>
-            </ErrorBoundary>
-            <LinkWrapper href="https://farside.co.uk/btc/" className="flex gap-1 text-inactive hover:text-primary" target="_blank">
-                <p className="truncate text-xs">Data: farside.co.uk</p>
-            </LinkWrapper>
-        </div>
+                <ErrorBoundary FallbackComponent={Fallback}>
+                    <div className={cn('h-[520px] w-full border border-inactive py-1 z-0', props.className)}>
+                        {Array.isArray(options.series) && options.series ? (
+                            <EchartWrapper options={options} />
+                        ) : (
+                            <LoadingArea message="Loading data..." />
+                        )}
+                    </div>
+                </ErrorBoundary>
+                <LinkWrapper href="https://farside.co.uk/btc/" className="flex gap-1 text-inactive hover:text-primary" target="_blank">
+                    <p className="truncate text-xs">Data: farside.co.uk</p>
+                </LinkWrapper>
+            </div>
+        </Suspense>
     )
 }

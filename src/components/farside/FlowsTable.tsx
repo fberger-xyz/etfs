@@ -7,7 +7,7 @@ import IconWrapper from '@/components/common/IconWrapper'
 import LinkWrapper from '@/components/common/LinkWrapper'
 import { cn, getConfig, monthName } from '@/utils'
 import TextWithTickerColor from '@/components/farside/ColorWrapper'
-import { FarsideRawData } from '@/interfaces'
+import { Flows } from '@prisma/client'
 dayjs.extend(weekOfYear)
 
 function TableRow(props: { activateHover?: boolean; date: ReactNode; tickers: ReactNode[]; total: ReactNode; rank: ReactNode; className?: string }) {
@@ -21,7 +21,10 @@ function TableRow(props: { activateHover?: boolean; date: ReactNode; tickers: Re
     )
 }
 
-export default function FlowsTable({ data, tickers }: { data: FarsideRawData[]; tickers: (EtfTickers | string)[] }) {
+export default function FlowsTable({ data }: { data: Flows[] }) {
+    // -
+    const tickers = Object.keys(EtfTickers) as EtfTickers[]
+
     // group by month / week
     const farsideDataGroupedBy: {
         rank: number
@@ -32,20 +35,20 @@ export default function FlowsTable({ data, tickers }: { data: FarsideRawData[]; 
             index: number
             totalPeriod: number
             rank: number
-            weeks: { index: number; totalPeriod: number; days: FarsideRawData[] }[]
+            weeks: { index: number; totalPeriod: number; days: Flows[] }[]
         }[]
     }[] = []
     for (let dayIndex = 0; dayIndex < data.length; dayIndex++) {
         // year
-        const dayYear = dayjs(data[dayIndex].Date).year()
+        const dayYear = dayjs(data[dayIndex].day).year()
         let yearIndex = farsideDataGroupedBy.findIndex((year) => year.index === dayYear)
         if (yearIndex < 0) {
-            farsideDataGroupedBy.unshift({ rank: 0, index: dayjs(data[dayIndex].Date).year(), months: [], totalPeriod: 0 })
+            farsideDataGroupedBy.unshift({ rank: 0, index: dayjs(data[dayIndex].day).year(), months: [], totalPeriod: 0 })
             yearIndex = farsideDataGroupedBy.findIndex((year) => year.index === dayYear)
         }
 
         // month
-        const dayMonth = dayjs(data[dayIndex].Date).month()
+        const dayMonth = dayjs(data[dayIndex].day).month()
         let monthIndex = farsideDataGroupedBy[yearIndex].months.findIndex((month) => month.index === dayMonth)
         if (monthIndex < 0) {
             farsideDataGroupedBy[yearIndex].months.unshift({ year: dayYear, index: dayMonth, weeks: [], rank: 0, totalPeriod: 0 })
@@ -53,7 +56,7 @@ export default function FlowsTable({ data, tickers }: { data: FarsideRawData[]; 
         }
 
         // week
-        const dayWeek = dayjs(data[dayIndex].Date).week()
+        const dayWeek = dayjs(data[dayIndex].day).week()
         let weekIndex = farsideDataGroupedBy[yearIndex].months[monthIndex].weeks.findIndex((week) => week.index === dayWeek)
         if (weekIndex < 0) {
             farsideDataGroupedBy[yearIndex].months[monthIndex].weeks.unshift({ index: dayWeek, days: [], totalPeriod: 0 })
@@ -62,9 +65,9 @@ export default function FlowsTable({ data, tickers }: { data: FarsideRawData[]; 
 
         // store
         farsideDataGroupedBy[yearIndex].months[monthIndex].weeks[weekIndex].days.unshift(data[dayIndex])
-        farsideDataGroupedBy[yearIndex].months[monthIndex].weeks[weekIndex].totalPeriod += Number(data[dayIndex].Total)
-        farsideDataGroupedBy[yearIndex].months[monthIndex].totalPeriod += Number(data[dayIndex].Total)
-        farsideDataGroupedBy[yearIndex].totalPeriod += Number(data[dayIndex].Total)
+        farsideDataGroupedBy[yearIndex].months[monthIndex].weeks[weekIndex].totalPeriod += Number(data[dayIndex].total)
+        farsideDataGroupedBy[yearIndex].months[monthIndex].totalPeriod += Number(data[dayIndex].total)
+        farsideDataGroupedBy[yearIndex].totalPeriod += Number(data[dayIndex].total)
     }
 
     // apply ranks for month
@@ -157,7 +160,7 @@ export default function FlowsTable({ data, tickers }: { data: FarsideRawData[]; 
                                         key={`${yearIndex}-${year.index}-${monthIndex}-${month.index}-${weekIndex}-${week.index}`}
                                         className="flex flex-col sm:gap-0.5"
                                     >
-                                        {week.days.length && dayjs(week.days[0].Date).format('ddd') === 'Fri' && (
+                                        {week.days.length && dayjs(week.days[0].day).format('ddd') === 'Fri' && (
                                             <TableRow
                                                 className="border-b border-dashed border-light-hover"
                                                 date={<p className="w-fit text-inactive">Week {week.index}</p>}
@@ -174,18 +177,18 @@ export default function FlowsTable({ data, tickers }: { data: FarsideRawData[]; 
                                             <TableRow
                                                 // className="bg-very-light-hover"
                                                 activateHover={true}
-                                                key={`${yearIndex}-${year.index}-${monthIndex}-${month.index}-${weekIndex}-${week.index}-${dayIndex}-${day.Date}`}
+                                                key={`${yearIndex}-${year.index}-${monthIndex}-${month.index}-${weekIndex}-${week.index}-${dayIndex}-${day.day}`}
                                                 date={
                                                     <>
-                                                        <p className="text-nowrap md:hidden">{dayjs(day.Date).format('ddd DD')}</p>
-                                                        <p className="hidden text-nowrap md:flex">{dayjs(day.Date).format('ddd DD MMM')}</p>
+                                                        <p className="text-nowrap md:hidden">{dayjs(day.day).format('ddd DD')}</p>
+                                                        <p className="hidden text-nowrap md:flex">{dayjs(day.day).format('ddd DD MMM')}</p>
                                                     </>
                                                 }
                                                 tickers={tickers
                                                     .sort((curr, next) => getConfig(curr).index - getConfig(next).index)
                                                     .map((ticker) => (
                                                         <div
-                                                            key={`${yearIndex}-${year.index}-${monthIndex}-${month.index}-${weekIndex}-${week.index}-${dayIndex}-${day.Date}-${ticker}`}
+                                                            key={`${yearIndex}-${year.index}-${monthIndex}-${month.index}-${weekIndex}-${week.index}-${dayIndex}-${day.day}-${ticker}`}
                                                             className="flex w-12 items-center justify-center overflow-hidden text-light-hover md:w-16"
                                                         >
                                                             {day[ticker as keyof typeof day] ? (
@@ -200,11 +203,11 @@ export default function FlowsTable({ data, tickers }: { data: FarsideRawData[]; 
                                                 total={
                                                     <p
                                                         className={cn('text-nowrap', {
-                                                            'text-green-500': Number(day.Total) > 0,
-                                                            'text-red-500': Number(day.Total) < 0,
+                                                            'text-green-500': Number(day.total) > 0,
+                                                            'text-red-500': Number(day.total) < 0,
                                                         })}
                                                     >
-                                                        {numeral(day.Total).format('0,0')}
+                                                        {numeral(day.total).format('0,0')}
                                                     </p>
                                                 }
                                                 rank={<p className="italic text-inactive">{day.rank}</p>}

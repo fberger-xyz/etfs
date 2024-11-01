@@ -11,6 +11,7 @@ import { cn, getConfig, roundNToXDecimals } from '@/utils'
 import EchartWrapper from './EchartWrapper'
 import { colors } from '@/config/charts.config'
 import LinkWrapper from '../common/LinkWrapper'
+import { Flows } from '@prisma/client'
 
 interface GetOptionsParams {
     timestamps: string[]
@@ -41,7 +42,7 @@ export function LoadingArea({ message = 'Loading...' }: { message?: string }) {
     )
 }
 
-export default function FarsidePercentChart(props: { className?: string; percentData: FarsideRawData[]; tickers: (EtfTickers | string)[] }) {
+export default function FarsidePercentChart(props: { className?: string; percentData: Flows[]; tickers: (EtfTickers | string)[] }) {
     /**
      * methods
      */
@@ -204,13 +205,13 @@ export default function FarsidePercentChart(props: { className?: string; percent
         // 1. for each day
         for (let dayIndex = 0; dayIndex < props.percentData.length; dayIndex++) {
             // store ts
-            const ts = dayjs(props.percentData[dayIndex].Date).format('ddd DD MMM YY')
+            const ts = dayjs(props.percentData[dayIndex].day).format('ddd DD MMM YY')
             optionsParams.timestamps.push(ts)
 
             // 2. for each ticker
             let totalFlowsForDay = 0
             for (let tickerIndex = 0; tickerIndex < props.tickers.length; tickerIndex++) {
-                const ticker = props.tickers[tickerIndex] as keyof FarsideRawData
+                const ticker = props.tickers[tickerIndex] as EtfTickers
                 if (ticker === EtfTickers.GBTC) continue
                 const flow = Number(props.percentData[dayIndex][ticker] ?? 0)
                 let serieIndex = optionsParams.flows.findIndex((serie) => serie.key === ticker)
@@ -236,7 +237,7 @@ export default function FarsidePercentChart(props: { className?: string; percent
                 const serieIndex = optionsParams.flows.findIndex((serie) => serie.key === ticker)
                 if (serieIndex < 0) continue
                 let percent = optionsParams.flows[serieIndex].flows[dayIndex] / totalFlowsForDay
-                if (props.percentData[dayIndex].Total === 0 || isNaN(percent)) percent = 0 // prevent errors
+                if (props.percentData[dayIndex].total === 0 || isNaN(percent)) percent = 0 // prevent errors
                 optionsParams.flows[serieIndex].flowsPercent.push(roundNToXDecimals(percent * 100, 2))
             }
         }

@@ -38,4 +38,5 @@ model Flows {
   raw                     Json?    @db.Json
   total                   Float    @default(0)
   close_of_bussiness_hour DateTime @default(now()) @db.Timestamptz(6)
+  rank                    Int      @default(0)
 }

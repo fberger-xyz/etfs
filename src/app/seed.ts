@@ -78,6 +78,7 @@ async function main() {
                 BTC: cleanFlow(parsedData[dayIndex].BTC),
                 total: cleanFlow(parsedData[dayIndex].Total),
                 raw: parsedData[dayIndex],
+                rank: 0,
             },
             create: {
                 xata_id,
@@ -96,6 +97,7 @@ async function main() {
                 BTC: cleanFlow(parsedData[dayIndex].BTC),
                 total: cleanFlow(parsedData[dayIndex].Total),
                 raw: parsedData[dayIndex],
+                rank: 0,
             },
         })
     }
