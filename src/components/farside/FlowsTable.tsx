@@ -5,7 +5,7 @@ import numeral from 'numeral'
 import weekOfYear from 'dayjs/plugin/weekOfYear'
 import IconWrapper from '@/components/common/IconWrapper'
 import LinkWrapper from '@/components/common/LinkWrapper'
-import { cn, getConfig, monthName } from '@/utils'
+import { cleanFlow, cn, getConfig, monthName } from '@/utils'
 import TextWithTickerColor from '@/components/farside/ColorWrapper'
 import { Flows } from '@prisma/client'
 dayjs.extend(weekOfYear)
@@ -24,6 +24,13 @@ function TableRow(props: { activateHover?: boolean; date: ReactNode; tickers: Re
 export default function FlowsTable({ data }: { data: Flows[] }) {
     // -
     const tickers = Object.keys(EtfTickers) as EtfTickers[]
+
+    // apply rank for days
+    const daysSortedByTotal = [...data].sort((curr, next) => cleanFlow(next.total) - cleanFlow(curr.total))
+    for (let sortedDayIndex = 0; sortedDayIndex < daysSortedByTotal.length; sortedDayIndex++) {
+        const dayIndex = data.findIndex((day) => day.xata_id === daysSortedByTotal[sortedDayIndex].xata_id)
+        if (dayIndex >= 0) data[dayIndex].rank = sortedDayIndex + 1
+    }
 
     // group by month / week
     const farsideDataGroupedBy: {
