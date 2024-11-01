@@ -5,13 +5,13 @@ import utc from 'dayjs/plugin/utc'
 import { PrismaClient } from '@prisma/client'
 import { Bot } from 'grammy'
 import { APP_METADATA } from '@/config/app.config'
-import { enrichFarsideJson, getFarsideTableDataAsJson } from '@/utils'
+import { cleanFlow, enrichFarsideJson, getFarsideTableDataAsJson } from '@/utils'
 import numeral from 'numeral'
 
 // helpers
 dayjs.extend(utc)
 dayjs.extend(timezone)
-const format = 'D MMMM YYYY hh:mm:ss A'
+const format = "D MMMM YYYY hh:mm'ss A"
 const timestamp = () => dayjs.utc().format(format)
 
 // telegram
@@ -66,22 +66,51 @@ export const scrapFarsideBtcAndStoreIt = inngest.createFunction(
 
         // debug
         const latestDayFlows = parsedData[parsedData.length - 1]
+        const day = dayjs(latestDayFlows.Date).format('ddd DD MMM YYYY')
+        const xata_id = `${day}`.toLowerCase().replaceAll(' ', '-')
+        const close_of_bussiness_hour = dayjs.utc(latestDayFlows.Date).hour(17).toDate()
         if (debug) console.log({ latestDayFlows })
 
         // xata
-        const pushToXata = await step.run('3. Push to xata', async () => {
-            const day = dayjs(latestDayFlows.Date).format('ddd DD MMM YYYY')
-            const records = await prisma.days.findMany({ where: { day } })
-            const xata_id = `${day}`.toLowerCase().replaceAll(' ', '-')
-            const output: { action: string; record: unknown } = { action: 'unknown ', record: null }
-            if (records.length) {
-                output.record = await prisma.days.update({ where: { xata_id: records[0].xata_id }, data: { flows: latestDayFlows } })
-                output.action = 'updated'
-            } else {
-                output.record = await prisma.days.create({ data: { xata_id, day, flows: latestDayFlows } })
-                output.action = 'created'
-            }
-            return output
+        await step.run('3. Push to xata', async () => {
+            return await prisma.flows.upsert({
+                where: { xata_id },
+                update: {
+                    day,
+                    close_of_bussiness_hour,
+                    IBIT: cleanFlow(latestDayFlows.IBIT),
+                    FBTC: cleanFlow(latestDayFlows.FBTC),
+                    BITB: cleanFlow(latestDayFlows.BITB),
+                    ARKB: cleanFlow(latestDayFlows.ARKB),
+                    BTCO: cleanFlow(latestDayFlows.BTCO),
+                    EZBC: cleanFlow(latestDayFlows.EZBC),
+                    BRRR: cleanFlow(latestDayFlows.BRRR),
+                    HODL: cleanFlow(latestDayFlows.HODL),
+                    BTCW: cleanFlow(latestDayFlows.BTCW),
+                    GBTC: cleanFlow(latestDayFlows.GBTC),
+                    BTC: cleanFlow(latestDayFlows.BTC),
+                    total: cleanFlow(latestDayFlows.Total),
+                    raw: latestDayFlows,
+                },
+                create: {
+                    xata_id,
+                    day,
+                    close_of_bussiness_hour,
+                    IBIT: cleanFlow(latestDayFlows.IBIT),
+                    FBTC: cleanFlow(latestDayFlows.FBTC),
+                    BITB: cleanFlow(latestDayFlows.BITB),
+                    ARKB: cleanFlow(latestDayFlows.ARKB),
+                    BTCO: cleanFlow(latestDayFlows.BTCO),
+                    EZBC: cleanFlow(latestDayFlows.EZBC),
+                    BRRR: cleanFlow(latestDayFlows.BRRR),
+                    HODL: cleanFlow(latestDayFlows.HODL),
+                    BTCW: cleanFlow(latestDayFlows.BTCW),
+                    GBTC: cleanFlow(latestDayFlows.GBTC),
+                    BTC: cleanFlow(latestDayFlows.BTC),
+                    total: cleanFlow(latestDayFlows.Total),
+                    raw: latestDayFlows,
+                },
+            })
         })
 
         // telegram
@@ -89,17 +118,17 @@ export const scrapFarsideBtcAndStoreIt = inngest.createFunction(
             const before = Date.now()
             const bot = new Bot(token)
             const chatId = channelId
-            const { Date: date, Total: total, ...flows } = latestDayFlows
-
-            const lines = [
-                `<u><b>Better Farside update</b></u>`,
-                `Timestamp: ${timestamp()} UTC`,
-                `Trigger: ${event.data?.cron ?? 'invoked'} (${process.env.NODE_ENV})`,
-                `Action: ${pushToXata.action} <b>${date}</b> entry`,
-                `<pre>${JSON.stringify(flows)}</pre>`,
-                `Total: ${numeral(total).format('0,0')} m$`,
+            const { Total: total, ...flows } = latestDayFlows
+            const message = [
+                `<u><b>Better Farside</b></u>`,
+                `Ts: ${timestamp()} UTC`,
+                `${String(process.env.NODE_ENV).toUpperCase()}: ${event.data?.cron ?? 'invoked'}`,
+                `Action: upserted <b>${xata_id}</b> entry`,
+                total ? `<pre>${JSON.stringify(flows)}</pre>` : null,
+                `Flows: ${numeral(total).format('0,0')} m$`,
             ]
-            const message = lines.join('\n')
+                .filter((line) => !!line)
+                .join('\n')
             await bot.api.sendMessage(chatId, message, { parse_mode: 'HTML' })
             const after = Date.now()
             return { ms: after - before }

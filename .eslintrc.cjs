@@ -28,7 +28,7 @@ module.exports = {
         'prettier/prettier': 1,
         'no-html-link-for-pages': 'off',
       },
-      files: ['src/**/*.ts', 'src/**/*.tsx', './tailwind.config.ts', './src/app/global.css'],
+      files: ['src/**/*.ts', 'src/**/*.tsx', './tailwind.config.ts', './prisma/seed.ts'],
     },
     {
       extends: ['prettier'],

@@ -16,3 +16,26 @@ model days {
   flows          Json?    @db.Json
   day            String   @unique(map: "days__pgroll_new_day_key")
 }
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model Flows {
+  xata_updatedat          DateTime @default(now()) @db.Timestamptz(6)
+  xata_id                 String   @unique(map: "_pgroll_new_Flows_xata_id_key") @default(dbgenerated("('rec_'::text || (xata_private.xid())::text)"))
+  xata_version            Int      @default(0)
+  xata_createdat          DateTime @default(now()) @db.Timestamptz(6)
+  day                     String   @unique(map: "Flows__pgroll_new_day_key")
+  IBIT                    Float    @default(0)
+  FBTC                    Float    @default(0)
+  BITB                    Float    @default(0)
+  ARKB                    Float    @default(0)
+  BTCO                    Float    @default(0)
+  EZBC                    Float    @default(0)
+  BRRR                    Float    @default(0)
+  HODL                    Float    @default(0)
+  BTCW                    Float    @default(0)
+  GBTC                    Float    @default(0)
+  BTC                     Float    @default(0)
+  raw                     Json?    @db.Json
+  total                   Float    @default(0)
+  close_of_bussiness_hour DateTime @default(now()) @db.Timestamptz(6)
+}

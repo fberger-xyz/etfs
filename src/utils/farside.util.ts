@@ -75,3 +75,5 @@ export const enrichFarsideJson = (rawData: FarsideRawData[]) => {
         })
     return { tickers, parsedData }
 }
+
+export const cleanFlow = (rawFlow: string | number | undefined) => (isNaN(Number(rawFlow)) ? 0 : Number(rawFlow))

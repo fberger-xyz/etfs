@@ -11,6 +11,6 @@ export interface FarsideRawData {
     BTCW: string | number
     GBTC: string | number
     BTC: string | number
-    Total: number
+    Total: string | number
     rank?: number
 }

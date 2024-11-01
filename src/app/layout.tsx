@@ -10,6 +10,7 @@ import { ThemeProvider } from 'next-themes'
 import { AppThemes } from '@/enums'
 import ReactQueryProvider from '@/providers/react-query.provider'
 import { Toaster } from 'react-hot-toast'
+import CustomFallback from '@/components/common/CustomFallback'
 
 // https://fonts.google.com/
 const font = Ubuntu_Mono({ weight: ['400', '700'], subsets: ['latin'] })
@@ -54,13 +55,7 @@ export default function RootLayout({
                     <ReactQueryProvider>
                         <main className="flex h-full w-full flex-col bg-background text-lg text-primary transition-all md:text-base">
                             <Header className="h-16 px-4 text-base sm:h-20 sm:text-lg" />
-                            <Suspense
-                                fallback={
-                                    <div className="flex h-full w-full items-center justify-center">
-                                        <p className="text-orange-500">Data loading...</p>
-                                    </div>
-                                }
-                            >
+                            <Suspense fallback={<CustomFallback loadingText="App loading..." />}>
                                 <div className="h-full overflow-scroll">{children}</div>
                             </Suspense>
                             <Footer className="md:p-3" />

@@ -10,7 +10,10 @@
     "eslint:fix": "eslint ./src --fix",
     "prettier:fix": "prettier --write src",
     "lint:fix": "pnpm eslint:fix && pnpm prettier:fix",
-    "prisma:sync:local": "prisma db pull && prisma generate"
+    "prisma:sync:pull:local": "prisma db pull && prisma generate",
+    "prisma:sync:push:remote": "prisma db push && prisma generate",
+    "seed": "ts-node --compiler-options '{\"module\": \"CommonJS\"}' ./src/app/seed.ts",
+    "inngest": "pnpm dlx inngest-cli@latest dev"
   },
   "dependencies": {
     "@next/env": "^14.2.5",
