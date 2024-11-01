@@ -11,7 +11,7 @@ import numeral from 'numeral'
 // helpers
 dayjs.extend(utc)
 dayjs.extend(timezone)
-const format = "D MMM. YY hh:mm'ss A"
+const format = "hh:mm'ss A"
 const timestamp = () => dayjs.utc().format(format)
 
 // telegram
@@ -119,10 +119,11 @@ export const scrapFarsideBtcAndStoreIt = inngest.createFunction(
             const bot = new Bot(token)
             const chatId = channelId
             const { Total: total, ...flows } = latestDayFlows
+            const env = String(process.env.NODE_ENV).toLowerCase() === 'production' ? 'Prod' : 'Dev'
             const message = [
-                `<u><b>Better Farside</b></u>`,
-                `Ts: ${timestamp()} UTC`,
-                `${String(process.env.NODE_ENV).toUpperCase()}: ${event.data?.cron ?? 'invoked'}`,
+                `<u><b>Data updated</b></u>`,
+                `Time: ${timestamp()} UTC`,
+                `Trigger: ${event.data?.cron ?? 'invoked'} (${env})`,
                 `Action: upserted <b>${xata_id}</b> entry`,
                 total ? `<pre>${JSON.stringify(flows)}</pre>` : null,
                 `Flows: ${numeral(total).format('0,0')} m$`,
