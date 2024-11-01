@@ -15,7 +15,7 @@ const getFlows = unstable_cache(
         return await prisma.flows.findMany()
     },
     ['flows'],
-    { revalidate: 3600 / (60 / 4), tags: ['flows'] }, // every 4 minutes
+    { revalidate: 3600 / (60 / 2), tags: ['flows'] }, // every 2 minutes
 )
 
 export default async function Page() {
