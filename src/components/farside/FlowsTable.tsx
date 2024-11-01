@@ -62,9 +62,9 @@ export default function FlowsTable({ data, tickers }: { data: FarsideRawData[]; 
 
         // store
         farsideDataGroupedBy[yearIndex].months[monthIndex].weeks[weekIndex].days.unshift(data[dayIndex])
-        farsideDataGroupedBy[yearIndex].months[monthIndex].weeks[weekIndex].totalPeriod += data[dayIndex].Total
-        farsideDataGroupedBy[yearIndex].months[monthIndex].totalPeriod += data[dayIndex].Total
-        farsideDataGroupedBy[yearIndex].totalPeriod += data[dayIndex].Total
+        farsideDataGroupedBy[yearIndex].months[monthIndex].weeks[weekIndex].totalPeriod += Number(data[dayIndex].Total)
+        farsideDataGroupedBy[yearIndex].months[monthIndex].totalPeriod += Number(data[dayIndex].Total)
+        farsideDataGroupedBy[yearIndex].totalPeriod += Number(data[dayIndex].Total)
     }
 
     // apply ranks for month
@@ -200,8 +200,8 @@ export default function FlowsTable({ data, tickers }: { data: FarsideRawData[]; 
                                                 total={
                                                     <p
                                                         className={cn('text-nowrap', {
-                                                            'text-green-500': day.Total > 0,
-                                                            'text-red-500': day.Total < 0,
+                                                            'text-green-500': Number(day.Total) > 0,
+                                                            'text-red-500': Number(day.Total) < 0,
                                                         })}
                                                     >
                                                         {numeral(day.Total).format('0,0')}
