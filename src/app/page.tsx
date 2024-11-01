@@ -33,7 +33,6 @@ export default async function Page() {
                 <IconWrapper icon={IconIds.SCROLL} className="w-5" />
             </div>
             <ChartsWrapper flows={flows} />
-            <div className="mb-10" />
         </PageWrapper>
     )
 }
