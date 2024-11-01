@@ -83,6 +83,9 @@ dependencies:
   tw-colors:
     specifier: ^3.3.2
     version: 3.3.2(tailwindcss@3.4.1)
+  undici:
+    specifier: ^6.20.1
+    version: 6.20.1
   zustand:
     specifier: ^4.5.5
     version: 4.5.5(@types/react@18.0.0)(react@18.0.0)
