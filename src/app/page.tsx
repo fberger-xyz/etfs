@@ -19,8 +19,8 @@ const getFlows = unstable_cache(
         })
     },
     ['flows'],
-    // { revalidate: 3600 / (60 / 2), tags: ['flows'] }, // every 2 minutes
-    { revalidate: false, tags: ['flows'] }, // every 2 minutes
+    { revalidate: 3600 / (60 / 2), tags: ['flows'] }, // every 2 minutes
+    // { revalidate: false, tags: ['flows'] }, // every 2 minutes
 )
 
 export default async function Page() {
