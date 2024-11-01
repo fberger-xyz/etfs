@@ -11,7 +11,7 @@ import numeral from 'numeral'
 // helpers
 dayjs.extend(utc)
 dayjs.extend(timezone)
-const format = "D MMMM YYYY hh:mm'ss A"
+const format = "D MMM. YY hh:mm'ss A"
 const timestamp = () => dayjs.utc().format(format)
 
 // telegram

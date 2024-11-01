@@ -6,7 +6,7 @@ import FlowsTable from '@/components/farside/FlowsTable'
 import IconWrapper from '@/components/common/IconWrapper'
 import { PrismaClient } from '@prisma/client'
 import { unstable_cache } from 'next/cache'
-import ChartsWrapper from '@/components/farside/chartsWrapper'
+import ChartsWrapper from '@/components/farside/ChartsWrapper'
 dayjs.extend(weekOfYear)
 
 const getFlows = unstable_cache(
