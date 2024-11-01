@@ -12,10 +12,15 @@ dayjs.extend(weekOfYear)
 const getFlows = unstable_cache(
     async () => {
         const prisma = new PrismaClient()
-        return await prisma.flows.findMany()
+        return await prisma.flows.findMany({
+            orderBy: {
+                close_of_bussiness_hour: 'asc',
+            },
+        })
     },
     ['flows'],
-    { revalidate: 3600 / (60 / 2), tags: ['flows'] }, // every 2 minutes
+    // { revalidate: 3600 / (60 / 2), tags: ['flows'] }, // every 2 minutes
+    { revalidate: false, tags: ['flows'] }, // every 2 minutes
 )
 
 export default async function Page() {

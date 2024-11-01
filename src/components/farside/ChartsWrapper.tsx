@@ -2,7 +2,6 @@ import { EtfTickers } from '@/enums'
 import dayjs from 'dayjs'
 import weekOfYear from 'dayjs/plugin/weekOfYear'
 import FarsideAreaChart from '@/components/charts/FarsideAreaChart'
-import { cloneDeep } from 'lodash'
 import FarsidePercentChart from '@/components/charts/FarsidePercentChart'
 import { cleanFlow } from '@/utils'
 import { Suspense } from 'react'
@@ -20,7 +19,11 @@ export default function ChartsWrapper(props: { flows: Flows[] }) {
 
     // cumulated flows
     const tickers = Object.keys(EtfTickers) as EtfTickers[]
-    const cumulatedFarsideData = cloneDeep(daysSortedByTotal)
+    console.log({ daysSortedByTotal })
+    const cumulatedFarsideData = [...daysSortedByTotal].sort(
+        (curr, next) => new Date(curr.close_of_bussiness_hour).getTime() - new Date(next.close_of_bussiness_hour).getTime(),
+    )
+
     for (let cfdIndex = 0; cfdIndex < cumulatedFarsideData.length; cfdIndex++) {
         for (let tickerIndex = 0; tickerIndex < tickers.length; tickerIndex++) {
             const ticker = tickers[tickerIndex]
