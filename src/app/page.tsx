@@ -1,62 +1,38 @@
 import PageWrapper from '@/components/common/PageWrapper'
-import { EtfTickers, IconIds } from '@/enums'
-import { farsideData } from '@/interfaces'
+import { IconIds } from '@/enums'
+import { FarsideRawData } from '@/interfaces'
 import dayjs from 'dayjs'
 import { promises as fs } from 'fs'
-import numeral from 'numeral'
 import weekOfYear from 'dayjs/plugin/weekOfYear'
 import FarsideAreaChart from '@/components/charts/FarsideAreaChart'
-dayjs.extend(weekOfYear)
 import { cloneDeep } from 'lodash'
 import FarsidePercentChart from '@/components/charts/FarsidePercentChart'
 import FlowsTable from '@/components/farside/FlowsTable'
 import IconWrapper from '@/components/common/IconWrapper'
+import { enrichFarsideJson } from '@/utils'
+dayjs.extend(weekOfYear)
 
 export default async function Page() {
     // load json
     const path = process.cwd() + '/src/data/farside-btc.json'
     const file = await fs.readFile(path, 'utf8')
-    const rawData = JSON.parse(file) as farsideData[]
+    const rawData = JSON.parse(file) as FarsideRawData[]
 
     // parse json
-    const tickers: (EtfTickers | string)[] = []
-    const farsideData = rawData
-        .filter((day) => dayjs(day.Date).isValid())
-        .map((day) => {
-            let totalCheck = 0
-            const dup = { ...day }
-            const entries = Object.entries(dup)
-            for (let entryIndex = 0; entryIndex < entries.length; entryIndex++) {
-                const key = entries[entryIndex][0] as keyof typeof dup
-                const value = entries[entryIndex][1]
-                if (key === 'Date' || dayjs(key).isValid()) continue
-                if (key === 'Total') continue
-                if (!tickers.includes(key)) tickers.push(key)
-                else if (value === '-') dup[key] = 0
-                else {
-                    const sign = String(value).includes('(') || String(value).includes(')') ? -1 : 1
-                    const parsedValue = numeral(String(value).replaceAll('(', '').replaceAll(')', '')).multiply(sign).value()
-                    if (parsedValue === null || isNaN(parsedValue)) continue
-                    dup[key] = parsedValue
-                    totalCheck += parsedValue
-                }
-            }
-            dup.TotalCheck = totalCheck
-            return dup
-        })
+    const { tickers, parsedData } = enrichFarsideJson(rawData)
 
     // apply rank for days
-    const daysSortedByTotal = [...farsideData].sort((curr, next) => next.TotalCheck - curr.TotalCheck)
+    const daysSortedByTotal = [...parsedData].sort((curr, next) => next.Total - curr.Total)
     for (let sortedDayIndex = 0; sortedDayIndex < daysSortedByTotal.length; sortedDayIndex++) {
-        const dayIndex = farsideData.findIndex((day) => day.Date === daysSortedByTotal[sortedDayIndex].Date)
-        if (dayIndex >= 0) farsideData[dayIndex].rank = sortedDayIndex + 1
+        const dayIndex = parsedData.findIndex((day) => day.Date === daysSortedByTotal[sortedDayIndex].Date)
+        if (dayIndex >= 0) parsedData[dayIndex].rank = sortedDayIndex + 1
     }
 
     // cumulated flows
-    const cumulatedFarsideData = cloneDeep(farsideData)
+    const cumulatedFarsideData = cloneDeep(parsedData)
     for (let cfdIndex = 0; cfdIndex < cumulatedFarsideData.length; cfdIndex++) {
         for (let tickerIndex = 0; tickerIndex < tickers.length; tickerIndex++) {
-            const ticker = tickers[tickerIndex] as keyof farsideData
+            const ticker = tickers[tickerIndex] as keyof FarsideRawData
             const flow = Number(cumulatedFarsideData[cfdIndex][ticker])
             cumulatedFarsideData[cfdIndex][ticker] = isNaN(flow) ? 0 : flow
             if (cfdIndex === 0) continue
@@ -67,13 +43,13 @@ export default async function Page() {
     // html
     return (
         <PageWrapper>
-            <FlowsTable farsideData={farsideData} tickers={tickers} />
+            <FlowsTable data={parsedData} tickers={tickers} />
             <div className="mb-5 flex w-full animate-pulse items-center justify-center gap-1 text-sm">
                 <p className="">Charts</p>
                 <IconWrapper icon={IconIds.SCROLL} className="w-5" />
             </div>
-            <FarsideAreaChart farsideData={cumulatedFarsideData} tickers={tickers} />
-            <FarsidePercentChart farsideData={cumulatedFarsideData} tickers={tickers} />
+            <FarsideAreaChart areaData={cumulatedFarsideData} tickers={tickers} />
+            <FarsidePercentChart percentData={cumulatedFarsideData} tickers={tickers} />
             <div className="mb-10" />
         </PageWrapper>
     )

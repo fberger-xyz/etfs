@@ -8,7 +8,7 @@ export default function Page() {
             <div className="mt-10 flex w-full flex-col items-center justify-center gap-8">
                 <LinkWrapper href="https://farside.co.uk/btc/" target="_blank" className="flex gap-1">
                     <p>
-                        Just better than <span className="underline underline-offset-2">the original.</span>
+                        Just better than <span className="underline underline-offset-2">the original</span>
                     </p>
                 </LinkWrapper>
                 <LinkWithIcon href="https://t.me/+nMy_2LCHvEJjZDI0">

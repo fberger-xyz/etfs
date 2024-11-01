@@ -3,7 +3,6 @@
 import * as echarts from 'echarts'
 import { ErrorBoundary } from 'react-error-boundary'
 import { useEffect, useState } from 'react'
-import { farsideData } from '@/interfaces'
 import dayjs from 'dayjs'
 import { AppThemes, EtfTickers } from '@/enums'
 import { useTheme } from 'next-themes'
@@ -12,6 +11,7 @@ import EchartWrapper from './EchartWrapper'
 import numeral from 'numeral'
 import { colors } from '@/config/charts.config'
 import LinkWrapper from '../common/LinkWrapper'
+import { FarsideRawData } from '@/interfaces'
 
 interface GetOptionsParams {
     timestamps: string[]
@@ -42,7 +42,7 @@ export function LoadingArea({ message = 'Loading...' }: { message?: string }) {
     )
 }
 
-export default function FarsideAreaChart(props: { className?: string; farsideData: farsideData[]; tickers: (EtfTickers | string)[] }) {
+export default function FarsideAreaChart(props: { className?: string; areaData: FarsideRawData[]; tickers: (EtfTickers | string)[] }) {
     const getOptionsParams = (): GetOptionsParams => ({ timestamps: [], flows: [] })
     const { resolvedTheme } = useTheme()
 
@@ -103,20 +103,6 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
                     symbol: 'none',
                     lineStyle: { color: 'gray', opacity: 0.6 },
                     data: [
-                        // {
-                        //     xAxis: dayjs(new Date('2024-01-11')).format('ddd DD MMM YY'),
-                        //     lineStyle: { color: colors.text[resolvedTheme as AppThemes], opacity: 0.5 },
-                        //     label: {
-                        //         show: true,
-                        //         color: colors.text[resolvedTheme as AppThemes],
-                        //         formatter: () => `11 Jan 24`,
-                        //         position: 'insideMiddleTop',
-                        //         offset: [0, -1],
-                        //         rotate: 90,
-                        //         fontSize: 9,
-                        //         opacity: 1,
-                        //     },
-                        // },
                         {
                             xAxis: dayjs(new Date('2024-01-11')).format('ddd DD MMM YY'),
                             lineStyle: { color: colors.text[resolvedTheme as AppThemes], opacity: 0.5 },
@@ -222,7 +208,6 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
                     bottom: '3%',
                     left: '15%',
                     right: '15%',
-                    // startValue: timestamps.length ? timestamps[Math.max(0, timestamps.length - 1000)] : undefined,
                     fillerColor: 'transparent',
                     textStyle: { color: colors.dztext[resolvedTheme as AppThemes] },
                     borderColor: colors.text[resolvedTheme as AppThemes], // Border color of the slider area
@@ -312,16 +297,16 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
         const optionsParams = getOptionsParams()
 
         // 1. for each day
-        for (let dayIndex = 0; dayIndex < props.farsideData.length; dayIndex++) {
+        for (let dayIndex = 0; dayIndex < props.areaData.length; dayIndex++) {
             // store ts
-            const ts = dayjs(props.farsideData[dayIndex].Date).format('ddd DD MMM YY')
+            const ts = dayjs(props.areaData[dayIndex].Date).format('ddd DD MMM YY')
             optionsParams.timestamps.push(ts)
 
             // 2. for each ticker
             let totalFlowsForDay = 0
             for (let tickerIndex = 0; tickerIndex < props.tickers.length; tickerIndex++) {
-                const ticker = props.tickers[tickerIndex] as keyof farsideData
-                const flow = Number(props.farsideData[dayIndex][ticker] ?? 0)
+                const ticker = props.tickers[tickerIndex] as keyof FarsideRawData
+                const flow = Number(props.areaData[dayIndex][ticker] ?? 0)
                 let serieIndex = optionsParams.flows.findIndex((serie) => serie.key === ticker)
                 if (serieIndex < 0) {
                     optionsParams.flows.push({
@@ -341,11 +326,11 @@ export default function FarsideAreaChart(props: { className?: string; farsideDat
 
             // 3. for each ticker: fill validator balance %
             for (let tickerIndex = 0; tickerIndex < props.tickers.length; tickerIndex++) {
-                const ticker = props.tickers[tickerIndex] as keyof farsideData
+                const ticker = props.tickers[tickerIndex] as keyof FarsideRawData
                 const serieIndex = optionsParams.flows.findIndex((serie) => serie.key === ticker)
                 if (serieIndex < 0) continue
                 let percent = optionsParams.flows[serieIndex].flows[dayIndex] / totalFlowsForDay
-                if (props.farsideData[dayIndex].TotalCheck === 0 || isNaN(percent)) percent = 0 // prevent errors
+                if (props.areaData[dayIndex].Total === 0 || isNaN(percent)) percent = 0 // prevent errors
                 optionsParams.flows[serieIndex].flowsPercent.push(roundNToXDecimals(percent * 100))
             }
         }

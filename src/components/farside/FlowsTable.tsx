@@ -1,6 +1,5 @@
 import { ReactNode } from 'react'
 import { EtfTickers, IconIds } from '@/enums'
-import { farsideData } from '@/interfaces'
 import dayjs from 'dayjs'
 import numeral from 'numeral'
 import weekOfYear from 'dayjs/plugin/weekOfYear'
@@ -8,6 +7,7 @@ import IconWrapper from '@/components/common/IconWrapper'
 import LinkWrapper from '@/components/common/LinkWrapper'
 import { cn, getConfig, monthName } from '@/utils'
 import TextWithTickerColor from '@/components/farside/ColorWrapper'
+import { FarsideRawData } from '@/interfaces'
 dayjs.extend(weekOfYear)
 
 function TableRow(props: { activateHover?: boolean; date: ReactNode; tickers: ReactNode[]; total: ReactNode; rank: ReactNode; className?: string }) {
@@ -21,7 +21,7 @@ function TableRow(props: { activateHover?: boolean; date: ReactNode; tickers: Re
     )
 }
 
-export default function FlowsTable({ farsideData, tickers }: { farsideData: farsideData[]; tickers: (EtfTickers | string)[] }) {
+export default function FlowsTable({ data, tickers }: { data: FarsideRawData[]; tickers: (EtfTickers | string)[] }) {
     // group by month / week
     const farsideDataGroupedBy: {
         rank: number
@@ -32,20 +32,20 @@ export default function FlowsTable({ farsideData, tickers }: { farsideData: fars
             index: number
             totalPeriod: number
             rank: number
-            weeks: { index: number; totalPeriod: number; days: farsideData[] }[]
+            weeks: { index: number; totalPeriod: number; days: FarsideRawData[] }[]
         }[]
     }[] = []
-    for (let dayIndex = 0; dayIndex < farsideData.length; dayIndex++) {
+    for (let dayIndex = 0; dayIndex < data.length; dayIndex++) {
         // year
-        const dayYear = dayjs(farsideData[dayIndex].Date).year()
+        const dayYear = dayjs(data[dayIndex].Date).year()
         let yearIndex = farsideDataGroupedBy.findIndex((year) => year.index === dayYear)
         if (yearIndex < 0) {
-            farsideDataGroupedBy.unshift({ rank: 0, index: dayjs(farsideData[dayIndex].Date).year(), months: [], totalPeriod: 0 })
+            farsideDataGroupedBy.unshift({ rank: 0, index: dayjs(data[dayIndex].Date).year(), months: [], totalPeriod: 0 })
             yearIndex = farsideDataGroupedBy.findIndex((year) => year.index === dayYear)
         }
 
         // month
-        const dayMonth = dayjs(farsideData[dayIndex].Date).month()
+        const dayMonth = dayjs(data[dayIndex].Date).month()
         let monthIndex = farsideDataGroupedBy[yearIndex].months.findIndex((month) => month.index === dayMonth)
         if (monthIndex < 0) {
             farsideDataGroupedBy[yearIndex].months.unshift({ year: dayYear, index: dayMonth, weeks: [], rank: 0, totalPeriod: 0 })
@@ -53,7 +53,7 @@ export default function FlowsTable({ farsideData, tickers }: { farsideData: fars
         }
 
         // week
-        const dayWeek = dayjs(farsideData[dayIndex].Date).week()
+        const dayWeek = dayjs(data[dayIndex].Date).week()
         let weekIndex = farsideDataGroupedBy[yearIndex].months[monthIndex].weeks.findIndex((week) => week.index === dayWeek)
         if (weekIndex < 0) {
             farsideDataGroupedBy[yearIndex].months[monthIndex].weeks.unshift({ index: dayWeek, days: [], totalPeriod: 0 })
@@ -61,10 +61,10 @@ export default function FlowsTable({ farsideData, tickers }: { farsideData: fars
         }
 
         // store
-        farsideDataGroupedBy[yearIndex].months[monthIndex].weeks[weekIndex].days.unshift(farsideData[dayIndex])
-        farsideDataGroupedBy[yearIndex].months[monthIndex].weeks[weekIndex].totalPeriod += farsideData[dayIndex].TotalCheck
-        farsideDataGroupedBy[yearIndex].months[monthIndex].totalPeriod += farsideData[dayIndex].TotalCheck
-        farsideDataGroupedBy[yearIndex].totalPeriod += farsideData[dayIndex].TotalCheck
+        farsideDataGroupedBy[yearIndex].months[monthIndex].weeks[weekIndex].days.unshift(data[dayIndex])
+        farsideDataGroupedBy[yearIndex].months[monthIndex].weeks[weekIndex].totalPeriod += data[dayIndex].Total
+        farsideDataGroupedBy[yearIndex].months[monthIndex].totalPeriod += data[dayIndex].Total
+        farsideDataGroupedBy[yearIndex].totalPeriod += data[dayIndex].Total
     }
 
     // apply ranks for month
@@ -200,11 +200,11 @@ export default function FlowsTable({ farsideData, tickers }: { farsideData: fars
                                                 total={
                                                     <p
                                                         className={cn('text-nowrap', {
-                                                            'text-green-500': day.TotalCheck > 0,
-                                                            'text-red-500': day.TotalCheck < 0,
+                                                            'text-green-500': day.Total > 0,
+                                                            'text-red-500': day.Total < 0,
                                                         })}
                                                     >
-                                                        {numeral(day.TotalCheck).format('0,0')}
+                                                        {numeral(day.Total).format('0,0')}
                                                     </p>
                                                 }
                                                 rank={<p className="italic text-inactive">{day.rank}</p>}

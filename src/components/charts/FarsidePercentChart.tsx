@@ -3,7 +3,7 @@
 import * as echarts from 'echarts'
 import { ErrorBoundary } from 'react-error-boundary'
 import { useEffect, useState } from 'react'
-import { farsideData } from '@/interfaces'
+import { FarsideRawData } from '@/interfaces'
 import dayjs from 'dayjs'
 import { AppThemes, EtfTickers } from '@/enums'
 import { useTheme } from 'next-themes'
@@ -41,7 +41,7 @@ export function LoadingArea({ message = 'Loading...' }: { message?: string }) {
     )
 }
 
-export default function FarsidePercentChart(props: { className?: string; farsideData: farsideData[]; tickers: (EtfTickers | string)[] }) {
+export default function FarsidePercentChart(props: { className?: string; percentData: FarsideRawData[]; tickers: (EtfTickers | string)[] }) {
     /**
      * methods
      */
@@ -174,7 +174,7 @@ export default function FarsidePercentChart(props: { className?: string; farside
                     show: true,
                     formatter: (params: { value: number; dataIndex: number }) => {
                         const data = Math.round(params.value)
-                        if (params.dataIndex !== props.farsideData.length - 2 && params.dataIndex % 10 !== 1) return ''
+                        if (params.dataIndex !== props.percentData.length - 2 && params.dataIndex % 10 !== 1) return ''
                         if (data >= 10) return data
                         else return ''
                     },
@@ -202,17 +202,17 @@ export default function FarsidePercentChart(props: { className?: string; farside
         const optionsParams = getOptionsParams()
 
         // 1. for each day
-        for (let dayIndex = 0; dayIndex < props.farsideData.length; dayIndex++) {
+        for (let dayIndex = 0; dayIndex < props.percentData.length; dayIndex++) {
             // store ts
-            const ts = dayjs(props.farsideData[dayIndex].Date).format('ddd DD MMM YY')
+            const ts = dayjs(props.percentData[dayIndex].Date).format('ddd DD MMM YY')
             optionsParams.timestamps.push(ts)
 
             // 2. for each ticker
             let totalFlowsForDay = 0
             for (let tickerIndex = 0; tickerIndex < props.tickers.length; tickerIndex++) {
-                const ticker = props.tickers[tickerIndex] as keyof farsideData
+                const ticker = props.tickers[tickerIndex] as keyof FarsideRawData
                 if (ticker === EtfTickers.GBTC) continue
-                const flow = Number(props.farsideData[dayIndex][ticker] ?? 0)
+                const flow = Number(props.percentData[dayIndex][ticker] ?? 0)
                 let serieIndex = optionsParams.flows.findIndex((serie) => serie.key === ticker)
                 if (serieIndex < 0) {
                     optionsParams.flows.push({
@@ -232,11 +232,11 @@ export default function FarsidePercentChart(props: { className?: string; farside
 
             // 3. for each ticker: fill validator balance %
             for (let tickerIndex = 0; tickerIndex < props.tickers.length; tickerIndex++) {
-                const ticker = props.tickers[tickerIndex] as keyof farsideData
+                const ticker = props.tickers[tickerIndex] as keyof FarsideRawData
                 const serieIndex = optionsParams.flows.findIndex((serie) => serie.key === ticker)
                 if (serieIndex < 0) continue
                 let percent = optionsParams.flows[serieIndex].flows[dayIndex] / totalFlowsForDay
-                if (props.farsideData[dayIndex].TotalCheck === 0 || isNaN(percent)) percent = 0 // prevent errors
+                if (props.percentData[dayIndex].Total === 0 || isNaN(percent)) percent = 0 // prevent errors
                 optionsParams.flows[serieIndex].flowsPercent.push(roundNToXDecimals(percent * 100, 2))
             }
         }

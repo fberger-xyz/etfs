@@ -1,4 +1,4 @@
-export interface farsideData {
+export interface FarsideRawData {
     Date: string | number
     IBIT: string | number
     FBTC: string | number
@@ -11,7 +11,6 @@ export interface farsideData {
     BTCW: string | number
     GBTC: string | number
     BTC: string | number
-    Total: string | number
-    TotalCheck: number
+    Total: number
     rank?: number
 }

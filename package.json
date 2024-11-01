@@ -9,7 +9,8 @@
     "lint": "next lint",
     "eslint:fix": "eslint ./src --fix",
     "prettier:fix": "prettier --write src",
-    "lint:fix": "pnpm eslint:fix && pnpm prettier:fix"
+    "lint:fix": "pnpm eslint:fix && pnpm prettier:fix",
+    "prisma:sync:local": "prisma db pull && prisma generate"
   },
   "dependencies": {
     "@next/env": "^14.2.5",
