@@ -232,7 +232,7 @@ export default function FlowsTable({ data }: { data: Flows[] }) {
             <div className="mt-1 flex w-full items-center justify-between">
                 {/* <div className="flex flex-col"> */}
                 <LinkWrapper href="https://farside.co.uk/btc/" className="flex gap-1 text-inactive hover:text-primary" target="_blank">
-                    <p className="truncate text-xs">Data: farside.co.uk</p>
+                    <p className="truncate text-xs">Data: farside.co.uk, scrapped a few min. ago</p>
                 </LinkWrapper>
                 {/* <div className="flex w-[250px] text-xs text-inactive">
                         <IconWrapper icon={IconIds.RANK} className="h-4 w-4" />

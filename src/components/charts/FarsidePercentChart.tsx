@@ -266,7 +266,7 @@ export default function FarsidePercentChart(props: { className?: string; percent
                     )}
                 </div>
                 <LinkWrapper href="https://farside.co.uk/btc/" className="flex gap-1 text-inactive hover:text-primary" target="_blank">
-                    <p className="truncate text-xs">Data: farside.co.uk</p>
+                <p className="truncate text-xs">Data: farside.co.uk, scrapped a few min. ago</p>
                 </LinkWrapper>
             </ErrorBoundary>
         </div>
