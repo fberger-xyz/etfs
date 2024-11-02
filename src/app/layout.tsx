@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     },
     twitter: {
         card: 'summary_large_image',
-        site: APP_METADATA.SOCIAL_TWITTER,
+        site: APP_METADATA.SOCIALS.TWITTER,
         title: APP_METADATA.SITE_NAME,
         description: APP_METADATA.SITE_DESCRIPTION,
         images: '/opengraph-image',

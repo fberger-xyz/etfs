@@ -13,10 +13,10 @@ dayjs.extend(weekOfYear)
 function TableRow(props: { activateHover?: boolean; date: ReactNode; tickers: ReactNode[]; total: ReactNode; rank: ReactNode; className?: string }) {
     return (
         <div className={cn('flex items-center sm:gap-1 px-1 md:px-2', { 'hover:bg-light-hover leading-3': props.activateHover }, props.className)}>
-            <div className="flex w-[95px] justify-start overflow-hidden text-discreet md:w-32">{props.date}</div>
+            <div className="flex w-[95px] justify-start overflow-hidden text-default md:w-32">{props.date}</div>
             {...props.tickers}
-            <div className="flex w-20 justify-end overflow-hidden text-discreet md:w-24">{props.total}</div>
-            <div className="flex w-12 justify-end overflow-hidden text-discreet md:w-24">{props.rank}</div>
+            <div className="flex w-20 justify-end overflow-hidden text-default md:w-24">{props.total}</div>
+            <div className="flex w-12 justify-end overflow-hidden text-default md:w-24">{props.rank}</div>
         </div>
     )
 }
@@ -232,7 +232,7 @@ export default function FlowsTable({ data }: { data: Flows[] }) {
             <div className="mt-1 flex w-full items-center justify-between">
                 {/* <div className="flex flex-col"> */}
                 <LinkWrapper href="https://farside.co.uk/btc/" className="flex gap-1 text-inactive hover:text-primary" target="_blank">
-                    <p className="truncate text-xs">Data: farside.co.uk, scrapped a few min. ago</p>
+                    <p className="truncate text-xs">Data: farside.co.uk, a few min. ago</p>
                 </LinkWrapper>
                 {/* <div className="flex w-[250px] text-xs text-inactive">
                         <IconWrapper icon={IconIds.RANK} className="h-4 w-4" />

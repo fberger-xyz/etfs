@@ -363,7 +363,7 @@ export default function FarsideAreaChart(props: { className?: string; areaData: 
                     </div>
                 </ErrorBoundary>
                 <LinkWrapper href="https://farside.co.uk/btc/" className="flex gap-1 text-inactive hover:text-primary" target="_blank">
-                    <p className="truncate text-xs">Data: farside.co.uk, scrapped a few min. ago</p>
+                    <p className="truncate text-xs">Data: farside.co.uk, a few min. ago</p>
                 </LinkWrapper>
             </div>
         </Suspense>

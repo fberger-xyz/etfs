@@ -6,12 +6,14 @@ export const APP_METADATA = {
     SITE_INFO: 'SITE_INFO',
     SITE_DESCRIPTION: 'SITE_DESCRIPTION',
     SITE_URL: 'https://better-farside.vercel.app/',
-    SOCIAL_TWITTER: 'fberger_xyz',
-    ENS: 'fran6.eth',
+    SOCIALS: {
+        TWITTER: 'fberger_xyz',
+        TELEGRAM: 'fberger_xyz',
+        LINKEDIN: 'francis-berger-a2404094',
+        ENS: 'fran6.eth',
+        MAIL: 'tba@protonmail.com',
+    },
     PROFILE_PICTURE: 'https://pbs.twimg.com/profile_images/1824850421078220800/jWMhjkyv_400x400.jpg',
-    MAIL: 'tba@protonmail.com',
-    TELEGRAM: 'fberger_xyz',
-    LINKEDIN: 'francis-berger-a2404094',
 }
 
 export const APP_THEMES: Partial<Record<AppThemes, { index: number; iconId: IconIds }>> = {

@@ -27,10 +27,12 @@ export enum IconIds {
     THEME_DEGEN = 'carbon:face-cool',
 
     // hugeicons
-    X = 'hugeicons:new-twitter',
-    DISCORD = 'ic:round-discord',
+    X = 'ri:twitter-x-fill',
+    TELEGRAM = 'mdi:telegram',
+    WEBSITE = 'mdi:web',
+    DISCORD = 'mdi:discord',
     GITHUB = 'mdi:github',
-    WEBSITE = 'carbon:information',
+    LINKEDIN = 'mdi:linkedin',
 
     // farside
     RANK = 'carbon:trophy',

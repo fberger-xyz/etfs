@@ -8,7 +8,7 @@ const config: Config = {
             colors: {
                 primary: 'var(--color-primary)',
                 secondary: 'var(--color-secondary)',
-                discreet: 'var(--color-discreet)',
+                default: 'var(--color-default)',
                 inactive: 'var(--color-inactive)',
                 background: 'var(--color-background)',
                 'light-hover': 'var(--color-light-hover)',
