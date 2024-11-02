@@ -17,7 +17,7 @@ export default function Footer(props: FooterProps) {
             <div className="flex items-end gap-1">
                 <p className="text-inactive">Author</p>
                 <LinkWrapper href="https://www.fberger.xyz/" className="">
-                    <p className="text-secondary">{APP_METADATA.SITE_NAME}</p>
+                    <p className="text-secondary">{APP_METADATA.SITE_AUTHOR}</p>
                 </LinkWrapper>
             </div>
         </div>

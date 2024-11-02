@@ -1,16 +1,16 @@
 import { AppThemes, IconIds } from '@/enums'
 
 export const APP_METADATA = {
-    EMOJI: '👨‍💻',
+    SITE_AUTHOR: 'fberger',
     SITE_NAME: 'better-farside',
-    SITE_INFO: 'Work In Progress',
-    SITE_DESCRIPTION: 'Site description to add',
+    SITE_INFO: 'SITE_INFO',
+    SITE_DESCRIPTION: 'SITE_DESCRIPTION',
     SITE_URL: 'https://better-farside.vercel.app/',
-    SOCIAL_TWITTER: 'fran6brg',
+    SOCIAL_TWITTER: 'fberger_xyz',
     ENS: 'fran6.eth',
     PROFILE_PICTURE: 'https://pbs.twimg.com/profile_images/1824850421078220800/jWMhjkyv_400x400.jpg',
     MAIL: 'tba@protonmail.com',
-    TELEGRAM: 'f6brg',
+    TELEGRAM: 'fberger_xyz',
     LINKEDIN: 'francis-berger-a2404094',
 }
 
