@@ -58,7 +58,7 @@ export default function RootLayout({
                             <Suspense fallback={<CustomFallback loadingText="App loading..." />}>
                                 <div className="h-full overflow-scroll">{children}</div>
                             </Suspense>
-                            <Footer className="md:p-3" />
+                            <Footer />
                             <Toaster position="bottom-center" reverseOrder={false} />
                         </main>
                     </ReactQueryProvider>
