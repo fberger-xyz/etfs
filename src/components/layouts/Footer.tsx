@@ -5,14 +5,20 @@ import LinkWrapper from '../common/LinkWrapper'
 import { APP_METADATA } from '@/config/app.config'
 import IconWrapper from '../common/IconWrapper'
 import { IconIds } from '@/enums'
+import { useEffect, useState } from 'react'
 
 interface FooterProps {
     className?: string
 }
 
 export default function Footer(props: FooterProps) {
-    const inIframe = () => window.self !== window.top
-    if (!inIframe()) return null
+    const [isInFrame, setIsInFrame] = useState(false)
+    useEffect(() => {
+        if (typeof window !== 'undefined') return
+        const inIframe = () => window.self !== window.top
+        setIsInFrame(inIframe())
+    }, [])
+    if (!isInFrame) return null
     return (
         <div className={cn('fixed bottom-0 w-full flex justify-end text-sm z-0', props.className)}>
             <div className="flex items-end gap-4 rounded-ss-xl bg-background p-3 text-default opacity-80 backdrop-blur-sm">
