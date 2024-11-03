@@ -253,7 +253,7 @@ export default function FarsidePercentChart(props: { className?: string; percent
         setOptions(newOptions)
     }, [resolvedTheme])
     return (
-        <div className="mb-28 mt-14 flex w-full flex-col text-xs">
+        <div className="mt-14 flex w-full flex-col text-xs">
             <div className="mb-1 flex w-full justify-center text-base text-primary md:mb-2">
                 <p>Cumulated Bitcoin ETF Flows %</p>
             </div>

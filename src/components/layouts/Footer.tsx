@@ -1,3 +1,5 @@
+'use client'
+
 import { cn } from '@/utils'
 import LinkWrapper from '../common/LinkWrapper'
 import { APP_METADATA } from '@/config/app.config'
@@ -9,6 +11,8 @@ interface FooterProps {
 }
 
 export default function Footer(props: FooterProps) {
+    const inIframe = () => window.self !== window.top
+    if (!inIframe()) return null
     return (
         <div className={cn('fixed bottom-0 w-full flex justify-end text-sm z-0', props.className)}>
             <div className="flex items-end gap-4 rounded-ss-xl bg-background p-3 text-default opacity-80 backdrop-blur-sm">
