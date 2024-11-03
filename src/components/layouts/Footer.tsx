@@ -14,7 +14,7 @@ interface FooterProps {
 export default function Footer(props: FooterProps) {
     const [isInFrame, setIsInFrame] = useState(false)
     useEffect(() => {
-        if (typeof window !== 'undefined') return
+        if (typeof window === 'undefined') return
         const inIframe = () => window.self !== window.top
         setIsInFrame(inIframe())
     }, [])
