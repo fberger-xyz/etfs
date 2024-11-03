@@ -18,7 +18,7 @@ export default function Footer(props: FooterProps) {
         const inIframe = () => window.self !== window.top
         setIsInFrame(inIframe())
     }, [])
-    if (!isInFrame) return null
+    if (isInFrame) return null
     return (
         <div className={cn('fixed bottom-0 w-full flex justify-end text-sm z-0', props.className)}>
             <div className="flex items-end gap-4 rounded-ss-xl bg-background p-3 text-default opacity-80 backdrop-blur-sm">
