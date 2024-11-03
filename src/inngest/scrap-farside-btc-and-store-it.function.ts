@@ -29,7 +29,7 @@ const pageToScrap = 'https://farside.co.uk/bitcoin-etf-flow-all-data/'
 
 export const scrapFarsideBtcAndStoreIt = inngest.createFunction(
     { id: 'scrap-farside-btc-and-store-it' },
-    { cron: 'TZ=Europe/Paris */14 * * * *' }, // https://crontab.guru/every-1-hour
+    { cron: 'TZ=Europe/Paris */15 * * * *' }, // https://crontab.guru/every-1-hour
     async ({ event, step }) => {
         // debug
         const debug = false
