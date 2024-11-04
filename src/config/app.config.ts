@@ -2,7 +2,7 @@ import { AppThemes, IconIds } from '@/enums'
 
 export const APP_METADATA = {
     SITE_AUTHOR: 'fberger',
-    SITE_NAME: 'safes-trades',
+    SITE_NAME: 'farside | fberger',
     SITE_INFO: 'SITE_INFO',
     SITE_DESCRIPTION: 'SITE_DESCRIPTION',
     SITE_URL: 'https://farside.fberger.xyz',
