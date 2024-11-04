@@ -28,8 +28,8 @@ export default async function Page() {
     return (
         <PageWrapper>
             <FlowsTable data={flows} />
-            <div className="mb-5 flex w-full animate-pulse items-center justify-center gap-1 text-sm">
-                <p className="">Charts</p>
+            <div className="my-5 flex w-full animate-pulse items-center justify-center gap-1 text-sm">
+                <p>Charts</p>
                 <IconWrapper icon={IconIds.SCROLL} className="w-5" />
             </div>
             <ChartsWrapper flows={flows} />

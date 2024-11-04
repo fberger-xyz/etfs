@@ -114,6 +114,7 @@ export const scrapFarsideBtcAndStoreIt = inngest.createFunction(
         })
 
         // telegram
+        // todo notify only if new flows total !== prev flows total
         await step.run('4. Notify telegram', async () => {
             const before = Date.now()
             const bot = new Bot(token)
