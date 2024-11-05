@@ -64,53 +64,56 @@ export const scrapFarsideBtcAndStoreIt = inngest.createFunction(
             }
 
         // debug
-        const latestDayFlows = parsedData[parsedData.length - 1]
-        const day = dayjs(latestDayFlows.Date).format('ddd DD MMM YYYY')
-        const xata_id = `${day}`.toLowerCase().replaceAll(' ', '-')
-        const close_of_bussiness_hour = dayjs.utc(latestDayFlows.Date).hour(17).toDate()
-        if (debug) console.log({ latestDayFlows })
+        const latestDaysFlows = parsedData.slice(-5)
+        for (let dayIndex = 0; dayIndex < latestDaysFlows.length; dayIndex++) {
+            const dayData = latestDaysFlows[dayIndex]
+            const day = dayjs(dayData.Date).format('ddd DD MMM YYYY')
+            const xata_id = `${day}`.toLowerCase().replaceAll(' ', '-')
+            const close_of_bussiness_hour = dayjs.utc(dayData.Date).hour(17).toDate()
+            if (debug) console.log({ dayData })
 
-        // xata
-        await step.run('3. Push to xata', async () => {
-            return await prisma.flows.upsert({
-                where: { xata_id },
-                update: {
-                    day,
-                    close_of_bussiness_hour,
-                    IBIT: cleanFlow(latestDayFlows.IBIT),
-                    FBTC: cleanFlow(latestDayFlows.FBTC),
-                    BITB: cleanFlow(latestDayFlows.BITB),
-                    ARKB: cleanFlow(latestDayFlows.ARKB),
-                    BTCO: cleanFlow(latestDayFlows.BTCO),
-                    EZBC: cleanFlow(latestDayFlows.EZBC),
-                    BRRR: cleanFlow(latestDayFlows.BRRR),
-                    HODL: cleanFlow(latestDayFlows.HODL),
-                    BTCW: cleanFlow(latestDayFlows.BTCW),
-                    GBTC: cleanFlow(latestDayFlows.GBTC),
-                    BTC: cleanFlow(latestDayFlows.BTC),
-                    total: cleanFlow(latestDayFlows.Total),
-                    raw: latestDayFlows,
-                },
-                create: {
-                    xata_id,
-                    day,
-                    close_of_bussiness_hour,
-                    IBIT: cleanFlow(latestDayFlows.IBIT),
-                    FBTC: cleanFlow(latestDayFlows.FBTC),
-                    BITB: cleanFlow(latestDayFlows.BITB),
-                    ARKB: cleanFlow(latestDayFlows.ARKB),
-                    BTCO: cleanFlow(latestDayFlows.BTCO),
-                    EZBC: cleanFlow(latestDayFlows.EZBC),
-                    BRRR: cleanFlow(latestDayFlows.BRRR),
-                    HODL: cleanFlow(latestDayFlows.HODL),
-                    BTCW: cleanFlow(latestDayFlows.BTCW),
-                    GBTC: cleanFlow(latestDayFlows.GBTC),
-                    BTC: cleanFlow(latestDayFlows.BTC),
-                    total: cleanFlow(latestDayFlows.Total),
-                    raw: latestDayFlows,
-                },
+            // xata
+            await step.run(`3. Upsert ${xata_id} in xata`, async () => {
+                return await prisma.flows.upsert({
+                    where: { xata_id },
+                    update: {
+                        day,
+                        close_of_bussiness_hour,
+                        IBIT: cleanFlow(dayData.IBIT),
+                        FBTC: cleanFlow(dayData.FBTC),
+                        BITB: cleanFlow(dayData.BITB),
+                        ARKB: cleanFlow(dayData.ARKB),
+                        BTCO: cleanFlow(dayData.BTCO),
+                        EZBC: cleanFlow(dayData.EZBC),
+                        BRRR: cleanFlow(dayData.BRRR),
+                        HODL: cleanFlow(dayData.HODL),
+                        BTCW: cleanFlow(dayData.BTCW),
+                        GBTC: cleanFlow(dayData.GBTC),
+                        BTC: cleanFlow(dayData.BTC),
+                        total: cleanFlow(dayData.Total),
+                        raw: dayData,
+                    },
+                    create: {
+                        xata_id,
+                        day,
+                        close_of_bussiness_hour,
+                        IBIT: cleanFlow(dayData.IBIT),
+                        FBTC: cleanFlow(dayData.FBTC),
+                        BITB: cleanFlow(dayData.BITB),
+                        ARKB: cleanFlow(dayData.ARKB),
+                        BTCO: cleanFlow(dayData.BTCO),
+                        EZBC: cleanFlow(dayData.EZBC),
+                        BRRR: cleanFlow(dayData.BRRR),
+                        HODL: cleanFlow(dayData.HODL),
+                        BTCW: cleanFlow(dayData.BTCW),
+                        GBTC: cleanFlow(dayData.GBTC),
+                        BTC: cleanFlow(dayData.BTC),
+                        total: cleanFlow(dayData.Total),
+                        raw: dayData,
+                    },
+                })
             })
-        })
+        }
 
         // telegram
         // todo notify only if new flows total !== prev flows total
@@ -118,7 +121,9 @@ export const scrapFarsideBtcAndStoreIt = inngest.createFunction(
             const before = Date.now()
             const bot = new Bot(token)
             const chatId = channelId
-            const { Total: total, ...flows } = latestDayFlows
+            const { Total: total, ...flows } = parsedData[parsedData.length - 1]
+            const day = dayjs(parsedData[parsedData.length - 1].Date).format('ddd DD MMM YYYY')
+            const xata_id = `${day}`.toLowerCase().replaceAll(' ', '-')
             const env = String(process.env.NODE_ENV).toLowerCase() === 'production' ? 'Prod' : 'Dev'
             const message = [
                 `<u><b>Data updated</b></u>`,
