@@ -35,14 +35,14 @@ export async function GET(req: NextRequest) {
     if (!url) return NextResponse.json({ error: 'URL is required' }, { status: 400 })
 
     const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 10000) // 10 seconds timeout
+    const timeoutId = setTimeout(() => controller.abort(), 60000) // 60 seconds timeout
 
     try {
         const response = await fetch(url, {
             method: 'GET',
             headers: {
                 Accept: 'text/html; charset=utf-8',
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36',
+                // 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36',
             },
             signal: controller.signal,
         })
