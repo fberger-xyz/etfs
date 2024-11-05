@@ -19,6 +19,7 @@ const getFlows = unstable_cache(
         })
     },
     ['flows'],
+    // The revalidate value needs to be statically analyzable. For example revalidate = 600 is valid, but revalidate = 60 * 10 is not
     { revalidate: 120, tags: ['flows'] }, // every 2 minutes
     // { revalidate: false, tags: ['flows'] }, // every 2 minutes
 )
