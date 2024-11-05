@@ -36,10 +36,9 @@ export const scrapFarsideBtcAndStoreIt = inngest.createFunction(
 
         // html
         const { htmlContent } = await step.run('1. Scrap farside', async () => {
-            const response = await fetch(`${root}/api/proxy?url=${encodeURIComponent(pageToScrap)}`, {
-                method: 'GET',
-                headers: { Accept: 'text/html', 'User-Agent': 'Mozilla/5.0' },
-            })
+            const endpoint = `${root}/api/proxy?url=${encodeURIComponent(pageToScrap)}`
+            console.log({ endpoint })
+            const response = await fetch(endpoint, { method: 'GET', headers: { Accept: 'text/html', 'User-Agent': 'Mozilla/5.0' } })
             if (!response.ok) throw new Error(`Failed to fetch text/html of ${pageToScrap}`)
             const htmlContent = await response.text()
             return { htmlContent }
