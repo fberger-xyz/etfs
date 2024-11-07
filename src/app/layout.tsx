@@ -53,7 +53,7 @@ export default function RootLayout({
             <body className={cn(font.className, 'h-screen w-screen overflow-hidden')}>
                 <ThemeProvider attribute="class" defaultTheme={AppThemes.DARK} disableTransitionOnChange themes={Object.values(AppThemes)}>
                     <ReactQueryProvider>
-                        <main className="flex h-full w-full flex-col bg-background text-lg text-primary transition-all md:text-base">
+                        <main className="flex h-full w-full flex-col bg-background text-lg text-default transition-all md:text-base">
                             <Header className="h-16 px-4 text-base sm:h-20 sm:text-lg" />
                             <Suspense fallback={<CustomFallback loadingText="App loading..." />}>
                                 <div className="h-full overflow-scroll">{children}</div>

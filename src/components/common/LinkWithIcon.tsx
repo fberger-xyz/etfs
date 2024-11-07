@@ -6,11 +6,11 @@ export default function LinkWithIcon({ children, href }: { href: string; childre
     return (
         <LinkWrapper
             href={href}
-            className="flex w-fit items-center gap-2 rounded-md bg-light-hover px-1 text-secondary hover:text-primary"
+            className="group flex w-fit cursor-alias items-center gap-2 rounded-md bg-very-light-hover px-1 text-secondary hover:bg-light-hover hover:text-primary"
             target="_blank"
         >
             {children}
-            <IconWrapper icon={IconIds.IC_BASELINE_OPEN_IN_NEW} className="h-4 w-4" />
+            <IconWrapper icon={IconIds.IC_BASELINE_OPEN_IN_NEW} className="h-3.5 w-3.5 text-inactive group-hover:text-primary" />
         </LinkWrapper>
     )
 }

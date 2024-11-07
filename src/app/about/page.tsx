@@ -7,7 +7,7 @@ export default function Page() {
     return (
         <PageWrapper>
             <div className="mt-10 flex w-full flex-col items-center justify-center gap-8">
-                <LinkWrapper href="https://farside.co.uk/btc/" target="_blank" className="flex items-baseline gap-1 text-default">
+                <LinkWrapper href="https://farside.co.uk/btc/" target="_blank" className="flex items-baseline gap-1">
                     <p>
                         Just better than <span className="underline underline-offset-2">the original</span>
                     </p>

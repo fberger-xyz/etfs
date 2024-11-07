@@ -27,6 +27,7 @@ module.exports = {
       rules: {
         'prettier/prettier': 1,
         'no-html-link-for-pages': 'off',
+        "tailwindcss/migration-from-tailwind-2": "off",
       },
       files: ['src/**/*.ts', 'src/**/*.tsx', './tailwind.config.ts', './prisma/seed.ts'],
     },
@@ -55,7 +56,6 @@ module.exports = {
   settings: {
     tailwindcss: {
       config: path.join(__dirname, './tailwind.config.ts'),
-      // config: "tailwind.config.ts"
     },
   },
   rules: {

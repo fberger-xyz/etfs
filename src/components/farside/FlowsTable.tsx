@@ -8,15 +8,17 @@ import LinkWrapper from '@/components/common/LinkWrapper'
 import { cleanFlow, cn, getConfig, monthName } from '@/utils'
 import TextWithTickerColor from '@/components/farside/ColorWrapper'
 import { Flows } from '@prisma/client'
+import Link from 'next/link'
+import CopyOrDownloadDataModal from './CopyOrDownloadDataModal'
 dayjs.extend(weekOfYear)
 
 function TableRow(props: { activateHover?: boolean; date: ReactNode; tickers: ReactNode[]; total: ReactNode; rank: ReactNode; className?: string }) {
     return (
         <div className={cn('flex items-center sm:gap-1 px-1 md:px-2', { 'hover:bg-light-hover leading-3': props.activateHover }, props.className)}>
-            <div className="flex w-[95px] justify-start overflow-hidden text-default md:w-32">{props.date}</div>
+            <div className="flex w-[95px] justify-start overflow-hidden md:w-32">{props.date}</div>
             {...props.tickers}
-            <div className="flex w-20 justify-end overflow-hidden text-default md:w-24">{props.total}</div>
-            <div className="flex w-12 justify-end overflow-hidden text-default md:w-24">{props.rank}</div>
+            <div className="flex w-20 justify-end overflow-hidden md:w-24">{props.total}</div>
+            <div className="flex w-12 justify-end overflow-hidden md:w-24">{props.rank}</div>
         </div>
     )
 }
@@ -230,26 +232,24 @@ export default function FlowsTable({ data }: { data: Flows[] }) {
 
             {/* legend */}
             <div className="mt-1 flex w-full items-center justify-between">
-                {/* <div className="flex flex-col"> */}
                 <LinkWrapper href="https://farside.co.uk/btc/" className="flex gap-1 text-inactive hover:text-primary" target="_blank">
                     <p className="truncate text-xs">Data: farside.co.uk, a few min. ago</p>
                 </LinkWrapper>
-                {/* <div className="flex w-[250px] text-xs text-inactive">
-                        <IconWrapper icon={IconIds.RANK} className="h-4 w-4" />
-                        <p>Days are ranked by flow</p>
-                    </div> */}
-                {/* </div> */}
                 <div className="flex gap-2">
-                    <button className="flex items-center gap-1 text-inactive hover:text-primary">
-                        <p className="text-xs">CSV</p>
-                        <IconWrapper icon={IconIds.CARBON_DOWNLOAD} className="w-4" />
-                    </button>
-                    <button className="flex items-center gap-1 text-inactive hover:text-primary">
+                    <Link href="/?copy-or-download=true" className="flex items-center gap-1 text-inactive hover:text-primary">
                         <p className="text-xs">Copy</p>
                         <IconWrapper icon={IconIds.CARBON_COPY} className="w-4" />
-                    </button>
+                    </Link>
+                    <Link href="/?copy-or-download=true" className="flex items-center gap-1 text-inactive hover:text-primary">
+                        <p className="text-xs">CSV</p>
+                        <IconWrapper icon={IconIds.CARBON_DOWNLOAD} className="w-4" />
+                    </Link>
+                    <CopyOrDownloadDataModal />
                 </div>
             </div>
+
+            {/* modal */}
+            {/* <Modal /> */}
         </div>
     )
 }

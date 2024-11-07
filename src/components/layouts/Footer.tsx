@@ -21,19 +21,17 @@ export default function Footer(props: FooterProps) {
     if (isInFrame) return null
     return (
         <div className={cn('fixed bottom-0 w-full flex justify-end text-sm z-0', props.className)}>
-            <div className="flex items-end gap-4 rounded-ss-xl bg-background p-3 text-default opacity-80 backdrop-blur-sm">
-                <LinkWrapper target="_blank" href={`https://${APP_METADATA.SITE_AUTHOR}.xyz/projects/farside`} className="hover:text-primary">
-                    <IconWrapper icon={IconIds.WEBSITE} className="h-5 w-5" />
-                </LinkWrapper>
-                <LinkWrapper target="_blank" href={`https://t.me/${APP_METADATA.SOCIALS.TELEGRAM}`} className="hover:text-primary">
-                    <IconWrapper icon={IconIds.TELEGRAM} className="h-5 w-5" />
-                </LinkWrapper>
-                <LinkWrapper target="_blank" href={`https://x.com/${APP_METADATA.SOCIALS.TWITTER}`} className="hover:text-primary">
-                    <IconWrapper icon={IconIds.X} className="h-5 w-5" />
-                </LinkWrapper>
-                <LinkWrapper target="_blank" href={`https://www.linkedin.com/in/${APP_METADATA.SOCIALS.LINKEDIN}`} className="hover:text-primary">
-                    <IconWrapper icon={IconIds.LINKEDIN} className="h-5 w-5" />
-                </LinkWrapper>
+            <div className="flex items-end gap-4 rounded-ss-xl bg-background p-3 opacity-80 backdrop-blur-sm">
+                {[
+                    { href: `https://${APP_METADATA.SITE_AUTHOR}.xyz/projects/farside`, icon: IconIds.WEBSITE },
+                    { href: `https://t.me/${APP_METADATA.SOCIALS.TELEGRAM}`, icon: IconIds.TELEGRAM },
+                    { href: `https://x.com/${APP_METADATA.SOCIALS.TWITTER}`, icon: IconIds.X },
+                    { href: `https://www.linkedin.com/in/${APP_METADATA.SOCIALS.LINKEDIN}`, icon: IconIds.LINKEDIN },
+                ].map((link) => (
+                    <LinkWrapper key={link.href} target="_blank" href={link.href} className="cursor-alias hover:text-primary">
+                        <IconWrapper icon={link.icon} className="h-5 w-5" />
+                    </LinkWrapper>
+                ))}
             </div>
         </div>
     )
