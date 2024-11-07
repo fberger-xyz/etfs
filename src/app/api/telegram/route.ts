@@ -20,7 +20,7 @@ if (debug) console.log('Telegram: bot instanciated')
  */
 
 // const prisma = new PrismaClient()
-if (debug) console.log('Telegram: prisma client instanciated')
+// if (debug) console.log('Telegram: prisma client instanciated')
 
 /**
  * apply middlewares
