@@ -20,29 +20,9 @@ export default function CopyOrDownloadDataModal() {
     return (
         <Backdrop>
             <motion.div
-                variants={{
-                    hidden: {
-                        y: '-100vh',
-                        opacity: 0,
-                    },
-                    visible: {
-                        y: '0',
-                        opacity: 1,
-                        transition: {
-                            duration: 0.1,
-                            type: 'spring',
-                            damping: 25,
-                            stiffness: 500,
-                        },
-                    },
-                    exit: {
-                        y: '100vh',
-                        opacity: 0,
-                    },
-                }}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ ease: 'easeInOut', duration: 0.25 }}
                 className="flex max-w-[530px] flex-col gap-5 rounded-md border border-light-hover bg-background py-3 shadow-lg"
             >
                 <div className="flex w-full items-center justify-between px-4">

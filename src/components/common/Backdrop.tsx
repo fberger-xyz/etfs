@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 
+// https://fireship.io/lessons/framer-motion-modal/
 export function Backdrop({ children }: { children: React.ReactNode }) {
     return (
         <motion.div
