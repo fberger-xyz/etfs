@@ -3,13 +3,13 @@
 @tailwind utilities;
 
 html.light {
-    --color-primary: #ef4444;
-    --color-secondary: #111827;
+    --color-primary: #f87171;
+    --color-secondary: #500724;
     --color-default: #71717a;
     --color-inactive: #9ca3af;
-    --color-background: #e4e4e7;
+    --color-background: #fafaf9;
     --color-light-hover: #d4d4d8;
-    --color-very-light-hover: #d4d4d8;
+    --color-very-light-hover: #e4e4e7;
     --color-light-border: #e5e7eb;
 
     /* tickers */
