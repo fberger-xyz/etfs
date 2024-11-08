@@ -47,6 +47,7 @@ export const metadata = {
 
 export default async function Page() {
     const flows = await getFlows().catch(() => [])
+    console.log(`flows.length=${flows.length}`)
     return (
         <PageWrapper className="gap-5">
             <FlowsTable data={flows} />
