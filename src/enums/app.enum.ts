@@ -1,5 +1,6 @@
 export enum AppPagePaths {
     HOME = '/',
+    ETH_ETFS = '/eth',
     ABOUT = '/about',
 }
 

@@ -43,7 +43,12 @@ export default function Button(props: InterfaceButtonProps) {
         >
             {props.icons?.left && <IconWrapper icon={props.icons.left} className="my-0.5 h-3.5 w-3.5" />}
             {props.text && <p className="truncate">{`${props.text}${loading ? '...' : ''}`}</p>}
-            {props.icons?.right && <IconWrapper icon={props.icons.right} className="my-0.5 h-3.5 w-3.5" />}
+            {props.icons?.right && (
+                <IconWrapper
+                    icon={loading ? IconIds.LOADING : props.icons.right}
+                    className={cn('my-0.5 h-3.5 w-3.5', { 'text-orange-400': loading })}
+                />
+            )}
         </button>
     )
 }

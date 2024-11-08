@@ -37,4 +37,5 @@ export enum IconIds {
     // farside
     RANK = 'carbon:trophy',
     SCROLL = 'hugeicons:mouse-scroll-01',
+    LOADING = 'line-md:loading-twotone-loop',
 }

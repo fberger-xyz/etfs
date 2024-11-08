@@ -7,6 +7,9 @@ import IconWrapper from '@/components/common/IconWrapper'
 import { PrismaClient } from '@prisma/client'
 // import { unstable_cache } from 'next/cache'
 import ChartsWrapper from '@/components/farside/ChartsWrapper'
+import LinkWrapper from '@/components/common/LinkWrapper'
+import LinkWithIcon from '@/components/common/LinkWithIcon'
+import { APP_METADATA } from '@/config/app.config'
 dayjs.extend(weekOfYear)
 
 // const getFlows = unstable_cache(
@@ -45,13 +48,25 @@ export const metadata = {
 export default async function Page() {
     const flows = await getFlows().catch(() => [])
     return (
-        <PageWrapper>
+        <PageWrapper className="gap-5">
             <FlowsTable data={flows} />
-            <div className="my-5 flex w-full animate-pulse items-center justify-center gap-1 text-sm">
+            <div className="flex w-full animate-pulse items-center justify-center gap-1 text-sm">
                 <p>Charts</p>
                 <IconWrapper icon={IconIds.SCROLL} className="w-5" />
             </div>
             <ChartsWrapper flows={flows} />
+            <div className="mt-10 flex w-full flex-col items-center gap-5">
+                <LinkWrapper href="https://farside.co.uk/btc/" target="_blank" className="flex items-baseline gap-1">
+                    <p>
+                        Just better than <span className="underline underline-offset-2">the original</span>
+                    </p>
+                    <IconWrapper icon={IconIds.IC_BASELINE_OPEN_IN_NEW} className="h-4 w-4" />
+                </LinkWrapper>
+                <div className="flex flex-wrap gap-2 px-5">
+                    <p>Reach out on telegram</p>
+                    <LinkWithIcon href={`https://t.me/${APP_METADATA.SOCIALS.TELEGRAM}`}>@{APP_METADATA.SOCIALS.TELEGRAM}</LinkWithIcon>
+                </div>
+            </div>
         </PageWrapper>
     )
 }

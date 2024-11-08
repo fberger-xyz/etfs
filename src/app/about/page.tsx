@@ -1,6 +1,8 @@
 import IconWrapper from '@/components/common/IconWrapper'
+import LinkWithIcon from '@/components/common/LinkWithIcon'
 import LinkWrapper from '@/components/common/LinkWrapper'
 import PageWrapper from '@/components/common/PageWrapper'
+import { APP_METADATA } from '@/config/app.config'
 import { IconIds } from '@/enums'
 
 export default function Page() {
@@ -13,6 +15,10 @@ export default function Page() {
                     </p>
                     <IconWrapper icon={IconIds.IC_BASELINE_OPEN_IN_NEW} className="h-4 w-4" />
                 </LinkWrapper>
+                <div className="flex flex-wrap gap-2 px-5">
+                    <p>Reach out on telegram</p>
+                    <LinkWithIcon href={`https://t.me/${APP_METADATA.SOCIALS.TELEGRAM}`}>@{APP_METADATA.SOCIALS.TELEGRAM}</LinkWithIcon>
+                </div>
             </div>
         </PageWrapper>
     )
