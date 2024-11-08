@@ -149,6 +149,17 @@ export default function FarsideAreaChart(props: { className?: string; areaData: 
                                 opacity: 1,
                             },
                         },
+                        {
+                            xAxis: dayjs(new Date('2024-11-05')).format('ddd DD MMM YY'),
+                            lineStyle: { color: colors.text[resolvedTheme as AppThemes], opacity: 0.5 },
+                            label: {
+                                show: true,
+                                color: colors.text[resolvedTheme as AppThemes],
+                                formatter: () => `Trump\nwins`,
+                                fontSize: 9,
+                                opacity: 1,
+                            },
+                        },
                         // {
                         //     xAxis: dayjs(new Date('2024-09-18')).format('ddd DD MMM YY'),
                         //     lineStyle: { color: colors.text[resolvedTheme as AppThemes], opacity: 0.5 },
