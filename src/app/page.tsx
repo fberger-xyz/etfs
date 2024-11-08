@@ -26,11 +26,20 @@ dayjs.extend(weekOfYear)
 
 const getFlows = async () => {
     const prisma = new PrismaClient()
-    return await prisma.flows.findMany({
-        orderBy: {
-            close_of_bussiness_hour: 'asc',
-        },
-    })
+    try {
+        return await prisma.flows.findMany({
+            orderBy: {
+                close_of_bussiness_hour: 'asc',
+            },
+        })
+    } finally {
+        await prisma.$disconnect()
+    }
+}
+
+export const metadata = {
+    revalidate: 0, // Disable ISR
+    cache: 'no-store', // Disable caching completely
 }
 
 export default async function Page() {
