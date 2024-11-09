@@ -8,16 +8,28 @@ import ChartsWrapper from '@/components/farside/ChartsWrapper'
 import LinkWrapper from '@/components/common/LinkWrapper'
 import LinkWithIcon from '@/components/common/LinkWithIcon'
 import { APP_METADATA } from '@/config/app.config'
-import { Flows } from '@prisma/client'
+import prisma from '@/server/prisma'
 dayjs.extend(weekOfYear)
 
+// https://medium.com/@kassiomatheus23/data-not-updating-on-refresh-creating-cache-and-fetching-next-js-14-and-prisma-60d98aecca96
+export const revalidate = 0 //Very important
+export const dynamic = 'force-dynamic'
+export const fetchCache = 'force-no-store'
+
+async function getFlows() {
+    return await prisma.flows.findMany({
+        orderBy: { close_of_bussiness_hour: 'asc' },
+    })
+}
+
 export default async function Page() {
-    const root = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : APP_METADATA.SITE_URL
-    const endpoint = `${root}/api/flows`
-    // https://nextjs.org/docs/app/api-reference/functions/fetch
-    const response = await fetch(endpoint, { next: { revalidate: 30 } })
-    const { flows }: { flows: Flows[]; error: string } = await response.json()
-    if (!flows) throw new Error('No flows data available')
+    // const root = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : APP_METADATA.SITE_URL
+    // const endpoint = `${root}/api/flows`
+    // // https://nextjs.org/docs/app/api-reference/functions/fetch
+    // const response = await fetch(endpoint, { next: { revalidate: 30 } })
+    // const { flows }: { flows: Flows[]; error: string } = await response.json()
+    // if (!flows) return null
+    const flows = await getFlows()
     return (
         <PageWrapper className="gap-5">
             <FlowsTable data={flows} />
