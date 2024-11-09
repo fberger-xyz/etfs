@@ -4,50 +4,20 @@ import dayjs from 'dayjs'
 import weekOfYear from 'dayjs/plugin/weekOfYear'
 import FlowsTable from '@/components/farside/FlowsTable'
 import IconWrapper from '@/components/common/IconWrapper'
-import { PrismaClient } from '@prisma/client'
-// import { unstable_cache } from 'next/cache'
 import ChartsWrapper from '@/components/farside/ChartsWrapper'
 import LinkWrapper from '@/components/common/LinkWrapper'
 import LinkWithIcon from '@/components/common/LinkWithIcon'
 import { APP_METADATA } from '@/config/app.config'
+import { Flows } from '@prisma/client'
 dayjs.extend(weekOfYear)
 
-// const getFlows = unstable_cache(
-//     async () => {
-//         const prisma = new PrismaClient()
-//         return await prisma.flows.findMany({
-//             orderBy: {
-//                 close_of_bussiness_hour: 'asc',
-//             },
-//         })
-//     },
-//     ['flows'],
-//     // The revalidate value needs to be statically analyzable. For example revalidate = 600 is valid, but revalidate = 60 * 10 is not
-//     // https://nextjs.org/docs/canary/app/api-reference/file-conventions/route-segment-config#revalidate
-//     { revalidate: 120, tags: ['flows'] }, // every 2 minutes
-// )
-
-const getFlows = async () => {
-    const prisma = new PrismaClient()
-    try {
-        return await prisma.flows.findMany({
-            orderBy: {
-                close_of_bussiness_hour: 'asc',
-            },
-        })
-    } finally {
-        await prisma.$disconnect()
-    }
-}
-
-export const metadata = {
-    revalidate: 0, // Disable ISR
-    cache: 'no-store', // Disable caching completely
-}
-
 export default async function Page() {
-    const flows = await getFlows().catch(() => [])
-    console.log(`flows.length=${flows.length}`)
+    const root = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : APP_METADATA.SITE_URL
+    const endpoint = `${root}/api/flows`
+    // https://nextjs.org/docs/app/api-reference/functions/fetch
+    const response = await fetch(endpoint, { next: { revalidate: 30 } })
+    const { flows }: { flows: Flows[]; error: string } = await response.json()
+    if (!flows) throw new Error('No flows data available')
     return (
         <PageWrapper className="gap-5">
             <FlowsTable data={flows} />

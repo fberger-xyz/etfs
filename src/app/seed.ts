@@ -1,13 +1,12 @@
-import { PrismaClient } from '@prisma/client'
 import dayjs from 'dayjs'
 import { EtfTickers } from '../enums'
 import { FarsideRawData } from '../interfaces'
 import numeral from 'numeral'
 import { promises as fs } from 'fs'
 import utc from 'dayjs/plugin/utc'
+import prisma from '@/server/prisma'
 
 dayjs.extend(utc)
-const prisma = new PrismaClient()
 
 /**
  * helpers
@@ -50,7 +49,12 @@ async function main() {
     // load and parse json
     const path = process.cwd() + '/src/data/farside-btc.json'
     const file = await fs.readFile(path, 'utf8')
-    const rawData = JSON.parse(file) as FarsideRawData[]
+    let rawData = null
+    try {
+        rawData = JSON.parse(file) as FarsideRawData[]
+    } catch (error) {
+        return
+    }
     const { parsedData } = enrichFarsideJson(rawData)
 
     // loop over each day

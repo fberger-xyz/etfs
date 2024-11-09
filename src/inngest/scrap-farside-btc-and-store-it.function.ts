@@ -2,11 +2,11 @@ import dayjs from 'dayjs'
 import { inngest } from './client'
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
-import { PrismaClient } from '@prisma/client'
 import { Bot } from 'grammy'
 import { APP_METADATA } from '@/config/app.config'
 import { cleanFlow, enrichFarsideJson, getFarsideTableDataAsJson } from '@/utils'
 import numeral from 'numeral'
+import prisma from '@/server/prisma'
 
 // helpers
 dayjs.extend(utc)
@@ -19,9 +19,6 @@ const token = process.env.TELEGRAM_BOT_TOKEN
 if (!token) throw new Error('TELEGRAM_BOT_TOKEN environment variable not found.')
 const channelId = String(process.env.TELEGRAM_CHANNEL_ID)
 if (!channelId) throw new Error('TELEGRAM_CHANNEL_ID environment variable not found.')
-
-// prisma
-const prisma = new PrismaClient()
 
 // -
 const root = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : APP_METADATA.SITE_URL
@@ -37,7 +34,7 @@ export const scrapFarsideBtcAndStoreIt = inngest.createFunction(
         // html
         const { htmlContent } = await step.run('1. Scrap farside', async () => {
             const endpoint = `${root}/api/proxy?url=${encodeURIComponent(pageToScrap)}`
-            console.log({ endpoint })
+            if (debug) console.log({ endpoint })
             const response = await fetch(endpoint, { method: 'GET', headers: { Accept: 'text/html', 'User-Agent': 'Mozilla/5.0' } })
             if (!response.ok) throw new Error(`Failed to fetch text/html of ${pageToScrap}`)
             const htmlContent = await response.text()
