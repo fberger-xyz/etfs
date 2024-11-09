@@ -11,6 +11,7 @@ import { APP_METADATA } from '@/config/app.config'
 import prisma from '@/server/prisma'
 dayjs.extend(weekOfYear)
 
+// https://nextjs.org/docs/app/api-reference/functions/fetch
 // https://medium.com/@kassiomatheus23/data-not-updating-on-refresh-creating-cache-and-fetching-next-js-14-and-prisma-60d98aecca96
 export const revalidate = 0 //Very important
 export const dynamic = 'force-dynamic'
@@ -23,12 +24,6 @@ async function getFlows() {
 }
 
 export default async function Page() {
-    // const root = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : APP_METADATA.SITE_URL
-    // const endpoint = `${root}/api/flows`
-    // // https://nextjs.org/docs/app/api-reference/functions/fetch
-    // const response = await fetch(endpoint, { next: { revalidate: 30 } })
-    // const { flows }: { flows: Flows[]; error: string } = await response.json()
-    // if (!flows) return null
     const flows = await getFlows()
     return (
         <PageWrapper className="gap-5">
