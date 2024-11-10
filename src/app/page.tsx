@@ -33,14 +33,14 @@ export default async function Page() {
                 <IconWrapper icon={IconIds.SCROLL} className="w-5" />
             </div>
             <ChartsWrapper flows={flows} />
-            <div className="mt-10 flex w-full flex-col items-center gap-5">
+            <div className="mt-10 flex w-full flex-col items-center gap-8">
                 <LinkWrapper href="https://farside.co.uk/btc/" target="_blank" className="flex items-baseline gap-1">
                     <p>
                         Just better than <span className="underline underline-offset-2">the original</span>
                     </p>
                     <IconWrapper icon={IconIds.IC_BASELINE_OPEN_IN_NEW} className="h-4 w-4" />
                 </LinkWrapper>
-                <div className="flex flex-wrap gap-2 px-5">
+                <div className="flex flex-wrap justify-center gap-4 px-5 text-sm text-inactive">
                     <p>Reach out on telegram</p>
                     <LinkWithIcon href={`https://t.me/${APP_METADATA.SOCIALS.TELEGRAM}`}>@{APP_METADATA.SOCIALS.TELEGRAM}</LinkWithIcon>
                 </div>

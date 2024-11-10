@@ -15,7 +15,7 @@ export default function Page() {
                     </p>
                     <IconWrapper icon={IconIds.IC_BASELINE_OPEN_IN_NEW} className="h-4 w-4" />
                 </LinkWrapper>
-                <div className="flex flex-wrap gap-2 px-5">
+                <div className="flex flex-wrap justify-center gap-2 px-5 text-sm text-inactive">
                     <p>Reach out on telegram</p>
                     <LinkWithIcon href={`https://t.me/${APP_METADATA.SOCIALS.TELEGRAM}`}>@{APP_METADATA.SOCIALS.TELEGRAM}</LinkWithIcon>
                 </div>
