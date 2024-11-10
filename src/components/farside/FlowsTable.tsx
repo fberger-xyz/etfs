@@ -132,7 +132,7 @@ export default function FlowsTable({ data }: { data: Flows[] }) {
             />
 
             {/* rows */}
-            <div className="flex h-[440px] w-full flex-col overflow-y-scroll border border-inactive md:h-[calc(100vh-260px)]">
+            <div className="flex h-[420px] w-full flex-col overflow-y-scroll border border-inactive md:h-[calc(100vh-280px)]">
                 {/* for each year */}
                 {farsideDataGroupedBy.map((year, yearIndex) => (
                     <div key={`${yearIndex}-${year.index}`} className="flex flex-col py-1">

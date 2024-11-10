@@ -6,7 +6,7 @@ export default function DefaultFallback() {
             <PageWrapper className="gap-5">
                 <div className="flex w-full flex-col items-center justify-center gap-3">
                     <div className="h-6 w-full max-w-52 animate-pulse rounded-md bg-light-hover" />
-                    <div className="relative flex h-[440px] w-full animate-pulse flex-col gap-1 border border-inactive bg-light-hover md:h-[calc(100vh-260px)]">
+                    <div className="relative flex h-[420px] w-full animate-pulse flex-col gap-1 border border-inactive bg-light-hover md:h-[calc(100vh-280px)]">
                         <div className="h-10 w-full rounded-sm border-b border-inactive" />
                         {Array(20)
                             .fill('-')
