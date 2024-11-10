@@ -119,6 +119,7 @@ export const scrapFarsideBtcAndStoreIt = inngest.createFunction(
             const bot = new Bot(token)
             const chatId = channelId
             const { Total: total, ...flows } = parsedData[parsedData.length - 1]
+            if (Number(total) === 0) return { ms: Date.now() - before }
             const day = dayjs(parsedData[parsedData.length - 1].Date).format('ddd DD MMM YYYY')
             const xata_id = `${day}`.toLowerCase().replaceAll(' ', '-')
             const env = String(process.env.NODE_ENV).toLowerCase() === 'production' ? 'Prod' : 'Dev'
