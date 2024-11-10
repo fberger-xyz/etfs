@@ -2,10 +2,9 @@ import { AppThemes, IconIds } from '@/enums'
 
 export const APP_METADATA = {
     SITE_AUTHOR: 'fberger',
-    SITE_NAME: 'farside | fberger',
-    SITE_INFO: 'SITE_INFO',
-    SITE_DESCRIPTION: 'SITE_DESCRIPTION',
-    SITE_URL: 'https://farside.fberger.xyz',
+    SITE_NAME: 'ETFs | fberger',
+    SITE_DESCRIPTION: '₿ and Ξ ETFs flows',
+    SITE_URL: 'https://etfs.fberger.xyz',
     SOCIALS: {
         TWITTER: 'fberger_xyz',
         TELEGRAM: 'fberger_xyz',

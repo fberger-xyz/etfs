@@ -13,7 +13,7 @@ dayjs.extend(weekOfYear)
 
 // https://nextjs.org/docs/app/api-reference/functions/fetch
 // https://medium.com/@kassiomatheus23/data-not-updating-on-refresh-creating-cache-and-fetching-next-js-14-and-prisma-60d98aecca96
-export const revalidate = 0 //Very important
+export const revalidate = 0 // todo: increase this up to 120
 export const dynamic = 'force-dynamic'
 export const fetchCache = 'force-no-store'
 
