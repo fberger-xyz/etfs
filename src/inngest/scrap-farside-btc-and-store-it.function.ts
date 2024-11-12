@@ -125,9 +125,9 @@ export const scrapFarsideBtcAndStoreIt = inngest.createFunction(
         const chatId = channelId
         const env = String(process.env.NODE_ENV).toLowerCase() === 'production' ? 'Prod' : 'Dev'
         for (let changeIndex = 0; changeIndex < dbChanges.length; changeIndex++) {
-            if (dbChanges[changeIndex].newTotal === dbChanges[changeIndex].prevTotal) continue // do not push twice the same notif
             const { xata_id, dayIsNew, newTotal: total, dataToPush: flows } = dbChanges[changeIndex]
-            if (dayIsNew && Number(total) === 0) continue // do not notify 0 total unless day is new
+            if (!dayIsNew) continue // do not notify unless day is new
+            if (dbChanges[changeIndex].dataToPush === dbChanges[changeIndex].dataToPush) continue // do not push twice the same notif
             await step.run(`4. [BTC] Notify telegram for ${xata_id} new total`, async () => {
                 const message = [
                     `<u><b>New flows update</b></u>`,
