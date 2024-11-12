@@ -1,6 +1,5 @@
 import dayjs from 'dayjs'
-import { EtfTickers } from '../enums'
-import { FarsideRawData } from '../interfaces'
+import { ETFsTickers, FarsideRawData } from '../interfaces'
 import numeral from 'numeral'
 import { promises as fs } from 'fs'
 import utc from 'dayjs/plugin/utc'
@@ -13,7 +12,7 @@ dayjs.extend(utc)
  */
 
 const enrichFarsideJson = (rawData: FarsideRawData[]) => {
-    const tickers: (EtfTickers | string)[] = []
+    const tickers: ETFsTickers[] = []
     const parsedData = rawData
         .filter((day) => dayjs(day.Date).isValid())
         .map((day) => {
@@ -21,7 +20,7 @@ const enrichFarsideJson = (rawData: FarsideRawData[]) => {
             const dup = { ...day }
             const entries = Object.entries(dup)
             for (let entryIndex = 0; entryIndex < entries.length; entryIndex++) {
-                const key = entries[entryIndex][0] as keyof typeof dup
+                const key = entries[entryIndex][0] as keyof FarsideRawData
                 const value = entries[entryIndex][1]
                 if (key === 'Date' || dayjs(key).isValid()) continue
                 if (key === 'Total') continue

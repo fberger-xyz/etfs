@@ -3,15 +3,14 @@
 import * as echarts from 'echarts'
 import { ErrorBoundary } from 'react-error-boundary'
 import { useEffect, useState } from 'react'
-import { FarsideRawData } from '@/interfaces'
+import { ETFsTickers, FarsideFlows, FarsideRawData } from '@/interfaces'
 import dayjs from 'dayjs'
-import { AppThemes, EtfTickers } from '@/enums'
+import { AppThemes, ETFs, BtcETFsTickers, EthETFsTickers } from '@/enums'
 import { useTheme } from 'next-themes'
-import { cn, getConfig, roundNToXDecimals } from '@/utils'
+import { cn, farsidePage, getConfig, roundNToXDecimals } from '@/utils'
 import EchartWrapper from './EchartWrapper'
 import { colors } from '@/config/charts.config'
 import LinkWrapper from '../common/LinkWrapper'
-import { Flows } from '@prisma/client'
 
 interface GetOptionsParams {
     timestamps: string[]
@@ -42,7 +41,7 @@ export function LoadingArea({ message = 'Loading...' }: { message?: string }) {
     )
 }
 
-export default function FarsidePercentChart(props: { className?: string; percentData: Flows[]; tickers: (EtfTickers | string)[] }) {
+export default function FarsidePercentChart(props: { className?: string; etf: ETFs; percentData: FarsideFlows[]; tickers: ETFsTickers[] }) {
     /**
      * methods
      */
@@ -211,17 +210,21 @@ export default function FarsidePercentChart(props: { className?: string; percent
             // 2. for each ticker
             let totalFlowsForDay = 0
             for (let tickerIndex = 0; tickerIndex < props.tickers.length; tickerIndex++) {
-                const ticker = props.tickers[tickerIndex] as EtfTickers
-                if (ticker === EtfTickers.GBTC) continue
+                const ticker = props.tickers[tickerIndex] as keyof FarsideFlows
+                if (ticker === BtcETFsTickers.GBTC) continue
+                if (ticker === EthETFsTickers.ETHE) continue
+                if (ticker === EthETFsTickers.ETH) continue
+                const config = getConfig(props.etf, ticker)
+                if (!config) continue
                 const flow = Number(props.percentData[dayIndex][ticker] ?? 0)
                 let serieIndex = optionsParams.flows.findIndex((serie) => serie.key === ticker)
                 if (serieIndex < 0) {
                     optionsParams.flows.push({
                         key: ticker,
-                        index: getConfig(ticker).index,
+                        index: config.index,
                         flows: [],
                         flowsPercent: [],
-                        hexColor: getConfig(ticker).colors[resolvedTheme as AppThemes],
+                        hexColor: config.colors[resolvedTheme as AppThemes],
                         showSerie: false,
                     })
                     serieIndex = optionsParams.flows.findIndex((serie) => serie.key === ticker)
@@ -255,7 +258,7 @@ export default function FarsidePercentChart(props: { className?: string; percent
     return (
         <div className="mt-14 flex w-full flex-col text-xs">
             <div className="mb-1 flex w-full justify-center text-base text-primary md:mb-2">
-                <p>Cumulated Bitcoin ETF Flows %</p>
+                <p>Cumulated {props.etf} ETFs Flows %</p>
             </div>
             <ErrorBoundary FallbackComponent={Fallback}>
                 <div className={cn('h-[520px] w-full border border-inactive py-1 z-0', props.className)}>
@@ -265,7 +268,7 @@ export default function FarsidePercentChart(props: { className?: string; percent
                         <LoadingArea message="Loading data..." />
                     )}
                 </div>
-                <LinkWrapper href="https://farside.co.uk/btc/" className="flex gap-1 text-inactive hover:text-primary" target="_blank">
+                <LinkWrapper href={farsidePage(props.etf)} className="flex gap-1 text-inactive hover:text-primary" target="_blank">
                     <p className="truncate text-xs">Data: farside.co.uk, a few min. ago</p>
                 </LinkWrapper>
             </ErrorBoundary>

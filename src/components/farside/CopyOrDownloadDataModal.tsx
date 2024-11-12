@@ -30,9 +30,12 @@ export default function CopyOrDownloadDataModal() {
                         <span className="underline underline-offset-2">Copy</span> or <span className="underline underline-offset-2">Download</span>{' '}
                         flows data
                     </p>
-                    <Link href="/" className="rounded-sm text-inactive hover:bg-very-light-hover hover:text-primary focus:outline-none">
+                    <button
+                        onClick={() => router.back()}
+                        className="rounded-sm text-inactive hover:bg-very-light-hover hover:text-primary focus:outline-none"
+                    >
                         <IconWrapper icon={IconIds.CARBON_CLOSE} className="size-6" />
-                    </Link>
+                    </button>
                 </div>
                 <div className="w-full border-t border-very-light-hover" />
                 <div className="flex flex-wrap gap-1.5 px-5">

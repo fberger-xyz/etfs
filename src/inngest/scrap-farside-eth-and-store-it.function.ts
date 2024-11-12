@@ -46,7 +46,7 @@ export const scrapFarsideEthAndStoreIt = inngest.createFunction(
             const json = getEthFarsideTableDataAsJson(htmlContent)
             return { json }
         })
-        if (debug) console.log({ json })
+        if (debug) console.log({ json: json.slice(0, 5) })
 
         // debug
         if (debug) console.log(`2. Scrapped ${json.length} entries`)
@@ -63,8 +63,8 @@ export const scrapFarsideEthAndStoreIt = inngest.createFunction(
             }
 
         // debug
-        const latestDaysFlows = parsedData.slice(-5)
-        // const latestDaysFlows = parsedData
+        // const latestDaysFlows = parsedData.slice(-5)
+        const latestDaysFlows = parsedData
         const dbChanges: { xata_id: string; dayIsNew: boolean; prevTotal: null | number; newTotal: null | number; dataToPush: string }[] = []
         for (let dayIndex = 0; dayIndex < latestDaysFlows.length; dayIndex++) {
             const dayData = latestDaysFlows[dayIndex]

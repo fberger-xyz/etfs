@@ -1,5 +1,5 @@
 import PageWrapper from '@/components/common/PageWrapper'
-import { IconIds } from '@/enums'
+import { ETFs, BtcETFsTickers, IconIds } from '@/enums'
 import dayjs from 'dayjs'
 import weekOfYear from 'dayjs/plugin/weekOfYear'
 import FlowsTable from '@/components/farside/FlowsTable'
@@ -9,32 +9,35 @@ import LinkWrapper from '@/components/common/LinkWrapper'
 import LinkWithIcon from '@/components/common/LinkWithIcon'
 import { APP_METADATA } from '@/config/app.config'
 import prisma from '@/server/prisma'
+import { ETFsTickers, FarsideFlows } from '@/interfaces'
+import { farsidePage } from '@/utils'
 dayjs.extend(weekOfYear)
 
 // https://nextjs.org/docs/app/api-reference/functions/fetch
 // https://medium.com/@kassiomatheus23/data-not-updating-on-refresh-creating-cache-and-fetching-next-js-14-and-prisma-60d98aecca96
-export const revalidate = 0 // todo: increase this up to 120
+export const revalidate = 0
 export const dynamic = 'force-dynamic'
 export const fetchCache = 'force-no-store'
 
 async function getFlows() {
-    return await prisma.flows.findMany({
+    return (await prisma.flows.findMany({
         orderBy: { close_of_bussiness_hour: 'asc' },
-    })
+    })) as FarsideFlows[]
 }
 
 export default async function Page() {
+    const tickers = Object.keys(BtcETFsTickers) as ETFsTickers[]
     const flows = await getFlows()
     return (
         <PageWrapper className="gap-5">
-            <FlowsTable data={flows} />
+            <FlowsTable etf={ETFs.BTC} data={flows} tickers={tickers} />
             <div className="flex w-full animate-pulse items-center justify-center gap-1 text-sm">
                 <p>Charts</p>
                 <IconWrapper icon={IconIds.SCROLL} className="w-5" />
             </div>
-            <ChartsWrapper flows={flows} />
+            <ChartsWrapper etf={ETFs.BTC} flows={flows} tickers={tickers} />
             <div className="mt-10 flex w-full flex-col items-center gap-8">
-                <LinkWrapper href="https://farside.co.uk/btc/" target="_blank" className="flex items-baseline gap-1">
+                <LinkWrapper href={farsidePage(ETFs.BTC)} target="_blank" className="flex items-baseline gap-1">
                     <p>
                         Just better than <span className="underline underline-offset-2">the original</span>
                     </p>

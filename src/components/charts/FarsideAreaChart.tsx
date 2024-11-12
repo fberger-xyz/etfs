@@ -4,15 +4,14 @@ import * as echarts from 'echarts'
 import { ErrorBoundary } from 'react-error-boundary'
 import { Suspense, useEffect, useState } from 'react'
 import dayjs from 'dayjs'
-import { AppThemes, EtfTickers } from '@/enums'
+import { AppThemes, ETFs, BtcETFsTickers } from '@/enums'
 import { useTheme } from 'next-themes'
-import { cn, getConfig, roundNToXDecimals, shortenStr } from '@/utils'
+import { cn, farsidePage, getConfig, roundNToXDecimals, shortenStr } from '@/utils'
 import EchartWrapper from './EchartWrapper'
 import numeral from 'numeral'
 import { colors } from '@/config/charts.config'
 import LinkWrapper from '../common/LinkWrapper'
-import { FarsideRawData } from '@/interfaces'
-import { Flows } from '@prisma/client'
+import { ETFsTickers, FarsideFlows, FarsideRawData } from '@/interfaces'
 import CustomFallback from '../common/CustomFallback'
 
 interface GetOptionsParams {
@@ -44,7 +43,7 @@ export function LoadingArea({ message = 'Loading...' }: { message?: string }) {
     )
 }
 
-export default function FarsideAreaChart(props: { className?: string; areaData: Flows[]; tickers: (EtfTickers | string)[] }) {
+export default function FarsideAreaChart(props: { className?: string; etf: ETFs; areaData: FarsideFlows[]; tickers: ETFsTickers[] }) {
     const getOptionsParams = (): GetOptionsParams => ({ timestamps: [], flows: [] })
     const { resolvedTheme } = useTheme()
 
@@ -56,7 +55,7 @@ export default function FarsideAreaChart(props: { className?: string; areaData: 
         const series = [
             ...flows.map((etf) => {
                 const showEndlabel =
-                    etf.key === EtfTickers.BRRR || (etf.flowsPercent.length > 0 && Math.abs(etf.flowsPercent[etf.flowsPercent.length - 1]) > 15) // 5 %
+                    etf.key === BtcETFsTickers.BRRR || (etf.flowsPercent.length > 0 && Math.abs(etf.flowsPercent[etf.flowsPercent.length - 1]) > 15) // 5 %
                 return {
                     showSymbol: false,
                     name: etf.key,
@@ -199,7 +198,7 @@ export default function FarsideAreaChart(props: { className?: string; areaData: 
                 icon: 'rect',
                 selected: {
                     ...props.tickers.reduce((acc, curr) => ({ ...acc, [curr]: true }), {}),
-                    [EtfTickers.GBTC]: false,
+                    [BtcETFsTickers.GBTC]: false,
                 },
             },
             toolbox: {
@@ -318,16 +317,18 @@ export default function FarsideAreaChart(props: { className?: string; areaData: 
             // 2. for each ticker
             let totalFlowsForDay = 0
             for (let tickerIndex = 0; tickerIndex < props.tickers.length; tickerIndex++) {
-                const ticker = props.tickers[tickerIndex] as EtfTickers
+                const ticker = props.tickers[tickerIndex] as BtcETFsTickers
+                const config = getConfig(props.etf, ticker)
+                if (!config) continue
                 const flow = Number(props.areaData[dayIndex][ticker] ?? 0)
                 let serieIndex = optionsParams.flows.findIndex((serie) => serie.key === ticker)
                 if (serieIndex < 0) {
                     optionsParams.flows.push({
                         key: ticker,
-                        index: getConfig(ticker).index,
+                        index: config.index,
                         flows: [],
                         flowsPercent: [],
-                        hexColor: getConfig(ticker).colors[resolvedTheme as AppThemes],
+                        hexColor: config.colors[resolvedTheme as AppThemes],
                         showSerie: false,
                     })
                     serieIndex = optionsParams.flows.findIndex((serie) => serie.key === ticker)
@@ -362,7 +363,7 @@ export default function FarsideAreaChart(props: { className?: string; areaData: 
         <Suspense fallback={<CustomFallback loadingText="Area chart loading..." />}>
             <div className="mt-10 flex w-full flex-col text-xs">
                 <div className="mb-1 flex w-full justify-center text-base text-primary md:mb-2">
-                    <p>Cumulated Bitcoin ETF Flows $m USD</p>
+                    <p>Cumulated {props.etf} ETFs Flows $m USD</p>
                 </div>
                 <ErrorBoundary FallbackComponent={Fallback}>
                     <div className={cn('h-[520px] w-full border border-inactive py-1 z-0', props.className)}>
@@ -373,7 +374,7 @@ export default function FarsideAreaChart(props: { className?: string; areaData: 
                         )}
                     </div>
                 </ErrorBoundary>
-                <LinkWrapper href="https://farside.co.uk/btc/" className="flex gap-1 text-inactive hover:text-primary" target="_blank">
+                <LinkWrapper href={farsidePage(props.etf)} className="flex gap-1 text-inactive hover:text-primary" target="_blank">
                     <p className="truncate text-xs">Data: farside.co.uk, a few min. ago</p>
                 </LinkWrapper>
             </div>

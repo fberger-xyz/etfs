@@ -1,15 +1,16 @@
 import { ReactNode } from 'react'
-import { EtfTickers, IconIds } from '@/enums'
+import { ETFs, IconIds } from '@/enums'
 import dayjs from 'dayjs'
 import numeral from 'numeral'
 import weekOfYear from 'dayjs/plugin/weekOfYear'
 import IconWrapper from '@/components/common/IconWrapper'
 import LinkWrapper from '@/components/common/LinkWrapper'
-import { cleanFlow, cn, getConfig, monthName } from '@/utils'
+import { cleanFlow, cn, farsidePage, getConfig, monthName } from '@/utils'
 import TextWithTickerColor from '@/components/farside/ColorWrapper'
 import { Flows } from '@prisma/client'
 import Link from 'next/link'
 import CopyOrDownloadDataModal from './CopyOrDownloadDataModal'
+import { ETFsTickers, FarsideFlows } from '@/interfaces'
 dayjs.extend(weekOfYear)
 
 function TableRow(props: { activateHover?: boolean; date: ReactNode; tickers: ReactNode[]; total: ReactNode; rank: ReactNode; className?: string }) {
@@ -23,10 +24,7 @@ function TableRow(props: { activateHover?: boolean; date: ReactNode; tickers: Re
     )
 }
 
-export default function FlowsTable({ data }: { data: Flows[] }) {
-    // -
-    const tickers = Object.keys(EtfTickers) as EtfTickers[]
-
+export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: FarsideFlows[]; tickers: ETFsTickers[] }) {
     // apply rank for days
     const daysSortedByTotal = [...data].sort((curr, next) => cleanFlow(next.total) - cleanFlow(curr.total))
     for (let sortedDayIndex = 0; sortedDayIndex < daysSortedByTotal.length; sortedDayIndex++) {
@@ -95,7 +93,7 @@ export default function FlowsTable({ data }: { data: Flows[] }) {
         <div className="flex w-full flex-col text-xs lg:text-sm">
             {/* context */}
             <div className="mb-1 flex w-full justify-center text-base text-primary md:mb-2">
-                <p>Bitcoin ETF Flows $m USD</p>
+                <p>{etf} ETFs Flows $m USD</p>
             </div>
 
             {/* headers */}
@@ -103,15 +101,16 @@ export default function FlowsTable({ data }: { data: Flows[] }) {
                 className="border-x border-t border-inactive bg-light-hover"
                 date={<p>Date</p>}
                 tickers={tickers
-                    .sort((curr, next) => getConfig(curr).index - getConfig(next).index)
+                    .filter((curr) => getConfig(etf, curr))
+                    .sort((curr, next) => getConfig(etf, curr).index - getConfig(etf, next).index)
                     .map((ticker) => (
                         <LinkWrapper
-                            href={getConfig(ticker).url}
+                            href={getConfig(etf, ticker).url}
                             key={ticker}
                             className="group flex h-9 w-12 -rotate-45 items-center justify-center overflow-hidden hover:rotate-0 sm:rotate-0 md:w-16"
                             target="_blank"
                         >
-                            <TextWithTickerColor className="p-0.5 group-hover:hidden" ticker={ticker}>
+                            <TextWithTickerColor className="p-0.5 group-hover:hidden" etf={etf} ticker={ticker}>
                                 {ticker}
                             </TextWithTickerColor>
                             <IconWrapper icon={IconIds.IC_BASELINE_OPEN_IN_NEW} className="hidden h-4 w-4 text-primary group-hover:flex" />
@@ -159,7 +158,6 @@ export default function FlowsTable({ data }: { data: Flows[] }) {
                                         <div className="flex w-12 items-center justify-center overflow-hidden text-inactive md:w-16" />
                                     ))}
                                     total={<p className="text-inactive">{numeral(month.totalPeriod).format('0,0')}</p>}
-                                    // rank={<p className="text-inactive">{month.rank}</p>}
                                     rank={null}
                                 />
 
@@ -184,7 +182,6 @@ export default function FlowsTable({ data }: { data: Flows[] }) {
                                         {/* for each day */}
                                         {week.days.map((day, dayIndex) => (
                                             <TableRow
-                                                // className="bg-very-light-hover"
                                                 activateHover={true}
                                                 key={`${yearIndex}-${year.index}-${monthIndex}-${month.index}-${weekIndex}-${week.index}-${dayIndex}-${day.day}`}
                                                 date={
@@ -194,14 +191,15 @@ export default function FlowsTable({ data }: { data: Flows[] }) {
                                                     </>
                                                 }
                                                 tickers={tickers
-                                                    .sort((curr, next) => getConfig(curr).index - getConfig(next).index)
+                                                    .filter((curr) => getConfig(etf, curr))
+                                                    .sort((curr, next) => getConfig(etf, curr).index - getConfig(etf, next).index)
                                                     .map((ticker) => (
                                                         <div
                                                             key={`${yearIndex}-${year.index}-${monthIndex}-${month.index}-${weekIndex}-${week.index}-${dayIndex}-${day.day}-${ticker}`}
                                                             className="flex w-12 items-center justify-center overflow-hidden text-light-hover md:w-16"
                                                         >
                                                             {day[ticker as keyof typeof day] ? (
-                                                                <TextWithTickerColor className="p-0.5 group-hover:hidden" ticker={ticker}>
+                                                                <TextWithTickerColor etf={etf} className="p-0.5 group-hover:hidden" ticker={ticker}>
                                                                     {numeral(day[ticker as keyof typeof day]).format('0,0')}
                                                                 </TextWithTickerColor>
                                                             ) : (
@@ -232,24 +230,27 @@ export default function FlowsTable({ data }: { data: Flows[] }) {
 
             {/* legend */}
             <div className="mt-1 flex w-full items-center justify-between">
-                <LinkWrapper href="https://farside.co.uk/btc/" className="flex gap-1 text-inactive hover:text-primary" target="_blank">
+                <LinkWrapper href={farsidePage(etf)} className="flex gap-1 text-inactive hover:text-primary" target="_blank">
                     <p className="truncate text-xs">Data: farside.co.uk, a few min. ago</p>
                 </LinkWrapper>
                 <div className="flex gap-2">
-                    <Link href="/?copy-or-download=true" className="flex items-center gap-1 text-inactive hover:text-primary">
+                    <Link
+                        href={etf === ETFs.BTC ? '/?copy-or-download=true' : '/eth?copy-or-download=true'}
+                        className="flex items-center gap-1 text-inactive hover:text-primary"
+                    >
                         <p className="text-xs">Copy</p>
                         <IconWrapper icon={IconIds.CARBON_COPY} className="w-4" />
                     </Link>
-                    <Link href="/?copy-or-download=true" className="flex items-center gap-1 text-inactive hover:text-primary">
+                    <Link
+                        href={etf === ETFs.BTC ? '/?copy-or-download=true' : '/eth?copy-or-download=true'}
+                        className="flex items-center gap-1 text-inactive hover:text-primary"
+                    >
                         <p className="text-xs">CSV</p>
                         <IconWrapper icon={IconIds.CARBON_DOWNLOAD} className="w-4" />
                     </Link>
                     <CopyOrDownloadDataModal />
                 </div>
             </div>
-
-            {/* modal */}
-            {/* <Modal /> */}
         </div>
     )
 }
