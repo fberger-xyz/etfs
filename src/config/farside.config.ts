@@ -1,5 +1,5 @@
 import { AppThemes, ETFs, BtcETFsTickers, EthETFsTickers } from '@/enums'
-import { ETFsTickers } from '@/interfaces';
+import { ETFsTickers } from '@/interfaces'
 
 export const ETFS_TICKERS_CONFIG: Record<
     ETFs,
