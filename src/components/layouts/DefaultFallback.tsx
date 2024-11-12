@@ -10,8 +10,8 @@ export default function DefaultFallback() {
                         <div className="h-11 w-full rounded-sm border-b border-inactive" />
                         {Array(20)
                             .fill('-')
-                            .map(() => (
-                                <div className="h-6 w-full rounded-sm bg-very-light-hover p-2" />
+                            .map((entry, entryIndex) => (
+                                <div key={`${entry}-${entryIndex}`} className="h-6 w-full rounded-sm bg-very-light-hover p-2" />
                             ))}
                         <p className="absolute bottom-1/2 w-full text-center text-primary">Loading App ...</p>
                     </div>

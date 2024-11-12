@@ -11,3 +11,14 @@ export enum EtfTickers {
     GBTC = 'GBTC',
     BTC = 'BTC',
 }
+export enum EthEtfTickers {
+    ETHA = 'ETHA',
+    FETH = 'FETH',
+    ETHW = 'ETHW',
+    CETH = 'CETH',
+    ETHV = 'ETHV',
+    QETH = 'QETH',
+    EZET = 'EZET',
+    ETHE = 'ETHE',
+    ETH = 'ETH',
+}

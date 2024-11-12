@@ -173,8 +173,8 @@ export default function FlowsTable({ data }: { data: Flows[] }) {
                                             <TableRow
                                                 className="border-b border-dashed border-light-hover"
                                                 date={<p className="w-fit text-inactive">Week {week.index}</p>}
-                                                tickers={tickers.map(() => (
-                                                    <div className="flex w-12 md:w-16" />
+                                                tickers={tickers.map((ticker, tickerIndex) => (
+                                                    <div key={`${ticker}-${tickerIndex}`} className="flex w-12 md:w-16" />
                                                 ))}
                                                 total={<p className="text-inactive">{numeral(week.totalPeriod).format('0,0')}</p>}
                                                 rank={null}

@@ -41,10 +41,6 @@ const enrichFarsideJson = (rawData: FarsideRawData[]) => {
     return { tickers, parsedData }
 }
 
-/**
- * logic
- */
-
 async function main() {
     // load and parse json
     const path = process.cwd() + '/src/data/farside-btc.json'
@@ -61,8 +57,9 @@ async function main() {
     const cleanFlow = (rawFlow: string | number | undefined) => (isNaN(Number(rawFlow)) ? 0 : Number(rawFlow))
     for (let dayIndex = 0; dayIndex < parsedData.length; dayIndex++) {
         const day = dayjs(parsedData[dayIndex].Date).format('ddd DD MMM YYYY')
-        const xata_id = `${day}`.toLowerCase().replaceAll(' ', '-')
-        const close_of_bussiness_hour = dayjs.utc(parsedData[dayIndex].Date).hour(17).toDate()
+        const xata_id = String(day).toLowerCase().replaceAll(' ', '-')
+        // const close_of_bussiness_hour = dayjs.utc(parsedData[dayIndex].Date).hour(17).toDate()
+        const close_of_bussiness_hour = dayjs(parsedData[dayIndex].Date).hour(17).toDate()
         console.log(`upsert ${xata_id}...`)
         await prisma.flows.upsert({
             where: { xata_id },

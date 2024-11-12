@@ -14,3 +14,19 @@ export interface FarsideRawData {
     Total: string | number
     rank?: number
 }
+
+export interface EthFarsideRawData {
+    Fee: string | number
+    Date: string | number
+    ETHA: string | number
+    FETH: string | number
+    ETHW: string | number
+    CETH: string | number
+    ETHV: string | number
+    QETH: string | number
+    EZET: string | number
+    ETHE: string | number
+    ETH: string | number
+    Total: string | number
+    rank?: number
+}
