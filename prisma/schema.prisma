@@ -30,3 +30,26 @@ model Flows {
   close_of_bussiness_hour DateTime @default(now()) @db.Timestamptz(6)
   rank                    Int      @default(0)
 }
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model EthFlows {
+  xata_updatedat          DateTime @default(now()) @db.Timestamptz(6)
+  xata_id                 String   @unique(map: "_pgroll_new_EthFlows_xata_id_key") @default(dbgenerated("('rec_'::text || (xata_private.xid())::text)"))
+  xata_version            Int      @default(0)
+  xata_createdat          DateTime @default(now()) @db.Timestamptz(6)
+  day                     String   @unique(map: "EthFlows__pgroll_new_day_key")
+  ETHA                    Float    @default(0)
+  FETH                    Float    @default(0)
+  ETHW                    Float    @default(0)
+  CETH                    Float    @default(0)
+  ETHV                    Float    @default(0)
+  EZBC                    Float    @default(0)
+  QETH                    Float    @default(0)
+  EZET                    Float    @default(0)
+  ETHE                    Float    @default(0)
+  ETH                     Float    @default(0)
+  raw                     Json?    @db.Json
+  total                   Float    @default(0)
+  close_of_bussiness_hour DateTime @default(now()) @db.Timestamptz(6)
+  rank                    Int      @default(0)
+}

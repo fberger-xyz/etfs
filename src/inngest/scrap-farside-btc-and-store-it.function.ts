@@ -62,6 +62,7 @@ export const scrapFarsideBtcAndStoreIt = inngest.createFunction(
 
         // debug
         const latestDaysFlows = parsedData.slice(-5)
+        const dbChanges: { xata_id: string; dayIsNew: boolean; prevTotal: null | number; newTotal: null | number; dataToPush: string }[] = []
         for (let dayIndex = 0; dayIndex < latestDaysFlows.length; dayIndex++) {
             const dayData = latestDaysFlows[dayIndex]
             const day = dayjs(dayData.Date).format('ddd DD MMM YYYY')
@@ -70,73 +71,82 @@ export const scrapFarsideBtcAndStoreIt = inngest.createFunction(
             if (debug) console.log({ dayData })
 
             // xata
-            await step.run(`3. Upsert ${xata_id} in xata`, async () => {
-                return await prisma.flows.upsert({
+            const change = await step.run(`3. Upsert ${xata_id} in xata`, async () => {
+                // check new day
+                const existingDayData = await prisma.flows.findFirst({ where: { xata_id } })
+
+                // prepare
+                const dataToPush = {
+                    IBIT: cleanFlow(dayData.IBIT),
+                    FBTC: cleanFlow(dayData.FBTC),
+                    BITB: cleanFlow(dayData.BITB),
+                    ARKB: cleanFlow(dayData.ARKB),
+                    BTCO: cleanFlow(dayData.BTCO),
+                    EZBC: cleanFlow(dayData.EZBC),
+                    BRRR: cleanFlow(dayData.BRRR),
+                    HODL: cleanFlow(dayData.HODL),
+                    BTCW: cleanFlow(dayData.BTCW),
+                    GBTC: cleanFlow(dayData.GBTC),
+                    BTC: cleanFlow(dayData.BTC),
+                }
+
+                // push
+                await prisma.flows.upsert({
                     where: { xata_id },
-                    update: {
-                        day,
-                        close_of_bussiness_hour,
-                        IBIT: cleanFlow(dayData.IBIT),
-                        FBTC: cleanFlow(dayData.FBTC),
-                        BITB: cleanFlow(dayData.BITB),
-                        ARKB: cleanFlow(dayData.ARKB),
-                        BTCO: cleanFlow(dayData.BTCO),
-                        EZBC: cleanFlow(dayData.EZBC),
-                        BRRR: cleanFlow(dayData.BRRR),
-                        HODL: cleanFlow(dayData.HODL),
-                        BTCW: cleanFlow(dayData.BTCW),
-                        GBTC: cleanFlow(dayData.GBTC),
-                        BTC: cleanFlow(dayData.BTC),
-                        total: cleanFlow(dayData.Total),
-                        raw: dayData,
-                    },
+                    update: { day, close_of_bussiness_hour, ...dataToPush, total: cleanFlow(dayData.Total), raw: dayData },
                     create: {
                         xata_id,
                         day,
                         close_of_bussiness_hour,
-                        IBIT: cleanFlow(dayData.IBIT),
-                        FBTC: cleanFlow(dayData.FBTC),
-                        BITB: cleanFlow(dayData.BITB),
-                        ARKB: cleanFlow(dayData.ARKB),
-                        BTCO: cleanFlow(dayData.BTCO),
-                        EZBC: cleanFlow(dayData.EZBC),
-                        BRRR: cleanFlow(dayData.BRRR),
-                        HODL: cleanFlow(dayData.HODL),
-                        BTCW: cleanFlow(dayData.BTCW),
-                        GBTC: cleanFlow(dayData.GBTC),
-                        BTC: cleanFlow(dayData.BTC),
+                        ...dataToPush,
                         total: cleanFlow(dayData.Total),
                         raw: dayData,
                     },
                 })
+
+                // store change
+                return {
+                    xata_id,
+                    dayIsNew: !existingDayData,
+                    prevTotal: existingDayData?.total ?? null,
+                    newTotal: cleanFlow(dayData.Total),
+                    dataToPush: JSON.stringify(dataToPush),
+                }
             })
+
+            // store change
+            dbChanges.push(change)
+
+            // debug
+            // console.log({ xata_id, change })
         }
 
         // telegram
         // todo notify only if new flows total !== prev flows total
-        await step.run('4. Notify telegram', async () => {
-            const before = Date.now()
-            const bot = new Bot(token)
-            const chatId = channelId
-            const { Total: total, ...flows } = parsedData[parsedData.length - 1]
-            if (Number(total) === 0) return { ms: Date.now() - before }
-            const day = dayjs(parsedData[parsedData.length - 1].Date).format('ddd DD MMM YYYY')
-            const xata_id = `${day}`.toLowerCase().replaceAll(' ', '-')
-            const env = String(process.env.NODE_ENV).toLowerCase() === 'production' ? 'Prod' : 'Dev'
-            const message = [
-                `<u><b>Data updated</b></u>`,
-                `Time: ${timestamp()} UTC`,
-                `Trigger: ${event.data?.cron ?? 'invoked'} (${env})`,
-                `Action: upserted <b>${xata_id}</b>`,
-                total ? `<pre>${JSON.stringify(flows)}</pre>` : null,
-                `Flows: ${numeral(total).format('0,0')} m$`,
-            ]
-                .filter((line) => !!line)
-                .join('\n')
-            await bot.api.sendMessage(chatId, message, { parse_mode: 'HTML' })
-            const after = Date.now()
-            return { ms: after - before }
-        })
+        const before = Date.now()
+        const bot = new Bot(token)
+        const chatId = channelId
+        const env = String(process.env.NODE_ENV).toLowerCase() === 'production' ? 'Prod' : 'Dev'
+        for (let changeIndex = 0; changeIndex < dbChanges.length; changeIndex++) {
+            if (dbChanges[changeIndex].newTotal === dbChanges[changeIndex].prevTotal) continue // do not push twice the same notif
+            const { xata_id, dayIsNew, newTotal: total, dataToPush: flows } = dbChanges[changeIndex]
+            if (dayIsNew && Number(total) === 0) continue // do not notify 0 total unless day is new
+            await step.run(`4. Notify telegram for ${xata_id} new total`, async () => {
+                const message = [
+                    `<u><b>Data updated</b></u>`,
+                    // `Time: ${timestamp()} UTC`, // redundant w/ hour displayed at bottom of message
+                    `Trigger: ${event.data?.cron ?? 'invoked'} (${env})`,
+                    // `Action: upserted <b>${xata_id}</b>`,
+                    total ? `<pre>${JSON.stringify(flows)}</pre>` : null,
+                    `Flows: ${numeral(total).format('0,0')} m$`,
+                ]
+                    .filter((line) => !!line)
+                    .join('\n')
+                await bot.api.sendMessage(chatId, message, { parse_mode: 'HTML' })
+                const after = Date.now()
+                return { ms: after - before }
+            })
+        }
 
         // finally
         return {
