@@ -2,10 +2,10 @@ import dayjs from 'dayjs'
 import { inngest } from './client'
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
-// import { Bot } from 'grammy'
+import { Bot } from 'grammy'
 import { APP_METADATA } from '@/config/app.config'
 import { cleanFlow, enrichEthFarsideJson, getEthFarsideTableDataAsJson } from '@/utils'
-// import numeral from 'numeral'
+import numeral from 'numeral'
 import prisma from '@/server/prisma'
 
 // helpers
@@ -63,8 +63,7 @@ export const scrapFarsideEthAndStoreIt = inngest.createFunction(
             }
 
         // debug
-        // const latestDaysFlows = parsedData.slice(-5)
-        const latestDaysFlows = parsedData
+        const latestDaysFlows = parsedData.slice(-5)
         const dbChanges: { xata_id: string; dayIsNew: boolean; prevTotal: null | number; newTotal: null | number; dataToPush: string }[] = []
         for (let dayIndex = 0; dayIndex < latestDaysFlows.length; dayIndex++) {
             const dayData = latestDaysFlows[dayIndex]
@@ -123,30 +122,30 @@ export const scrapFarsideEthAndStoreIt = inngest.createFunction(
         console.log({ dbChanges })
 
         // telegram
-        // const before = Date.now()
-        // const bot = new Bot(token)
-        // const chatId = channelId
-        // const env = String(process.env.NODE_ENV).toLowerCase() === 'production' ? 'Prod' : 'Dev'
-        // for (let changeIndex = 0; changeIndex < dbChanges.length; changeIndex++) {
-        //     const { xata_id, dayIsNew, newTotal: total, dataToPush: flows } = dbChanges[changeIndex]
-        //     if (!dayIsNew) continue // do not notify prev days
-        //     if (dbChanges[changeIndex].dataToPush === dbChanges[changeIndex].dataToPush) continue // do not push twice the same notif
-        //     await step.run(`4. ETH | Notify telegram for ${xata_id} new total`, async () => {
-        //         const message = [
-        //             `<u><b>New flows update</b></u>`,
-        //             // `Time: ${timestamp()} UTC`, // redundant w/ hour displayed at bottom of message
-        //             `Trigger: ${event.data?.cron ?? 'invoked'} (${env})`,
-        //             // `Action: upserted <b>${xata_id}</b>`,
-        //             total ? `<pre>${flows}</pre>` : null,
-        //             `Flows: ${numeral(total).format('0,0')} m$`,
-        //         ]
-        //             .filter((line) => !!line)
-        //             .join('\n')
-        //         await bot.api.sendMessage(chatId, message, { parse_mode: 'HTML' })
-        //         const after = Date.now()
-        //         return { ms: after - before }
-        //     })
-        // }
+        const before = Date.now()
+        const bot = new Bot(token)
+        const chatId = channelId
+        const env = String(process.env.NODE_ENV).toLowerCase() === 'production' ? 'Prod' : 'Dev'
+        for (let changeIndex = 0; changeIndex < dbChanges.length; changeIndex++) {
+            const { xata_id, dayIsNew, newTotal: total, dataToPush: flows } = dbChanges[changeIndex]
+            if (!dayIsNew) continue // do not notify prev days
+            if (dbChanges[changeIndex].dataToPush === dbChanges[changeIndex].dataToPush) continue // do not push twice the same notif
+            await step.run(`4. ETH | Notify telegram for ${xata_id} new total`, async () => {
+                const message = [
+                    `<u><b>New flows update</b></u>`,
+                    // `Time: ${timestamp()} UTC`, // redundant w/ hour displayed at bottom of message
+                    `Trigger: ${event.data?.cron ?? 'invoked'} (${env})`,
+                    // `Action: upserted <b>${xata_id}</b>`,
+                    total ? `<pre>${flows}</pre>` : null,
+                    `Flows: ${numeral(total).format('0,0')} m$`,
+                ]
+                    .filter((line) => !!line)
+                    .join('\n')
+                await bot.api.sendMessage(chatId, message, { parse_mode: 'HTML' })
+                const after = Date.now()
+                return { ms: after - before }
+            })
+        }
 
         // finally
         return {
