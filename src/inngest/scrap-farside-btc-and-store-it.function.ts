@@ -70,7 +70,7 @@ export const scrapFarsideBtcAndStoreIt = inngest.createFunction(
          * xata
          */
 
-        const dbChanges: { xata_id: string; dayIsNew: boolean; prevTotal: null | number; newTotal: null | number; dataToPush: string }[] = []
+        const dbChanges: { xata_id: string; entryIsNew: boolean; prevTotal: null | number; newTotal: null | number; dataToPush: string }[] = []
         const latestDaysFlows = parsedData.slice(-5)
         for (let dayIndex = 0; dayIndex < latestDaysFlows.length; dayIndex++) {
             const dayData = latestDaysFlows[dayIndex]
@@ -116,7 +116,7 @@ export const scrapFarsideBtcAndStoreIt = inngest.createFunction(
                 // store change
                 return {
                     xata_id,
-                    dayIsNew: !existingDayData,
+                    entryIsNew: !existingDayData,
                     prevTotal: existingDayData?.total ?? null,
                     newTotal: cleanFlow(dayData.Total),
                     dataToPush: JSON.stringify(dataToPush),
@@ -135,10 +135,9 @@ export const scrapFarsideBtcAndStoreIt = inngest.createFunction(
         const chatId = channelId
         const env = String(process.env.NODE_ENV).toLowerCase() === 'production' ? 'Prod' : 'Dev'
         for (let changeIndex = 0; changeIndex < dbChanges.length; changeIndex++) {
-            const { xata_id, dayIsNew, newTotal: total, dataToPush: flows } = dbChanges[changeIndex]
-            if (!dayIsNew) continue // do not notify prev days
+            const { xata_id, entryIsNew, newTotal: total, dataToPush: flows } = dbChanges[changeIndex]
             const messageLines: (string | null)[] = [`<u><b>New flows update</b></u>`]
-            if (dbChanges[changeIndex].dataToPush !== dbChanges[changeIndex].dataToPush) {
+            if (entryIsNew || dbChanges[changeIndex].dataToPush !== dbChanges[changeIndex].dataToPush) {
                 messageLines.push(
                     `Trigger: ${event.data?.cron ?? 'invoked'} (${env})`,
                     // `Action: upserted <b>${xata_id}</b>`,
