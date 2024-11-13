@@ -31,7 +31,10 @@ export const scrapFarsideBtcAndStoreIt = inngest.createFunction(
         // debug
         const debug = false
 
-        // html
+        /**
+         * html
+         */
+
         const { htmlContent } = await step.run('1. [BTC] Scrap farside', async () => {
             const endpoint = `${root}/api/proxy?url=${encodeURIComponent(pageToScrap)}`
             if (debug) console.log({ endpoint })
@@ -41,7 +44,10 @@ export const scrapFarsideBtcAndStoreIt = inngest.createFunction(
             return { htmlContent }
         })
 
-        // json
+        /**
+         * json
+         */
+
         const { json } = await step.run('2. [BTC] Parse html content to json', async () => {
             const json = getFarsideTableDataAsJson(htmlContent)
             return { json }
@@ -60,7 +66,10 @@ export const scrapFarsideBtcAndStoreIt = inngest.createFunction(
                 body: `Done at ${timestamp()} UTC - empty data`,
             }
 
-        // debug
+        /**
+         * xata
+         */
+
         const dbChanges: { xata_id: string; dayIsNew: boolean; prevTotal: null | number; newTotal: null | number; dataToPush: string }[] = []
         const latestDaysFlows = parsedData.slice(-5)
         for (let dayIndex = 0; dayIndex < latestDaysFlows.length; dayIndex++) {
@@ -118,30 +127,28 @@ export const scrapFarsideBtcAndStoreIt = inngest.createFunction(
             dbChanges.push(change)
         }
 
-        // telegram
-        // todo notify only if new flows total !== prev flows total
-        const before = Date.now()
+        /**
+         * telegram
+         */
+
         const bot = new Bot(token)
         const chatId = channelId
         const env = String(process.env.NODE_ENV).toLowerCase() === 'production' ? 'Prod' : 'Dev'
         for (let changeIndex = 0; changeIndex < dbChanges.length; changeIndex++) {
             const { xata_id, dayIsNew, newTotal: total, dataToPush: flows } = dbChanges[changeIndex]
             if (!dayIsNew) continue // do not notify prev days
-            if (dbChanges[changeIndex].dataToPush === dbChanges[changeIndex].dataToPush) continue // do not push twice the same notif
-            await step.run(`4. [BTC] Notify telegram for ${xata_id} new total`, async () => {
-                const message = [
-                    `<u><b>New flows update</b></u>`,
-                    // `Time: ${timestamp()} UTC`, // redundant w/ hour displayed at bottom of message
+            const messageLines: (string | null)[] = [`<u><b>New flows update</b></u>`]
+            if (dbChanges[changeIndex].dataToPush !== dbChanges[changeIndex].dataToPush) {
+                messageLines.push(
                     `Trigger: ${event.data?.cron ?? 'invoked'} (${env})`,
                     // `Action: upserted <b>${xata_id}</b>`,
                     total ? `<pre>${flows}</pre>` : null,
                     `Flows: ${numeral(total).format('0,0')} m$`,
-                ]
-                    .filter((line) => !!line)
-                    .join('\n')
+                )
+            }
+            await step.run(`4. [BTC] Notify telegram for ${xata_id} new total`, async () => {
+                const message = messageLines.filter((line) => !!line).join('\n')
                 await bot.api.sendMessage(chatId, message, { parse_mode: 'HTML' })
-                const after = Date.now()
-                return { ms: after - before }
             })
         }
 
