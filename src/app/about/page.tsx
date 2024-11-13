@@ -14,7 +14,7 @@ export default function Page() {
                     <p>
                         Just better than <span className="underline underline-offset-2">the original</span>
                     </p>
-                    <IconWrapper icon={IconIds.IC_BASELINE_OPEN_IN_NEW} className="h-4 w-4" />
+                    <IconWrapper icon={IconIds.IC_BASELINE_OPEN_IN_NEW} className="hidden h-4 w-4 group-hover:flex" />
                 </LinkWrapper>
                 <div className="flex flex-wrap justify-center gap-2 px-5 text-sm text-inactive">
                     <p>Reach out on telegram</p>

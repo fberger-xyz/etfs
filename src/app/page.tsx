@@ -36,12 +36,12 @@ export default async function Page() {
                 <IconWrapper icon={IconIds.SCROLL} className="w-5" />
             </div>
             <ChartsWrapper etf={ETFs.BTC} flows={flows} tickers={tickers} />
-            <div className="mt-10 flex w-full flex-col items-center gap-8">
+            <div className="group mt-10 flex w-full flex-col items-center gap-8">
                 <LinkWrapper href={farsidePage(ETFs.BTC)} target="_blank" className="flex items-baseline gap-1">
                     <p>
                         Just better than <span className="underline underline-offset-2">the original</span>
                     </p>
-                    <IconWrapper icon={IconIds.IC_BASELINE_OPEN_IN_NEW} className="h-4 w-4" />
+                    <IconWrapper icon={IconIds.IC_BASELINE_OPEN_IN_NEW} className="hidden h-4 w-4 group-hover:flex" />
                 </LinkWrapper>
                 <div className="flex flex-wrap justify-center gap-4 px-5 text-sm text-inactive">
                     <p>Reach out on telegram</p>

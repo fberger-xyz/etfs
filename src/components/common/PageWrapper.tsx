@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation'
 import { Suspense } from 'react'
 import GoBack from './GoBack'
 import { cn } from '@/utils'
+import { AppPagePaths } from '@/enums'
 
 export default function PageWrapper({ children, className, ...props }: { children: React.ReactNode; className?: string }) {
     const pathname = usePathname()
@@ -27,7 +28,7 @@ export default function PageWrapper({ children, className, ...props }: { childre
                     className, // gap-2 md:gap-6
                 )}
             >
-                {pathname !== '/' && <GoBack />}
+                {pathname !== AppPagePaths.HOME && pathname !== AppPagePaths.ETH_ETFS && <GoBack />}
                 {children}
             </div>
         </Suspense>

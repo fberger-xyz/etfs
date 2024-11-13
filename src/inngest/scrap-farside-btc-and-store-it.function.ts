@@ -136,7 +136,7 @@ export const scrapFarsideBtcAndStoreIt = inngest.createFunction(
         const env = String(process.env.NODE_ENV).toLowerCase() === 'production' ? 'Prod' : 'Dev'
         for (let changeIndex = 0; changeIndex < dbChanges.length; changeIndex++) {
             const { xata_id, entryIsNew, newTotal: total, dataToPush: flows } = dbChanges[changeIndex]
-            const messageLines: (string | null)[] = [`<u><b>New flows update</b></u>`]
+            const messageLines: (string | null)[] = [`<u><b>BTC flows update</b></u>`]
             if (entryIsNew || dbChanges[changeIndex].dataToPush !== dbChanges[changeIndex].dataToPush) {
                 messageLines.push(
                     `Trigger: ${event.data?.cron ?? 'invoked'} (${env})`,
