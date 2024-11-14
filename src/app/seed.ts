@@ -4,6 +4,7 @@ import numeral from 'numeral'
 import { promises as fs } from 'fs'
 import utc from 'dayjs/plugin/utc'
 import prisma from '@/server/prisma'
+import { getDayFromDate, getXataIdFromDate } from '@/utils'
 
 dayjs.extend(utc)
 
@@ -55,8 +56,8 @@ async function main() {
     // loop over each day
     const cleanFlow = (rawFlow: string | number | undefined) => (isNaN(Number(rawFlow)) ? 0 : Number(rawFlow))
     for (let dayIndex = 0; dayIndex < parsedData.length; dayIndex++) {
-        const day = dayjs(parsedData[dayIndex].Date).format('ddd DD MMM YYYY')
-        const xata_id = String(day).toLowerCase().replaceAll(' ', '-')
+        const day = getDayFromDate(parsedData[dayIndex].Date)
+        const xata_id = getXataIdFromDate(parsedData[dayIndex].Date)
         // const close_of_bussiness_hour = dayjs.utc(parsedData[dayIndex].Date).hour(17).toDate()
         const close_of_bussiness_hour = dayjs(parsedData[dayIndex].Date).hour(17).toDate()
         console.log(`upsert ${xata_id}...`)

@@ -21,6 +21,9 @@ export const getConfig = (etf: ETFs, ticker: ETFsTickers) =>
           }
 
 export const farsidePage = (etf: ETFs) => `https://farside.co.uk/${etf === ETFs.BTC ? 'btc' : 'eth'}/`
+export const getDayFromDate = (date: string | number) => dayjs(date).format('ddd DD MMM YYYY')
+export const getXataIdFromDay = (day: string) => String(day).toLowerCase().trim().replaceAll(' ', '-')
+export const getXataIdFromDate = (date: string | number) => getXataIdFromDay(getDayFromDate(date))
 
 /**
  * BTC

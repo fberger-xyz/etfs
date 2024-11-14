@@ -4,7 +4,7 @@ import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
 import { Bot } from 'grammy'
 import { APP_METADATA } from '@/config/app.config'
-import { cleanFlow, enrichEthFarsideJson, getEthFarsideTableDataAsJson } from '@/utils'
+import { cleanFlow, enrichEthFarsideJson, getDayFromDate, getEthFarsideTableDataAsJson, getXataIdFromDate } from '@/utils'
 import numeral from 'numeral'
 import prisma from '@/server/prisma'
 
@@ -73,11 +73,11 @@ export const scrapFarsideEthAndStoreIt = inngest.createFunction(
          */
 
         const latestDaysFlows = parsedData.slice(-5)
-        const dbChanges: { xata_id: string; entryIsNew: boolean; prevTotal: null | number; newTotal: null | number; dataToPush: string }[] = []
+        const dbChanges: { xata_id: string; prevTotal: null | number; newTotal: null | number; dataToPush: string }[] = []
         for (let dayIndex = 0; dayIndex < latestDaysFlows.length; dayIndex++) {
             const dayData = latestDaysFlows[dayIndex]
-            const day = dayjs(dayData.Date).format('ddd DD MMM YYYY')
-            const xata_id = String(day).toLowerCase().replaceAll(' ', '-')
+            const day = getDayFromDate(dayData.Date)
+            const xata_id = getXataIdFromDate(dayData.Date)
             const close_of_bussiness_hour = dayjs(dayData.Date).hour(17).toDate()
             if (debug) console.log({ dayData })
 
@@ -116,7 +116,6 @@ export const scrapFarsideEthAndStoreIt = inngest.createFunction(
                 // store change
                 return {
                     xata_id,
-                    entryIsNew: !existingDayData,
                     prevTotal: existingDayData?.total ?? null,
                     newTotal: cleanFlow(dayData.Total),
                     dataToPush: JSON.stringify(dataToPush),
@@ -124,7 +123,7 @@ export const scrapFarsideEthAndStoreIt = inngest.createFunction(
             })
 
             // store change
-            dbChanges.push(change)
+            if (!dbChanges.some((otherChange) => otherChange.xata_id === change.xata_id)) dbChanges.push(change)
         }
 
         /**
@@ -136,12 +135,13 @@ export const scrapFarsideEthAndStoreIt = inngest.createFunction(
         let notificationsCount = 0
         const env = String(process.env.NODE_ENV).toLowerCase() === 'production' ? 'Prod' : 'Dev'
         for (let changeIndex = 0; changeIndex < dbChanges.length; changeIndex++) {
-            const { xata_id, entryIsNew, newTotal: total, dataToPush: flows } = dbChanges[changeIndex]
-            if (entryIsNew || dbChanges[changeIndex].newTotal !== dbChanges[changeIndex].prevTotal) {
+            const { xata_id, newTotal: total, dataToPush: flows } = dbChanges[changeIndex]
+            if (dbChanges[changeIndex].newTotal !== dbChanges[changeIndex].prevTotal) {
                 notificationsCount += 1
                 await step.run(`4. [ETH] Notify telegram for ${xata_id} new total`, async () => {
                     const message = [
-                        `<u><b>Ξ ETFs flows update</b></u>`,
+                        `<b>Ξ ETFs flows update</b>`,
+                        flows,
                         `Trigger: ${event.data?.cron ?? 'invoked'} (${env})`,
                         total ? `<pre>${flows}</pre>` : null,
                         `Flows: ${numeral(total).format('0,0')} m$`,
