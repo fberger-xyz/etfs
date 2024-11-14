@@ -14,7 +14,7 @@
     "lint:fix": "pnpm eslint:fix && pnpm prettier:fix",
     "prisma:sync:pull:local": "prisma db pull && prisma generate",
     "prisma:sync:push:remote": "prisma db push && prisma generate",
-    "seed": "ts-node --compiler-options '{\"module\": \"CommonJS\"}' ./src/app/seed.ts",
+    "seed": "ts-node --compiler-options '{\"module\": \"CommonJS\"}' ./src/app/server/seed.ts",
     "inngest": "pnpm dlx inngest-cli@latest dev"
   },
   "dependencies": {

@@ -133,23 +133,30 @@ export const scrapFarsideBtcAndStoreIt = inngest.createFunction(
 
         const bot = new Bot(token)
         const chatId = channelId
+        let notificationsCount = 0
         const env = String(process.env.NODE_ENV).toLowerCase() === 'production' ? 'Prod' : 'Dev'
         for (let changeIndex = 0; changeIndex < dbChanges.length; changeIndex++) {
             const { xata_id, entryIsNew, newTotal: total, dataToPush: flows } = dbChanges[changeIndex]
-            const messageLines: (string | null)[] = [`<u><b>BTC flows update</b></u>`]
-            if (entryIsNew || dbChanges[changeIndex].dataToPush !== dbChanges[changeIndex].dataToPush) {
-                messageLines.push(
-                    `Trigger: ${event.data?.cron ?? 'invoked'} (${env})`,
-                    // `Action: upserted <b>${xata_id}</b>`,
-                    total ? `<pre>${flows}</pre>` : null,
-                    `Flows: ${numeral(total).format('0,0')} m$`,
-                )
+            if (entryIsNew || dbChanges[changeIndex].newTotal !== dbChanges[changeIndex].prevTotal) {
+                notificationsCount += 1
+                await step.run(`4. [BTC] Notify telegram for ${xata_id} new total`, async () => {
+                    const message = [
+                        `<u><b>₿ ETFs flows update</b></u>`,
+                        `Trigger: ${event.data?.cron ?? 'invoked'} (${env})`,
+                        total ? `<pre>${flows}</pre>` : null,
+                        `Flows: ${numeral(total).format('0,0')} m$`,
+                    ]
+                        .filter((line) => !!line)
+                        .join('\n')
+                    await bot.api.sendMessage(chatId, message, { parse_mode: 'HTML' })
+                })
             }
-            await step.run(`4. [BTC] Notify telegram for ${xata_id} new total`, async () => {
-                const message = messageLines.filter((line) => !!line).join('\n')
-                await bot.api.sendMessage(chatId, message, { parse_mode: 'HTML' })
-            })
         }
+
+        if (!notificationsCount)
+            await step.run(`5. [BTC] Notify telegram for cron job execution`, async () => {
+                await bot.api.sendMessage(chatId, `<u><b>₿ flows update</b></u>`, { parse_mode: 'HTML' })
+            })
 
         // finally
         return {
