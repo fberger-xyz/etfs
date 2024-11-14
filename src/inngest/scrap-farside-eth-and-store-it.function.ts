@@ -141,7 +141,6 @@ export const scrapFarsideEthAndStoreIt = inngest.createFunction(
                 await step.run(`4. [ETH] Notify telegram for ${xata_id} new total`, async () => {
                     const message = [
                         `<b>Ξ ETFs flows update</b>`,
-                        flows,
                         `Trigger: ${event.data?.cron ?? 'invoked'} (${env})`,
                         total ? `<pre>${flows}</pre>` : null,
                         `Flows: ${numeral(total).format('0,0')} m$`,
@@ -155,7 +154,7 @@ export const scrapFarsideEthAndStoreIt = inngest.createFunction(
 
         if (!notificationsCount)
             await step.run(`5. [ETH] Notify telegram for cron job execution`, async () => {
-                await bot.api.sendMessage(chatId, `<u><b>Ξ flows update</b></u>`, { parse_mode: 'HTML' })
+                await bot.api.sendMessage(chatId, `<b>Ξ flows scrapped - no updated</b>`, { parse_mode: 'HTML' })
             })
 
         // finally

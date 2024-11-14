@@ -154,7 +154,7 @@ export const scrapFarsideBtcAndStoreIt = inngest.createFunction(
 
         if (!notificationsCount)
             await step.run(`5. [BTC] Notify telegram for cron job execution`, async () => {
-                await bot.api.sendMessage(chatId, `<u><b>₿ flows update</b></u>`, { parse_mode: 'HTML' })
+                await bot.api.sendMessage(chatId, `<b>₿ flows scrapped - no update</b>`, { parse_mode: 'HTML' })
             })
 
         // finally
