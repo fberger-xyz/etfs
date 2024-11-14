@@ -4,7 +4,7 @@ import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
 import { Bot } from 'grammy'
 import { APP_METADATA } from '@/config/app.config'
-import { cleanFlow, enrichEthFarsideJson, getDayFromDate, getEthFarsideTableDataAsJson, getXataIdFromDate } from '@/utils'
+import { cleanFlow, enrichEthFarsideJson, getEthFarsideTableDataAsJson, prepareDate } from '@/utils'
 import numeral from 'numeral'
 import prisma from '@/server/prisma'
 
@@ -76,9 +76,7 @@ export const scrapFarsideEthAndStoreIt = inngest.createFunction(
         const dbChanges: { xata_id: string; prevTotal: null | number; newTotal: null | number; dataToPush: string }[] = []
         for (let dayIndex = 0; dayIndex < latestDaysFlows.length; dayIndex++) {
             const dayData = latestDaysFlows[dayIndex]
-            const day = getDayFromDate(dayData.Date)
-            const xata_id = getXataIdFromDate(dayData.Date)
-            const close_of_bussiness_hour = dayjs(dayData.Date).hour(17).toDate()
+            const { day, xata_id, close_of_bussiness_hour, isTodayOrYesterday } = prepareDate(dayData.Date)
             if (debug) console.log({ dayData })
 
             // xata
@@ -123,7 +121,7 @@ export const scrapFarsideEthAndStoreIt = inngest.createFunction(
             })
 
             // store change
-            if (!dbChanges.some((otherChange) => otherChange.xata_id === change.xata_id)) dbChanges.push(change)
+            if (isTodayOrYesterday && !dbChanges.some((otherChange) => otherChange.xata_id === change.xata_id)) dbChanges.push(change)
         }
 
         /**
@@ -140,7 +138,7 @@ export const scrapFarsideEthAndStoreIt = inngest.createFunction(
                 notificationsCount += 1
                 await step.run(`4. [ETH] Notify telegram for ${xata_id} new total`, async () => {
                     const message = [
-                        `<b>Ξ ETFs flows update</b>`,
+                        `<b>Ξ ETFs flows update for ${xata_id}</b>`,
                         `Trigger: ${event.data?.cron ?? 'invoked'} (${env})`,
                         total ? `<pre>${flows}</pre>` : null,
                         `Flows: ${numeral(total).format('0,0')} m$`,
@@ -154,7 +152,7 @@ export const scrapFarsideEthAndStoreIt = inngest.createFunction(
 
         if (!notificationsCount)
             await step.run(`5. [ETH] Notify telegram for cron job execution`, async () => {
-                await bot.api.sendMessage(chatId, `<b>Ξ flows scrapped - no updated</b>`, { parse_mode: 'HTML' })
+                await bot.api.sendMessage(chatId, `<b>Ξ ETFs flows scrapped - no update</b>`, { parse_mode: 'HTML' })
             })
 
         // finally

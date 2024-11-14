@@ -4,7 +4,7 @@ import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
 import { Bot } from 'grammy'
 import { APP_METADATA } from '@/config/app.config'
-import { cleanFlow, enrichFarsideJson, getDayFromDate, getFarsideTableDataAsJson, getXataIdFromDate } from '@/utils'
+import { cleanFlow, enrichFarsideJson, getFarsideTableDataAsJson, prepareDate } from '@/utils'
 import numeral from 'numeral'
 import prisma from '@/server/prisma'
 
@@ -74,9 +74,8 @@ export const scrapFarsideBtcAndStoreIt = inngest.createFunction(
         const latestDaysFlows = parsedData.slice(-5)
         for (let dayIndex = 0; dayIndex < latestDaysFlows.length; dayIndex++) {
             const dayData = latestDaysFlows[dayIndex]
-            const day = getDayFromDate(dayData.Date)
-            const xata_id = getXataIdFromDate(dayData.Date)
-            const close_of_bussiness_hour = dayjs(dayData.Date).hour(17).toDate()
+            const { day, xata_id, close_of_bussiness_hour, isTodayOrYesterday } = prepareDate(dayData.Date)
+            dayjs(dayData.Date).hour(17).toDate()
             if (debug) console.log({ dayData })
 
             // xata
@@ -123,7 +122,7 @@ export const scrapFarsideBtcAndStoreIt = inngest.createFunction(
             })
 
             // store change
-            if (!dbChanges.some((otherChange) => otherChange.xata_id === change.xata_id)) dbChanges.push(change)
+            if (isTodayOrYesterday && !dbChanges.some((otherChange) => otherChange.xata_id === change.xata_id)) dbChanges.push(change)
         }
 
         /**
@@ -140,7 +139,7 @@ export const scrapFarsideBtcAndStoreIt = inngest.createFunction(
                 notificationsCount += 1
                 await step.run(`4. [BTC] Notify telegram for ${xata_id} new total`, async () => {
                     const message = [
-                        `<b>₿ ETFs flows update</b>`,
+                        `<b>₿ ETFs flows update for ${xata_id}</b>`,
                         `Trigger: ${event.data?.cron ?? 'invoked'} (${env})`,
                         total ? `<pre>${flows}</pre>` : null,
                         `Flows: ${numeral(total).format('0,0')} m$`,
@@ -154,7 +153,7 @@ export const scrapFarsideBtcAndStoreIt = inngest.createFunction(
 
         if (!notificationsCount)
             await step.run(`5. [BTC] Notify telegram for cron job execution`, async () => {
-                await bot.api.sendMessage(chatId, `<b>₿ flows scrapped - no update</b>`, { parse_mode: 'HTML' })
+                await bot.api.sendMessage(chatId, `<b>₿ ETFs flows scrapped - no update</b>`, { parse_mode: 'HTML' })
             })
 
         // finally

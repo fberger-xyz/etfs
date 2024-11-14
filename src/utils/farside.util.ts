@@ -24,6 +24,18 @@ export const farsidePage = (etf: ETFs) => `https://farside.co.uk/${etf === ETFs.
 export const getDayFromDate = (date: string | number) => dayjs(date).format('ddd DD MMM YYYY')
 export const getXataIdFromDay = (day: string) => String(day).toLowerCase().trim().replaceAll(' ', '-')
 export const getXataIdFromDate = (date: string | number) => getXataIdFromDay(getDayFromDate(date))
+export const isTodayOrYesterday = (date: string | number | dayjs.Dayjs): boolean => {
+    if (dayjs(date).isSame(dayjs(), 'day')) return true
+    if (dayjs(date).isSame(dayjs().subtract(1, 'day'), 'day')) return true
+    return false
+}
+export const prepareDate = (date: string | number) => ({
+    dayjs: dayjs(date),
+    day: getDayFromDate(date),
+    xata_id: getXataIdFromDate(date),
+    close_of_bussiness_hour: dayjs(date).hour(17).toDate(),
+    isTodayOrYesterday: isTodayOrYesterday(date),
+})
 
 /**
  * BTC
