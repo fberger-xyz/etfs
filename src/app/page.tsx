@@ -11,7 +11,12 @@ import { APP_METADATA } from '@/config/app.config'
 import prisma from '@/server/prisma'
 import { ETFsTickers, FarsideFlows } from '@/interfaces'
 import { farsidePage } from '@/utils'
+import { Metadata } from 'next'
 dayjs.extend(weekOfYear)
+
+export const metadata: Metadata = {
+    title: '₿ ETFs | fberger',
+}
 
 // https://nextjs.org/docs/app/api-reference/functions/fetch
 // https://medium.com/@kassiomatheus23/data-not-updating-on-refresh-creating-cache-and-fetching-next-js-14-and-prisma-60d98aecca96

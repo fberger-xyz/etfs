@@ -16,7 +16,7 @@ import DefaultFallback from '@/components/layouts/DefaultFallback'
 const font = Ubuntu_Mono({ weight: ['400', '700'], subsets: ['latin'] })
 
 export const metadata: Metadata = {
-    title: APP_METADATA.SITE_NAME,
+    // title: APP_METADATA.SITE_NAME,
     description: APP_METADATA.SITE_DESCRIPTION,
     applicationName: APP_METADATA.SITE_NAME,
     metadataBase: new URL(APP_METADATA.SITE_URL),

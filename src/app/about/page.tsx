@@ -5,6 +5,11 @@ import PageWrapper from '@/components/common/PageWrapper'
 import { APP_METADATA } from '@/config/app.config'
 import { ETFs, IconIds } from '@/enums'
 import { farsidePage } from '@/utils'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+    title: 'About',
+}
 
 export default function Page() {
     return (
