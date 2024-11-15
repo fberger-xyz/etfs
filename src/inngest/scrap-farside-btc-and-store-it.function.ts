@@ -144,7 +144,7 @@ export const scrapFarsideBtcAndStoreIt = inngest.createFunction(
                         `<b>${day}</b>`,
                         event.data?.cron ? null : `Trigger: invoked (${env})`,
                         newTotal ? `<pre>${flows}</pre>` : null,
-                        `Flows: ${numeral(newTotal).format('0,0.00')} m$`,
+                        `Flows: ${numeral(newTotal).format('0,0.00')} m$ (prev: ${numeral(prevTotal).format('0,0.00')})`,
                     ]
                         .filter((line) => !!line)
                         .join('\n')
