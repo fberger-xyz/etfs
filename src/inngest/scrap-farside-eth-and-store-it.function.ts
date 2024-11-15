@@ -73,7 +73,7 @@ export const scrapFarsideEthAndStoreIt = inngest.createFunction(
          */
 
         const latestDaysFlows = parsedData.slice(-5)
-        const dbChanges: { xata_id: string; prevTotal: null | number; newTotal: null | number; dataToPush: string }[] = []
+        const dbChanges: { day: string; xata_id: string; prevTotal: null | number; newTotal: null | number; dataToPush: string }[] = []
         for (let dayIndex = 0; dayIndex < latestDaysFlows.length; dayIndex++) {
             const dayData = latestDaysFlows[dayIndex]
             const { day, xata_id, close_of_bussiness_hour, isTodayOrYesterday } = prepareDate(dayData.Date)
@@ -113,6 +113,7 @@ export const scrapFarsideEthAndStoreIt = inngest.createFunction(
 
                 // store change
                 return {
+                    day,
                     xata_id,
                     prevTotal: existingDayData?.total ?? null,
                     newTotal: cleanFlow(dayData.Total),
@@ -133,15 +134,16 @@ export const scrapFarsideEthAndStoreIt = inngest.createFunction(
         let notificationsCount = 0
         const env = String(process.env.NODE_ENV).toLowerCase() === 'production' ? 'Prod' : 'Dev'
         for (let changeIndex = 0; changeIndex < dbChanges.length; changeIndex++) {
-            const { xata_id, newTotal: total, dataToPush: flows } = dbChanges[changeIndex]
-            if (dbChanges[changeIndex].newTotal !== dbChanges[changeIndex].prevTotal) {
+            const { day, xata_id, prevTotal, newTotal, dataToPush: flows } = dbChanges[changeIndex]
+            if (prevTotal !== newTotal) {
                 notificationsCount += 1
                 await step.run(`4. [ETH] Notify telegram for ${xata_id} new total`, async () => {
                     const message = [
-                        `<b>Ξ ETFs flows update for ${xata_id}</b>`,
-                        `Trigger: ${event.data?.cron ?? 'invoked'} (${env})`,
-                        total ? `<pre>${flows}</pre>` : null,
-                        `Flows: ${numeral(total).format('0,0')} m$`,
+                        `Ξ ETFs flows update`,
+                        `<b>${day}</b>`,
+                        event.data?.cron ? null : `Trigger: invoked (${env})`,
+                        newTotal ? `<pre>${flows}</pre>` : null,
+                        `Flows: ${numeral(newTotal).format('0,0.00')} m$ (prev: ${numeral(prevTotal).format('0,0.00')})`,
                     ]
                         .filter((line) => !!line)
                         .join('\n')
