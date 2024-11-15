@@ -136,7 +136,8 @@ export const scrapFarsideBtcAndStoreIt = inngest.createFunction(
         const env = String(process.env.NODE_ENV).toLowerCase() === 'production' ? 'Prod' : 'Dev'
         for (let changeIndex = 0; changeIndex < dbChanges.length; changeIndex++) {
             const { day, xata_id, prevTotal, newTotal, dataToPush: flows } = dbChanges[changeIndex]
-            if (prevTotal !== newTotal) {
+            const differentTotal = numeral(prevTotal).format('0,0').localeCompare(numeral(newTotal).format('0,0')) === 0
+            if (differentTotal) {
                 notificationsCount += 1
                 await step.run(`4. [BTC] Notify telegram for ${xata_id} new total`, async () => {
                     const message = [
@@ -144,7 +145,7 @@ export const scrapFarsideBtcAndStoreIt = inngest.createFunction(
                         `<b>${day}</b>`,
                         event.data?.cron ? null : `Trigger: invoked (${env})`,
                         newTotal ? `<pre>${flows}</pre>` : null,
-                        `Flows: ${numeral(newTotal).format('0,0.00')} m$ (prev: ${numeral(prevTotal).format('0,0.00')})`,
+                        `Flows: ${numeral(newTotal).format('0,0')} m$ (prev: ${numeral(prevTotal).format('0,0')} m$)`,
                     ]
                         .filter((line) => !!line)
                         .join('\n')
