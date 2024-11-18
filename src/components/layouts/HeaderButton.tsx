@@ -5,8 +5,9 @@ import { usePathname } from 'next/navigation'
 import { cn } from '@/utils'
 import LinkWrapper from '../common/LinkWrapper'
 import { useAppStore } from '@/stores/app.store'
-import { AppPagePaths } from '@/enums'
+import { AppPagePaths, ETFs, IconIds } from '@/enums'
 import { InterfaceAppLink } from '@/interfaces'
+import IconWrapper from '../common/IconWrapper'
 
 export default function HeaderButton(props: { pagePath: AppPagePaths; disabled?: boolean }) {
     const { links } = useAppStore()
@@ -29,11 +30,17 @@ export default function HeaderButton(props: { pagePath: AppPagePaths; disabled?:
     return (
         <LinkWrapper
             href={props.disabled ? pathname : props.pagePath}
-            className={cn('z-50 rounded-md px-2 min-w-8 text-center sm:px-2.5 py-0.5 hover:bg-light-hover bg-opacity-50', {
+            className={cn('z-50 rounded-md px-2 min-w-8 text-center sm:px-2.5 py-0.5 hover:bg-light-hover bg-opacity-50 flex items-center', {
                 'bg-light-hover': isCurrentPath(),
             })}
         >
-            <p className={cn({ 'text-primary': isCurrentPath(), 'text-inactive': !isCurrentPath() })}>{link?.name ?? 'Not found'}</p>
+            {link.name === ETFs.BTC ? (
+                <IconWrapper icon={IconIds.CRYPTO_BTC} className={cn('size-5', { grayscale: !isCurrentPath() })} />
+            ) : link.name === ETFs.ETH ? (
+                <IconWrapper icon={IconIds.CRYPTO_ETH} className={cn('size-5', { grayscale: !isCurrentPath() })} />
+            ) : (
+                <p className={cn({ 'text-primary': isCurrentPath(), 'text-inactive': !isCurrentPath() })}>{link?.name ?? 'Not found'}</p>
+            )}
         </LinkWrapper>
     )
 }

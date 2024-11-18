@@ -28,6 +28,9 @@ const config: Config = {
                 gbtc: 'var(--color-gbtc)',
                 btc: 'var(--color-btc)',
             },
+            fontSize: {
+                '2xs': '0.65rem',
+            },
         },
     },
     plugins: [],

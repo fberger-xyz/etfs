@@ -38,4 +38,6 @@ export enum IconIds {
     RANK = 'carbon:trophy',
     SCROLL = 'hugeicons:mouse-scroll-01',
     LOADING = 'line-md:loading-twotone-loop',
+    CRYPTO_BTC = 'cryptocurrency-color:btc',
+    CRYPTO_ETH = 'cryptocurrency-color:eth',
 }

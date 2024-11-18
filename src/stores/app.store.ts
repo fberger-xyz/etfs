@@ -22,13 +22,17 @@ export const useAppStore = create<{
     initialized: false,
     links: [
         {
-            name: '₿',
+            // name: '₿',
+            // name: ETFs.BTC,
+            name: 'BTC',
             path: AppPagePaths.HOME,
             enabled: true,
             sublinks: [],
         },
         {
-            name: 'Ξ',
+            // name: 'Ξ',
+            // name: ETFs.ETH,
+            name: 'ETH',
             path: AppPagePaths.ETH_ETFS,
             enabled: true,
             sublinks: [],

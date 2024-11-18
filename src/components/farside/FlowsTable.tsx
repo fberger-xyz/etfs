@@ -19,7 +19,7 @@ function TableRow(props: { activateHover?: boolean; date: ReactNode; tickers: Re
             <div className="flex w-[95px] justify-start overflow-hidden md:w-32">{props.date}</div>
             {...props.tickers}
             <div className="flex w-20 justify-end overflow-hidden md:w-24">{props.total}</div>
-            <div className="flex w-12 justify-end overflow-hidden md:w-24">{props.rank}</div>
+            <div className="flex w-12 justify-end overflow-hidden pr-0.5 md:w-24">{props.rank}</div>
         </div>
     )
 }
@@ -90,10 +90,12 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
 
     // html
     return (
-        <div className="flex w-full flex-col text-xs lg:text-sm">
+        <div className="flex w-full flex-col text-2xs lg:text-sm">
             {/* context */}
-            <div className="mb-1 flex w-full justify-center text-base text-primary md:mb-2">
-                <p>{etf} ETFs Flows $m USD</p>
+            <div className="mb-1 flex w-full justify-center gap-1.5 text-lg md:mb-2">
+                <IconWrapper icon={etf === ETFs.BTC ? IconIds.CRYPTO_BTC : IconIds.CRYPTO_ETH} className="size-6" />
+                <p>ETFs Flows</p>
+                <p className="text-inactive">$m USD</p>
             </div>
 
             {/* headers */}
@@ -110,7 +112,7 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
                             className="group flex h-9 w-12 -rotate-45 items-center justify-center overflow-hidden hover:rotate-0 sm:rotate-0 md:w-16"
                             target="_blank"
                         >
-                            <TextWithTickerColor className="p-0.5 group-hover:hidden" etf={etf} ticker={ticker}>
+                            <TextWithTickerColor className="group-hover:hidden" etf={etf} ticker={ticker}>
                                 {ticker}
                             </TextWithTickerColor>
                             <IconWrapper icon={IconIds.IC_BASELINE_OPEN_IN_NEW} className="hidden h-4 w-4 text-primary group-hover:flex" />

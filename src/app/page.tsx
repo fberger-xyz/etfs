@@ -36,7 +36,7 @@ export default async function Page() {
     return (
         <PageWrapper className="gap-5">
             <FlowsTable etf={ETFs.BTC} data={flows} tickers={tickers} />
-            <div className="flex w-full animate-pulse items-center justify-center gap-1 text-sm">
+            <div className="flex w-full animate-pulse items-center justify-center gap-1 text-sm text-primary">
                 <p>Charts</p>
                 <IconWrapper icon={IconIds.SCROLL} className="w-5" />
             </div>

@@ -4,7 +4,7 @@ import * as echarts from 'echarts'
 import { ErrorBoundary } from 'react-error-boundary'
 import { Suspense, useEffect, useState } from 'react'
 import dayjs from 'dayjs'
-import { AppThemes, ETFs, BtcETFsTickers } from '@/enums'
+import { AppThemes, ETFs, BtcETFsTickers, IconIds } from '@/enums'
 import { useTheme } from 'next-themes'
 import { cn, farsidePage, getConfig, roundNToXDecimals, shortenStr } from '@/utils'
 import EchartWrapper from './EchartWrapper'
@@ -13,6 +13,7 @@ import { colors } from '@/config/charts.config'
 import LinkWrapper from '../common/LinkWrapper'
 import { ETFsTickers, FarsideFlows, FarsideRawData } from '@/interfaces'
 import CustomFallback from '../common/CustomFallback'
+import IconWrapper from '../common/IconWrapper'
 
 interface GetOptionsParams {
     timestamps: string[]
@@ -362,8 +363,14 @@ export default function FarsideAreaChart(props: { className?: string; etf: ETFs;
     return (
         <Suspense fallback={<CustomFallback loadingText="Area chart loading..." />}>
             <div className="mt-10 flex w-full flex-col text-xs">
-                <div className="mb-1 flex w-full justify-center text-base text-primary md:mb-2">
+                {/* <div className="mb-1 flex w-full justify-center text-base text-primary md:mb-2">
                     <p>Cumulated {props.etf} ETFs Flows $m USD</p>
+                </div> */}
+                <div className="mb-1 flex w-full justify-center gap-1.5 text-lg md:mb-2">
+                    <p>Cumulated</p>
+                    <IconWrapper icon={props.etf === ETFs.BTC ? IconIds.CRYPTO_BTC : IconIds.CRYPTO_ETH} className="size-6" />
+                    <p>ETFs Flows</p>
+                    <p className="text-inactive">$m USD</p>
                 </div>
                 <ErrorBoundary FallbackComponent={Fallback}>
                     <div className={cn('h-[520px] w-full border border-inactive py-1 z-0', props.className)}>
