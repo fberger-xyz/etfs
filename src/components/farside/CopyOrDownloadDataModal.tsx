@@ -31,9 +31,9 @@ export default function CopyOrDownloadDataModal() {
                     </p>
                     <button
                         onClick={() => router.back()}
-                        className="rounded-sm text-inactive hover:bg-very-light-hover hover:text-primary focus:outline-none"
+                        className="rounded-sm text-default hover:bg-very-light-hover hover:text-primary focus:outline-none"
                     >
-                        <IconWrapper icon={IconIds.CARBON_CLOSE} className="size-6" />
+                        <IconWrapper icon={IconIds.CARBON_CLOSE} className="size-7" />
                     </button>
                 </div>
                 <div className="w-full border-t border-very-light-hover" />
