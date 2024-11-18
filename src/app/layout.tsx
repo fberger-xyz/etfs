@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Ubuntu_Mono } from 'next/font/google'
+import { Lato } from 'next/font/google'
 import './globals.css'
 import { APP_METADATA } from '../config/app.config'
 import { cn } from '../utils'
@@ -13,7 +13,7 @@ import { Toaster } from 'react-hot-toast'
 import DefaultFallback from '@/components/layouts/DefaultFallback'
 
 // https://fonts.google.com/
-const font = Ubuntu_Mono({ weight: ['400', '700'], subsets: ['latin'] })
+const font = Lato({ weight: ['400', '700'], subsets: ['latin'] })
 
 export const metadata: Metadata = {
     // title: APP_METADATA.SITE_NAME,
