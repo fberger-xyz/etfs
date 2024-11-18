@@ -90,7 +90,7 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
 
     // html
     return (
-        <div className="flex w-full flex-col text-2xs lg:text-sm">
+        <div className="flex w-full flex-col text-2xs md:text-sm lg:text-base">
             {/* context */}
             <div className="mb-1 flex w-full justify-center gap-1.5 text-lg md:mb-2">
                 <IconWrapper icon={etf === ETFs.BTC ? IconIds.CRYPTO_BTC : IconIds.CRYPTO_ETH} className="size-6" />
