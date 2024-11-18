@@ -132,13 +132,13 @@ export const scrapFarsideBtcAndStoreIt = inngest.createFunction(
 
         const bot = new Bot(token)
         const chatId = channelId
-        let notificationsCount = 0
+        // let notificationsCount = 0
         const env = String(process.env.NODE_ENV).toLowerCase() === 'production' ? 'Prod' : 'Dev'
         for (let changeIndex = 0; changeIndex < dbChanges.length; changeIndex++) {
             const { day, xata_id, prevTotal, newTotal, dataToPush: flows } = dbChanges[changeIndex]
             const differentTotal = numeral(prevTotal).format('0,0').localeCompare(numeral(newTotal).format('0,0')) !== 0
             if (differentTotal) {
-                notificationsCount += 1
+                // notificationsCount += 1
                 await step.run(`4. [BTC] Notify telegram for ${xata_id} new total`, async () => {
                     const message = [
                         `₿ ETFs flows update`,
@@ -154,10 +154,10 @@ export const scrapFarsideBtcAndStoreIt = inngest.createFunction(
             }
         }
 
-        if (!notificationsCount)
-            await step.run(`5. [BTC] Notify telegram for cron job execution`, async () => {
-                await bot.api.sendMessage(chatId, `₿ ETFs flows scrapped - no update`, { parse_mode: 'HTML' })
-            })
+        // if (!notificationsCount)
+        //     await step.run(`5. [BTC] Notify telegram for cron job execution`, async () => {
+        //         await bot.api.sendMessage(chatId, `₿ ETFs flows scrapped - no update`, { parse_mode: 'HTML' })
+        //     })
 
         // finally
         return {
