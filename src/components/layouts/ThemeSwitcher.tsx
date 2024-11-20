@@ -13,7 +13,7 @@ export default function ThemeSwitcher() {
     useEffect(() => setMounted(true), [])
     if (mounted) {
         return (
-            <div className="z-50 flex items-center gap-0.5 rounded-md sm:gap-1">
+            <div className="z-50 flex items-center gap-0.5 rounded-md sm:gap-1 lg:gap-2">
                 {Object.entries(APP_THEMES)
                     .sort((curr, next) => curr[1].index - next[1].index)
                     .map(([theme, config]) => (
@@ -32,7 +32,7 @@ export default function ThemeSwitcher() {
         )
     } else
         return (
-            <div className="z-50 flex items-center gap-0.5 rounded-md sm:gap-1">
+            <div className="z-50 flex items-center rounded-md sm:gap-1 lg:gap-2">
                 {Object.entries(APP_THEMES)
                     .sort((curr, next) => curr[1].index - next[1].index)
                     .map(([theme, config]) => (
