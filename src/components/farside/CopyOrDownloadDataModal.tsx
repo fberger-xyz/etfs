@@ -9,16 +9,21 @@ import { Backdrop } from '../common/Backdrop'
 import Button from '../common/Button'
 import { APP_METADATA } from '@/config/app.config'
 import LinkWithIcon from '../common/LinkWithIcon'
+import { useRef } from 'react'
+import { useClickOutside } from '@/hooks/useClickOutside'
 
 export default function CopyOrDownloadDataModal() {
+    const modalRef = useRef<HTMLDivElement>(null)
     const router = useRouter()
     const searchParams = useSearchParams()
     const showModal = searchParams.get('copy-or-download') === 'true'
     useKeyboardShortcut({ key: 'Escape', onKeyPressed: () => router.back() })
+    useClickOutside(modalRef, () => router.back())
     if (!showModal) return null
     return (
         <Backdrop>
             <motion.div
+                ref={modalRef}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ ease: 'easeInOut', duration: 0.25 }}
