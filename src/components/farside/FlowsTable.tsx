@@ -3,11 +3,10 @@
 import { ReactNode, useState } from 'react'
 import { ETFs, IconIds } from '@/enums'
 import dayjs from 'dayjs'
-import numeral from 'numeral'
 import weekOfYear from 'dayjs/plugin/weekOfYear'
 import IconWrapper from '@/components/common/IconWrapper'
 import LinkWrapper from '@/components/common/LinkWrapper'
-import { cleanFlow, cn, farsidePage, getConfig, monthName } from '@/utils'
+import { cleanFlow, cn, farsidePage, formatFlows, getConfig, monthName } from '@/utils'
 import TextWithTickerColor from '@/components/farside/ColorWrapper'
 import { Flows } from '@prisma/client'
 import Link from 'next/link'
@@ -129,17 +128,17 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
                     <p className="text-base text-inactive">in millions of $</p>
                 </div>
                 <div className="flex justify-end gap-2 text-2xs italic">
-                    <button className="group text-inactive">
+                    <button className="group w-8 text-inactive">
                         <p className="line-through group-hover:hidden">Month</p>
-                        <p className="hidden group-hover:flex">To code</p>
+                        <p className="hidden truncate group-hover:flex">To code</p>
                     </button>
-                    <button className="group text-inactive">
+                    <button className="group w-8 text-inactive">
                         <p className="line-through group-hover:hidden">Year</p>
-                        <p className="hidden group-hover:flex">To code</p>
+                        <p className="hidden truncate group-hover:flex">To code</p>
                     </button>
                     <button
                         onClick={() => setTotalsToShow({ ...totalsToShow, inception: !totalsToShow.inception })}
-                        className={cn({ 'text-inactive line-through': !totalsToShow.inception, 'text-default': totalsToShow.inception })}
+                        className={cn('w-10', { 'text-inactive line-through': !totalsToShow.inception, 'text-default': totalsToShow.inception })}
                     >
                         <p>Inception</p>
                     </button>
@@ -195,13 +194,13 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
                                           .map(([ticker, total]) => (
                                               <div key={`${yearIndex}-${year.index}-${ticker}`} className="w-12 md:w-16">
                                                   <TextWithTickerColor etf={etf} className="text-center" ticker={ticker}>
-                                                      {numeral(total).format('0,0')}
+                                                      {formatFlows(total)}
                                                   </TextWithTickerColor>
                                               </div>
                                           ))
                                     : tickers.map((ticker, tickerIndex) => <div key={`${ticker}-${tickerIndex}`} className="flex w-12 md:w-16" />)
                             }
-                            total={<p className="text-inactive">{numeral(year.totalPeriod).format('0,0')}</p>}
+                            total={<p className="text-inactive">{formatFlows(year.totalPeriod)}</p>}
                             rank={null}
                             className="py-1"
                         />
@@ -219,7 +218,7 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
                                     tickers={tickers.map(() => (
                                         <div className="flex w-12 items-center justify-center overflow-hidden text-inactive md:w-16" />
                                     ))}
-                                    total={<p className="text-inactive">{numeral(month.totalPeriod).format('0,0')}</p>}
+                                    total={<p className="text-inactive">{formatFlows(month.totalPeriod)}</p>}
                                     rank={null}
                                 />
 
@@ -271,7 +270,7 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
                                                                     className="w-full text-center group-hover:hidden"
                                                                     ticker={ticker}
                                                                 >
-                                                                    {numeral(day[ticker as keyof typeof day]).format('0,0')}
+                                                                    {formatFlows(Number(day[ticker as keyof typeof day]))}
                                                                 </TextWithTickerColor>
                                                             ) : (
                                                                 <p className="text-center text-inactive group-hover:hidden">.</p>
@@ -285,7 +284,7 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
                                                             'text-red-500': Number(day.total) < 0,
                                                         })}
                                                     >
-                                                        {numeral(day.total).format('0,0')}
+                                                        {formatFlows(day.total)}
                                                     </p>
                                                 }
                                                 rank={<p className="italic text-inactive">{day.rank}</p>}

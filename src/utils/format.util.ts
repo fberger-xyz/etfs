@@ -7,7 +7,6 @@ export const shortenStr = (str: string, max = 20) => {
     if (str.length <= max) return str
     return `${str.slice(0, max - 3).trim()}...`
 }
-export const prettify = (data: unknown) => JSON.stringify(data, null, 2)
 
 export const formatNumberWithDecimals = (numberAsString: string | number, decimals: number, precision = 1) => {
     try {
@@ -18,6 +17,11 @@ export const formatNumberWithDecimals = (numberAsString: string | number, decima
     } catch (error) {
         return JSON.stringify(error)
     }
+}
+
+export const formatFlows = (flow: number) => {
+    if (Math.abs(flow) > 1000) return `${numeral(flow).divide(1000).format('0,0.0')}K`
+    return numeral(flow).format('0,0')
 }
 
 export const roundNToXDecimals = (n: number | string, x = 0) => Number(parseFloat(String(n)).toFixed(x))
