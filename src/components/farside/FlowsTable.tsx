@@ -121,14 +121,14 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
     return (
         <div className="flex w-full flex-col">
             {/* context */}
-            <div className="grid grid-cols-3 items-baseline">
-                <span />
-                <div className="mb-1 flex w-full items-baseline justify-center gap-1.5 text-lg">
+            <div className="grid grid-flow-col items-baseline">
+                <span className="hidden md:flex" />
+                <div className="mb-1 flex w-full items-baseline justify-start gap-1.5 text-lg md:justify-center">
                     <IconWrapper icon={etf === ETFs.BTC ? IconIds.CRYPTO_BTC : IconIds.CRYPTO_ETH} className="size-5" />
                     <p>ETFs Flows</p>
                     <p className="text-base text-inactive">in millions of $</p>
                 </div>
-                <div className="flex justify-end gap-2 text-xs italic">
+                <div className="flex justify-end gap-2 text-2xs italic">
                     <button className="group text-inactive">
                         <p className="line-through group-hover:hidden">Month</p>
                         <p className="hidden group-hover:flex">To code</p>
@@ -181,7 +181,7 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
             />
 
             {/* rows */}
-            <div className="flex h-[420px] w-full flex-col overflow-y-scroll border border-inactive text-2xs sm:text-xs md:h-[calc(100vh-280px)] md:text-sm">
+            <div className="flex h-[400px] w-full flex-col overflow-y-scroll border border-inactive text-2xs sm:text-xs md:h-[calc(100vh-280px)] md:text-sm">
                 {/* for each year */}
                 {farsideDataGroupedBy.map((year, yearIndex) => (
                     <div key={`${yearIndex}-${year.index}`} className="flex flex-col py-1">

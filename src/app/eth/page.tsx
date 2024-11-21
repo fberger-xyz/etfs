@@ -41,8 +41,8 @@ export default async function Page() {
                 <IconWrapper icon={IconIds.SCROLL} className="w-5" />
             </div>
             <ChartsWrapper etf={ETFs.ETH} flows={flows} tickers={tickers} />
-            <div className="mt-10 flex w-full flex-col items-center gap-8">
-                <LinkWrapper href={farsidePage(ETFs.ETH)} target="_blank" className="flex items-baseline gap-1">
+            <div className="mt-14 flex w-full flex-col items-center gap-8">
+                <LinkWrapper href={farsidePage(ETFs.ETH)} target="_blank" className="group flex items-baseline gap-1">
                     <p>
                         Better than <span className="underline underline-offset-2">the original</span>
                     </p>
