@@ -120,14 +120,14 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
     return (
         <div className="flex w-full flex-col">
             {/* context */}
-            <div className="grid grid-flow-col items-baseline">
+            <div className="grid grid-flow-col items-baseline px-2">
                 <span className="hidden md:flex" />
                 <div className="mb-1 flex w-full items-baseline justify-start gap-1.5 text-lg md:justify-center">
                     <IconWrapper icon={etf === ETFs.BTC ? IconIds.CRYPTO_BTC : IconIds.CRYPTO_ETH} className="size-5" />
                     <p>ETFs Flows</p>
                     <p className="text-base text-inactive">in millions of $</p>
                 </div>
-                <div className="flex justify-end gap-2 text-2xs italic">
+                <div className="flex justify-end gap-1 text-2xs italic">
                     <button className="group w-8 text-inactive">
                         <p className="line-through group-hover:hidden">Month</p>
                         <p className="hidden truncate group-hover:flex">To code</p>
@@ -147,7 +147,7 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
 
             {/* headers */}
             <TableRow
-                className="border-x border-t border-inactive bg-light-hover text-2xs sm:text-sm md:text-sm lg:text-base"
+                className="border-x border-t border-inactive bg-light-hover text-2xs md:text-sm lg:text-sm xl:text-base"
                 date={<p>Date</p>}
                 tickers={tickers
                     .filter((curr) => getConfig(etf, curr))
@@ -159,7 +159,7 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
                             className="group flex h-9 w-12 -rotate-45 items-center justify-center overflow-visible hover:rotate-0 sm:rotate-0 md:w-16"
                             target="_blank"
                         >
-                            <TextWithTickerColor className="text-center group-hover:hidden" etf={etf} ticker={ticker}>
+                            <TextWithTickerColor className="w-full text-center group-hover:hidden" etf={etf} ticker={ticker}>
                                 {ticker}
                             </TextWithTickerColor>
                             <IconWrapper icon={IconIds.IC_BASELINE_OPEN_IN_NEW} className="hidden h-4 w-4 text-primary group-hover:flex" />
@@ -192,11 +192,11 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
                                           .filter(([ticker]) => getConfig(etf, ticker))
                                           .sort(([curr], [next]) => getConfig(etf, curr).index - getConfig(etf, next).index)
                                           .map(([ticker, total]) => (
-                                              <div key={`${yearIndex}-${year.index}-${ticker}`} className="w-12 md:w-16">
-                                                  <TextWithTickerColor etf={etf} className="hidden text-center md:flex" ticker={ticker}>
+                                              <div key={`${yearIndex}-${year.index}-${ticker}`} className="flex w-12 items-center md:w-16">
+                                                  <TextWithTickerColor etf={etf} className="mx-auto hidden text-center md:flex" ticker={ticker}>
                                                       {formatFlows(total)}
                                                   </TextWithTickerColor>
-                                                  <TextWithTickerColor etf={etf} className="text-center md:hidden" ticker={ticker}>
+                                                  <TextWithTickerColor etf={etf} className="mx-auto text-center md:hidden" ticker={ticker}>
                                                       {formatFlows(total, true)}
                                                   </TextWithTickerColor>
                                               </div>
