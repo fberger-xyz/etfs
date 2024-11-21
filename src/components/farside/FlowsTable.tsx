@@ -128,14 +128,19 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
                     <p>ETFs Flows</p>
                     <p className="text-base text-inactive">in millions of $</p>
                 </div>
-                <div className="flex justify-end gap-2 text-sm">
-                    <button className="text-inactive line-through">
-                        <p>Month</p>
+                <div className="flex justify-end gap-2 text-xs italic">
+                    <button className="group text-inactive">
+                        <p className="line-through group-hover:hidden">Month</p>
+                        <p className="hidden group-hover:flex">To code</p>
                     </button>
-                    <button className="text-inactive line-through">
-                        <p>Year</p>
+                    <button className="group text-inactive">
+                        <p className="line-through group-hover:hidden">Year</p>
+                        <p className="hidden group-hover:flex">To code</p>
                     </button>
-                    <button onClick={() => setTotalsToShow({ ...totalsToShow, inception: !totalsToShow.inception })} className="text-default">
+                    <button
+                        onClick={() => setTotalsToShow({ ...totalsToShow, inception: !totalsToShow.inception })}
+                        className={cn({ 'text-inactive line-through': !totalsToShow.inception, 'text-default': totalsToShow.inception })}
+                    >
                         <p>Inception</p>
                     </button>
                 </div>
