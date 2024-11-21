@@ -23,7 +23,7 @@ export default function Footer(props: FooterProps) {
         <div className={cn('fixed bottom-0 w-full flex justify-end text-sm z-0', props.className)}>
             <div className="flex items-end gap-4 rounded-ss-xl bg-background p-3 opacity-80 backdrop-blur-sm">
                 {[
-                    { href: `https://${APP_METADATA.SITE_AUTHOR}/projects/etfs`, icon: IconIds.WEBSITE },
+                    { href: `https://${APP_METADATA.SITE_AUTHOR}`, icon: IconIds.WEBSITE },
                     { href: `https://t.me/${APP_METADATA.SOCIALS.TELEGRAM}`, icon: IconIds.TELEGRAM },
                     { href: `https://x.com/${APP_METADATA.SOCIALS.TWITTER}`, icon: IconIds.X },
                     { href: `https://www.linkedin.com/in/${APP_METADATA.SOCIALS.LINKEDIN}`, icon: IconIds.LINKEDIN },
