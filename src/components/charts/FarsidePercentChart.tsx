@@ -258,11 +258,11 @@ export default function FarsidePercentChart(props: { className?: string; etf: ET
     }, [resolvedTheme])
     return (
         <div className="mt-14 flex w-full flex-col text-xs">
-            <div className="mb-1 flex w-full justify-center gap-1.5 text-lg md:mb-2">
+            <div className="mb-1 flex w-full items-baseline justify-center gap-1.5 text-lg">
                 <p>Cumulated</p>
-                <IconWrapper icon={props.etf === ETFs.BTC ? IconIds.CRYPTO_BTC : IconIds.CRYPTO_ETH} className="size-6" />
+                <IconWrapper icon={props.etf === ETFs.BTC ? IconIds.CRYPTO_BTC : IconIds.CRYPTO_ETH} className="size-5" />
                 <p>ETFs Flows</p>
-                <p className="text-inactive">Total %</p>
+                <p className="text-base text-inactive">Total %</p>
             </div>
             <ErrorBoundary FallbackComponent={Fallback}>
                 <div className={cn('h-[520px] w-full border border-inactive py-1 z-0', props.className)}>

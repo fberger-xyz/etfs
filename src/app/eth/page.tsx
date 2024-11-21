@@ -15,7 +15,7 @@ import { Metadata } from 'next'
 dayjs.extend(weekOfYear)
 
 export const metadata: Metadata = {
-    title: 'Ξ ETFs | fberger',
+    title: `Ξ ETFs | ${APP_METADATA.SITE_AUTHOR}`,
 }
 
 // https://nextjs.org/docs/app/api-reference/functions/fetch

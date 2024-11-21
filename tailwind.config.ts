@@ -29,7 +29,7 @@ const config: Config = {
                 btc: 'var(--color-btc)',
             },
             fontSize: {
-                '2xs': '0.65rem',
+                '2xs': '0.62rem',
             },
         },
     },

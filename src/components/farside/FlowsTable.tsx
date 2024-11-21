@@ -15,7 +15,13 @@ dayjs.extend(weekOfYear)
 
 function TableRow(props: { activateHover?: boolean; date: ReactNode; tickers: ReactNode[]; total: ReactNode; rank: ReactNode; className?: string }) {
     return (
-        <div className={cn('flex items-center sm:gap-1 px-1 md:px-2', { 'hover:bg-light-hover leading-3': props.activateHover }, props.className)}>
+        <div
+            className={cn(
+                'flex items-center sm:gap-1 px-1 md:px-2 leading-3 sm:leading-4',
+                { 'hover:bg-very-light-hover': props.activateHover },
+                props.className,
+            )}
+        >
             <div className="flex w-[95px] justify-start overflow-hidden md:w-32">{props.date}</div>
             {...props.tickers}
             <div className="flex w-20 justify-end overflow-hidden md:w-24">{props.total}</div>
@@ -90,17 +96,17 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
 
     // html
     return (
-        <div className="flex w-full flex-col text-2xs md:text-sm">
+        <div className="flex w-full flex-col">
             {/* context */}
-            <div className="mb-1 flex w-full justify-center gap-1.5 text-lg md:mb-2">
-                <IconWrapper icon={etf === ETFs.BTC ? IconIds.CRYPTO_BTC : IconIds.CRYPTO_ETH} className="size-6" />
+            <div className="mb-1 flex w-full items-baseline justify-center gap-1.5 text-lg">
+                <IconWrapper icon={etf === ETFs.BTC ? IconIds.CRYPTO_BTC : IconIds.CRYPTO_ETH} className="size-5" />
                 <p>ETFs Flows</p>
-                <p className="text-inactive">$m USD</p>
+                <p className="text-base text-inactive">in millions of $</p>
             </div>
 
             {/* headers */}
             <TableRow
-                className="border-x border-t border-inactive bg-light-hover"
+                className="border-x border-t border-inactive bg-light-hover text-2xs sm:text-sm md:text-base"
                 date={<p>Date</p>}
                 tickers={tickers
                     .filter((curr) => getConfig(etf, curr))
@@ -109,7 +115,7 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
                         <LinkWrapper
                             href={getConfig(etf, ticker).url}
                             key={ticker}
-                            className="group flex h-9 w-12 -rotate-45 items-center justify-center overflow-hidden hover:rotate-0 sm:rotate-0 md:w-16"
+                            className="group flex h-9 w-12 -rotate-45 items-center justify-center overflow-visible hover:rotate-0 sm:rotate-0 md:w-16"
                             target="_blank"
                         >
                             <TextWithTickerColor className="group-hover:hidden" etf={etf} ticker={ticker}>
@@ -120,8 +126,8 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
                     ))}
                 total={
                     <>
-                        <p className="hidden text-nowrap md:flex">∑ Flows</p>
-                        <p className="pr-2 md:hidden">∑</p>
+                        <p className="hidden text-nowrap sm:flex">Total</p>
+                        <p className="pr-2 text-base sm:hidden">∑</p>
                     </>
                 }
                 rank={
@@ -133,7 +139,7 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
             />
 
             {/* rows */}
-            <div className="flex h-[420px] w-full flex-col overflow-y-scroll border border-inactive md:h-[calc(100vh-280px)]">
+            <div className="flex h-[420px] w-full flex-col overflow-y-scroll border border-inactive text-2xs sm:text-xs md:h-[calc(100vh-280px)] md:text-sm">
                 {/* for each year */}
                 {farsideDataGroupedBy.map((year, yearIndex) => (
                     <div key={`${yearIndex}-${year.index}`} className="flex flex-col py-1">
@@ -144,13 +150,14 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
                             ))}
                             total={<p className="text-inactive">{numeral(year.totalPeriod).format('0,0')}</p>}
                             rank={null}
+                            className="py-1"
                         />
 
                         {/* for each month */}
                         {year.months.map((month, monthIndex) => (
                             <div key={`${yearIndex}-${year.index}-${monthIndex}-${month.index}`} className="flex flex-col py-1">
                                 <TableRow
-                                    className="border-t border-light-hover pt-1"
+                                    className="border-t border-light-hover py-1.5"
                                     date={
                                         <p className="w-fit text-primary">
                                             {monthName(month.index).slice(0, 3)} {String(year.index).slice(2)}
@@ -167,12 +174,12 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
                                 {month.weeks.map((week, weekIndex) => (
                                     <div
                                         key={`${yearIndex}-${year.index}-${monthIndex}-${month.index}-${weekIndex}-${week.index}`}
-                                        className="flex flex-col sm:gap-0.5"
+                                        className="flex flex-col py-0.5 sm:gap-0.5"
                                     >
                                         {week.days.length && dayjs(week.days[0].day).format('ddd') === 'Fri' && (
                                             <TableRow
                                                 className="border-b border-dashed border-light-hover"
-                                                date={<p className="w-fit text-inactive">Week {week.index}</p>}
+                                                date={<p className="w-fit">Week {week.index}</p>}
                                                 tickers={tickers.map((ticker, tickerIndex) => (
                                                     <div key={`${ticker}-${tickerIndex}`} className="flex w-12 md:w-16" />
                                                 ))}
@@ -188,8 +195,10 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
                                                 key={`${yearIndex}-${year.index}-${monthIndex}-${month.index}-${weekIndex}-${week.index}-${dayIndex}-${day.day}`}
                                                 date={
                                                     <>
-                                                        <p className="text-nowrap md:hidden">{dayjs(day.day).format('ddd DD')}</p>
-                                                        <p className="hidden text-nowrap md:flex">{dayjs(day.day).format('ddd DD MMM')}</p>
+                                                        <p className="text-nowrap text-inactive lg:hidden">{dayjs(day.day).format('ddd DD')}</p>
+                                                        <p className="hidden text-nowrap text-inactive lg:flex">
+                                                            {dayjs(day.day).format('ddd DD MMM')}
+                                                        </p>
                                                     </>
                                                 }
                                                 tickers={tickers
