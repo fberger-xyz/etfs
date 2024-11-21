@@ -19,8 +19,11 @@ export const formatNumberWithDecimals = (numberAsString: string | number, decima
     }
 }
 
-export const formatFlows = (flow: number) => {
-    if (Math.abs(flow) > 1000) return `${numeral(flow).divide(1000).format('0,0.0')}K`
+export const formatFlows = (flow: number, round = false) => {
+    if (Math.abs(flow) > 1000) {
+        if (round) return `${numeral(flow).divide(1000).format('0,0')}K`
+        return `${numeral(flow).divide(1000).format('0,0.0')}K`
+    }
     return numeral(flow).format('0,0')
 }
 

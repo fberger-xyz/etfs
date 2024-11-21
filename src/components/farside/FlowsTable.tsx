@@ -193,8 +193,11 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
                                           .sort(([curr], [next]) => getConfig(etf, curr).index - getConfig(etf, next).index)
                                           .map(([ticker, total]) => (
                                               <div key={`${yearIndex}-${year.index}-${ticker}`} className="w-12 md:w-16">
-                                                  <TextWithTickerColor etf={etf} className="text-center" ticker={ticker}>
+                                                  <TextWithTickerColor etf={etf} className="hidden text-center md:flex" ticker={ticker}>
                                                       {formatFlows(total)}
+                                                  </TextWithTickerColor>
+                                                  <TextWithTickerColor etf={etf} className="text-center md:hidden" ticker={ticker}>
+                                                      {formatFlows(total, true)}
                                                   </TextWithTickerColor>
                                               </div>
                                           ))
