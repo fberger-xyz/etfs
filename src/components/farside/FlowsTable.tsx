@@ -15,13 +15,7 @@ dayjs.extend(weekOfYear)
 
 function TableRow(props: { activateHover?: boolean; date: ReactNode; tickers: ReactNode[]; total: ReactNode; rank: ReactNode; className?: string }) {
     return (
-        <div
-            className={cn(
-                'flex items-center sm:gap-1 px-1 md:px-2 leading-3 sm:leading-4',
-                { 'hover:bg-very-light-hover': props.activateHover },
-                props.className,
-            )}
-        >
+        <div className={cn('flex items-center sm:gap-1 px-1 md:px-2', { 'hover:bg-very-light-hover': props.activateHover }, props.className)}>
             <div className="flex w-[95px] justify-start overflow-hidden md:w-32">{props.date}</div>
             {...props.tickers}
             <div className="flex w-20 justify-end overflow-hidden md:w-24">{props.total}</div>
@@ -43,6 +37,7 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
         rank: number
         index: number
         totalPeriod: number
+        totalPerEtfs: Record<ETFsTickers, number>
         months: {
             year: number
             index: number
@@ -53,15 +48,16 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
     }[] = []
     for (let dayIndex = 0; dayIndex < data.length; dayIndex++) {
         // year
-        const dayYear = dayjs(data[dayIndex].day).year()
+        const dayAsDayjs = dayjs(data[dayIndex].day)
+        const dayYear = dayAsDayjs.year()
         let yearIndex = farsideDataGroupedBy.findIndex((year) => year.index === dayYear)
         if (yearIndex < 0) {
-            farsideDataGroupedBy.unshift({ rank: 0, index: dayjs(data[dayIndex].day).year(), months: [], totalPeriod: 0 })
+            farsideDataGroupedBy.unshift({ rank: 0, index: dayAsDayjs.year(), months: [], totalPeriod: 0, totalPerEtfs: {} })
             yearIndex = farsideDataGroupedBy.findIndex((year) => year.index === dayYear)
         }
 
         // month
-        const dayMonth = dayjs(data[dayIndex].day).month()
+        const dayMonth = dayAsDayjs.month()
         let monthIndex = farsideDataGroupedBy[yearIndex].months.findIndex((month) => month.index === dayMonth)
         if (monthIndex < 0) {
             farsideDataGroupedBy[yearIndex].months.unshift({ year: dayYear, index: dayMonth, weeks: [], rank: 0, totalPeriod: 0 })
@@ -69,7 +65,7 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
         }
 
         // week
-        const dayWeek = dayjs(data[dayIndex].day).week()
+        const dayWeek = dayAsDayjs.week()
         let weekIndex = farsideDataGroupedBy[yearIndex].months[monthIndex].weeks.findIndex((week) => week.index === dayWeek)
         if (weekIndex < 0) {
             farsideDataGroupedBy[yearIndex].months[monthIndex].weeks.unshift({ index: dayWeek, days: [], totalPeriod: 0 })
@@ -81,6 +77,15 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
         farsideDataGroupedBy[yearIndex].months[monthIndex].weeks[weekIndex].totalPeriod += Number(data[dayIndex].total)
         farsideDataGroupedBy[yearIndex].months[monthIndex].totalPeriod += Number(data[dayIndex].total)
         farsideDataGroupedBy[yearIndex].totalPeriod += Number(data[dayIndex].total)
+
+        // total per year
+        for (let tickerIndex = 0; tickerIndex < tickers.length; tickerIndex++) {
+            if (!farsideDataGroupedBy[yearIndex].totalPerEtfs[tickers[tickerIndex]])
+                farsideDataGroupedBy[yearIndex].totalPerEtfs[tickers[tickerIndex]] = 0
+            const flow = Number(data[dayIndex][tickers[tickerIndex] as keyof FarsideFlows])
+            if (isNaN(flow)) continue
+            farsideDataGroupedBy[yearIndex].totalPerEtfs[tickers[tickerIndex]] += flow
+        }
     }
 
     // apply ranks for month
@@ -145,9 +150,16 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
                     <div key={`${yearIndex}-${year.index}`} className="flex flex-col py-1">
                         <TableRow
                             date={<p className="text-primary">{year.index}</p>}
-                            tickers={tickers.map(() => (
-                                <div className="flex w-12 md:w-16" />
-                            ))}
+                            tickers={Object.entries(year.totalPerEtfs)
+                                .filter(([ticker]) => getConfig(etf, ticker))
+                                .sort(([curr], [next]) => getConfig(etf, curr).index - getConfig(etf, next).index)
+                                .map(([ticker, total]) => (
+                                    <div key={`${yearIndex}-${year.index}-${ticker}`} className="w-12 md:w-16">
+                                        <TextWithTickerColor etf={etf} className="p-0.5 group-hover:hidden" ticker={ticker}>
+                                            {numeral(total).format('0,0')}
+                                        </TextWithTickerColor>
+                                    </div>
+                                ))}
                             total={<p className="text-inactive">{numeral(year.totalPeriod).format('0,0')}</p>}
                             rank={null}
                             className="py-1"
@@ -178,12 +190,15 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
                                     >
                                         {week.days.length && dayjs(week.days[0].day).format('ddd') === 'Fri' && (
                                             <TableRow
-                                                className="border-b border-dashed border-light-hover"
+                                                className="border-b border-dashed border-light-hover pt-0.5"
                                                 date={<p className="w-fit">Week {week.index}</p>}
                                                 tickers={tickers.map((ticker, tickerIndex) => (
                                                     <div key={`${ticker}-${tickerIndex}`} className="flex w-12 md:w-16" />
                                                 ))}
-                                                total={<p className="text-inactive">{numeral(week.totalPeriod).format('0,0')}</p>}
+                                                total={
+                                                    null
+                                                    // <p className="text-inactive">{numeral(week.totalPeriod).format('0,0')}</p>
+                                                }
                                                 rank={null}
                                             />
                                         )}
@@ -207,10 +222,14 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
                                                     .map((ticker) => (
                                                         <div
                                                             key={`${yearIndex}-${year.index}-${monthIndex}-${month.index}-${weekIndex}-${week.index}-${dayIndex}-${day.day}-${ticker}`}
-                                                            className="flex w-12 items-center justify-center overflow-hidden text-light-hover md:w-16"
+                                                            className="w-12 md:w-16"
                                                         >
                                                             {day[ticker as keyof typeof day] ? (
-                                                                <TextWithTickerColor etf={etf} className="p-0.5 group-hover:hidden" ticker={ticker}>
+                                                                <TextWithTickerColor
+                                                                    etf={etf}
+                                                                    className="w-full text-center group-hover:hidden"
+                                                                    ticker={ticker}
+                                                                >
                                                                     {numeral(day[ticker as keyof typeof day]).format('0,0')}
                                                                 </TextWithTickerColor>
                                                             ) : (
@@ -229,6 +248,7 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
                                                     </p>
                                                 }
                                                 rank={<p className="italic text-inactive">{day.rank}</p>}
+                                                className="leading-3 xl:leading-4"
                                             />
                                         ))}
                                     </div>
