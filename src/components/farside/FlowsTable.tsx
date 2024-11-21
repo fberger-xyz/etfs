@@ -120,14 +120,14 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
     return (
         <div className="flex w-full flex-col">
             {/* context */}
-            <div className="grid grid-flow-col items-baseline px-2">
-                <span className="hidden md:flex" />
-                <div className="mb-1 flex w-full items-baseline justify-start gap-1.5 text-lg md:justify-center">
+            <div className="flex items-baseline justify-between px-2 sm:px-0">
+                <span className="hidden w-1/4 sm:flex" />
+                <div className="mb-1 flex w-max items-baseline justify-start gap-1.5 truncate text-base sm:w-1/2 sm:justify-center lg:text-lg">
                     <IconWrapper icon={etf === ETFs.BTC ? IconIds.CRYPTO_BTC : IconIds.CRYPTO_ETH} className="size-5" />
                     <p>ETFs Flows</p>
                     <p className="text-base text-inactive">in millions of $</p>
                 </div>
-                <div className="flex justify-end gap-1 text-2xs italic">
+                <div className="flex w-1/4 justify-end gap-1 text-2xs italic">
                     <button className="group w-8 text-inactive">
                         <p className="line-through group-hover:hidden">Month</p>
                         <p className="hidden truncate group-hover:flex">To code</p>
