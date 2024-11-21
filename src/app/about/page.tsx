@@ -17,7 +17,7 @@ export default function Page() {
             <div className="mt-10 flex w-full flex-col items-center justify-center gap-8">
                 <LinkWrapper href={farsidePage(ETFs.BTC)} target="_blank" className="flex items-baseline gap-1">
                     <p>
-                        Just better than <span className="underline underline-offset-2">the original</span>
+                        Better than <span className="underline underline-offset-2">the original</span>
                     </p>
                     <IconWrapper icon={IconIds.IC_BASELINE_OPEN_IN_NEW} className="hidden h-4 w-4 group-hover:flex" />
                 </LinkWrapper>
