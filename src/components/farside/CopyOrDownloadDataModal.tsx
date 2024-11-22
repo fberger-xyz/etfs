@@ -27,11 +27,11 @@ export default function CopyOrDownloadDataModal() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ ease: 'easeInOut', duration: 0.25 }}
-                className="flex max-w-[530px] flex-col gap-5 rounded-md border border-light-hover bg-background py-3 shadow-lg"
+                className="flex max-w-[400px] flex-col gap-5 rounded-md border border-light-hover bg-background py-3 text-base shadow-lg"
             >
                 <div className="flex w-full items-center justify-between px-6">
-                    <p className="text-lg text-secondary">
-                        <span className="underline underline-offset-2">Copy</span> or <span className="underline underline-offset-2">Download</span>{' '}
+                    <p className="font-bold text-secondary lg:text-lg">
+                        <span className="underline underline-offset-4">Copy</span> or <span className="underline underline-offset-4">Download</span>{' '}
                         flows data
                     </p>
                     <button
@@ -49,8 +49,8 @@ export default function CopyOrDownloadDataModal() {
                 </div>
                 <div className="w-full border-t border-very-light-hover" />
                 <div className="flex w-full items-center justify-end gap-3 px-5">
-                    <Button text="Copy data (JSON)" icons={{ right: IconIds.CARBON_COPY }} />
-                    <Button text="Download data (CSV)" icons={{ right: IconIds.CARBON_DOWNLOAD }} />
+                    <Button text="Copy (JSON)" icons={{ right: IconIds.CARBON_COPY }} />
+                    <Button text="Download (CSV)" icons={{ right: IconIds.CARBON_DOWNLOAD }} />
                 </div>
             </motion.div>
         </Backdrop>

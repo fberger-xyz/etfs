@@ -229,11 +229,11 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
                                 {month.weeks.map((week, weekIndex) => (
                                     <div
                                         key={`${yearIndex}-${year.index}-${monthIndex}-${month.index}-${weekIndex}-${week.index}`}
-                                        className="flex flex-col py-0.5 sm:gap-0.5"
+                                        className="flex flex-col sm:gap-0.5"
                                     >
                                         {week.days.length && dayjs(week.days[0].day).format('ddd') === 'Fri' && (
                                             <TableRow
-                                                className="border-b border-dashed border-light-hover pt-0.5"
+                                                className="mb-0.5 mt-1 border-b border-dashed border-light-hover leading-5 md:mb-1 md:mt-2"
                                                 date={<p className="w-fit">Week {week.index}</p>}
                                                 tickers={tickers.map((ticker, tickerIndex) => (
                                                     <div key={`${ticker}-${tickerIndex}`} className="flex w-12 md:w-16" />
@@ -291,7 +291,7 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
                                                     </p>
                                                 }
                                                 rank={<p className="italic text-inactive">{day.rank}</p>}
-                                                className="leading-3 xl:leading-4"
+                                                className="leading-3 lg:leading-4"
                                             />
                                         ))}
                                     </div>
