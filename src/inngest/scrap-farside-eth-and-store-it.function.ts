@@ -20,13 +20,14 @@ if (!token) throw new Error('TELEGRAM_BOT_TOKEN environment variable not found.'
 const channelId = String(process.env.TELEGRAM_CHANNEL_ID)
 if (!channelId) throw new Error('TELEGRAM_CHANNEL_ID environment variable not found.')
 
-// -
+// constants
 const root = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : APP_METADATA.SITE_URL
 const pageToScrap = 'https://farside.co.uk/ethereum-etf-flow-all-data/'
 
 export const scrapFarsideEthAndStoreIt = inngest.createFunction(
     { id: 'scrap-farside-eth-and-store-it' },
-    { cron: 'TZ=Europe/Paris */15 * * * *' }, // https://crontab.guru/every-1-hour
+    // https://crontab.guru/every-1-hour
+    { cron: 'TZ=Europe/Paris */15 * * * *' },
     async ({ event, step }) => {
         // debug
         const debug = false
@@ -52,10 +53,6 @@ export const scrapFarsideEthAndStoreIt = inngest.createFunction(
             const json = getEthFarsideTableDataAsJson(htmlContent)
             return { json }
         })
-        if (debug) console.log({ json: json.slice(0, 5) })
-
-        // debug
-        if (debug) console.log(`2. Scrapped ${json.length} entries`)
 
         // parse
         const { parsedData } = enrichEthFarsideJson(json)
@@ -131,7 +128,6 @@ export const scrapFarsideEthAndStoreIt = inngest.createFunction(
 
         const bot = new Bot(token)
         const chatId = channelId
-        // let notificationsCount = 0
         const env = String(process.env.NODE_ENV).toLowerCase() === 'production' ? 'Prod' : 'Dev'
         for (let changeIndex = 0; changeIndex < dbChanges.length; changeIndex++) {
             const { day, xata_id, prevTotal, newTotal, dataToPush: flows } = dbChanges[changeIndex]
@@ -152,11 +148,6 @@ export const scrapFarsideEthAndStoreIt = inngest.createFunction(
                 })
             }
         }
-
-        // if (!notificationsCount)
-        //     await step.run(`5. [ETH] Notify telegram for cron job execution`, async () => {
-        //         await bot.api.sendMessage(chatId, `Ξ ETFs flows scrapped - no update`, { parse_mode: 'HTML' })
-        //     })
 
         // finally
         return {

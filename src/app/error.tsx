@@ -14,7 +14,7 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
         <PageWrapper>
             <div className="my-10 flex flex-col items-center gap-6">
                 <p className="font-bold">Something went wrong!</p>
-                <div className="flex flex-col items-center gap-2 rounded-md border border-light-hover p-4">
+                <div className="flex flex-col items-center gap-2 rounded-xl border border-light-hover p-4">
                     <p className="text-inactive">Application logs</p>
                     <JsonField className="text-red-400">{JSON.stringify(extractErrorMessage(error), null, 2)}</JsonField>
                 </div>

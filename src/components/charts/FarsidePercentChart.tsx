@@ -29,7 +29,7 @@ export function Fallback({ error }: { error: Error }) {
     return (
         <div className="flex flex-col items-center text-xs">
             <p className="">Something went wrong...</p>
-            <p className="rounded-md bg-gray-100 p-1 text-orange-500">Error: {error.message}</p>
+            <p className="rounded-xl bg-gray-100 p-1 text-orange-500">Error: {error.message}</p>
         </div>
     )
 }
