@@ -11,6 +11,7 @@ import { AppThemes } from '@/enums'
 import ReactQueryProvider from '@/providers/react-query.provider'
 import { Toaster } from 'react-hot-toast'
 import DefaultFallback from '@/components/layouts/DefaultFallback'
+import ErrorBoundary from '@/components/common/ErrorBoundary'
 
 // https://fonts.google.com/
 const font = Lato({ weight: ['400', '700'], subsets: ['latin'] })
@@ -55,9 +56,11 @@ export default function RootLayout({
                     <ReactQueryProvider>
                         <main className="flex h-full w-full flex-col bg-background text-lg text-default transition-all md:text-base">
                             <Header />
-                            <Suspense fallback={<DefaultFallback />}>
-                                <div className="h-full overflow-scroll">{children}</div>
-                            </Suspense>
+                            <ErrorBoundary>
+                                <Suspense fallback={<DefaultFallback />}>
+                                    <div className="h-full overflow-scroll">{children}</div>
+                                </Suspense>
+                            </ErrorBoundary>
                             <Footer />
                             <Toaster position="bottom-center" reverseOrder={false} />
                         </main>
