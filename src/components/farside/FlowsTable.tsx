@@ -8,7 +8,6 @@ import IconWrapper from '@/components/common/IconWrapper'
 import LinkWrapper from '@/components/common/LinkWrapper'
 import { cleanFlow, cn, farsidePage, formatFlows, getConfig, monthName } from '@/utils'
 import TextWithTickerColor from '@/components/farside/ColorWrapper'
-import { Flows } from '@prisma/client'
 import Link from 'next/link'
 import CopyOrDownloadDataModal from './CopyOrDownloadDataModal'
 import { ETFsTickers, FarsideFlows } from '@/interfaces'
@@ -50,7 +49,7 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
             index: number
             totalPeriod: number
             rank: number
-            weeks: { index: number; totalPeriod: number; days: Flows[] }[]
+            weeks: { index: number; totalPeriod: number; days: FarsideFlows[] }[]
         }[]
     }[] = []
     for (let dayIndex = 0; dayIndex < data.length; dayIndex++) {
@@ -322,7 +321,7 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
                         <p className="text-xs">CSV</p>
                         <IconWrapper icon={IconIds.CARBON_DOWNLOAD} className="w-4" />
                     </Link>
-                    <CopyOrDownloadDataModal />
+                    <CopyOrDownloadDataModal etf={etf} data={data} tickers={tickers} />
                 </div>
             </div>
         </div>

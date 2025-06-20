@@ -53,3 +53,16 @@ model EthFlows {
   close_of_bussiness_hour DateTime @default(now()) @db.Timestamptz(6)
   rank                    Int      @default(0)
 }
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model Prices {
+  xata_id        String   @unique(map: "_pgroll_new_Prices_xata_id_key") @default(dbgenerated("('rec_'::text || (xata_private.xid())::text)"))
+  xata_version   Int      @default(0)
+  xata_createdat DateTime @default(now()) @db.Timestamptz(6)
+  xata_updatedat DateTime @default(now()) @db.Timestamptz(6)
+  day            String?
+  eth_opening    Float?
+  eth_close      Float?
+  btc_opening    Float?
+  btc_close      Float?
+}
