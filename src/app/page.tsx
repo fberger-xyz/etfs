@@ -25,14 +25,54 @@ export const dynamic = 'force-dynamic'
 export const fetchCache = 'force-no-store'
 
 async function getFlows() {
-    return (await prisma.flows.findMany({
-        orderBy: { close_of_bussiness_hour: 'asc' },
-    })) as FarsideFlows[]
+    try {
+        // Optimize query with pagination and proper ordering
+        const flows = await prisma.flows.findMany({
+            orderBy: { close_of_bussiness_hour: 'asc' },
+            // Add pagination if needed for large datasets
+            // take: 1000,
+            // skip: 0,
+            select: {
+                xata_id: true,
+                day: true,
+                total: true,
+                rank: true,
+                close_of_bussiness_hour: true,
+                IBIT: true,
+                FBTC: true,
+                BITB: true,
+                ARKB: true,
+                BTCO: true,
+                EZBC: true,
+                BRRR: true,
+                HODL: true,
+                BTCW: true,
+                GBTC: true,
+                BTC: true,
+                raw: true,
+            },
+        })
+        return flows as FarsideFlows[]
+    } catch (error) {
+        console.error('Error fetching BTC flows:', error)
+        return [] as FarsideFlows[]
+    }
 }
 
 export default async function Page() {
     const tickers = Object.keys(BtcETFsTickers) as ETFsTickers[]
     const flows = await getFlows()
+
+    if (!flows.length) {
+        return (
+            <PageWrapper className="gap-5">
+                <div className="flex w-full items-center justify-center">
+                    <p className="text-lg text-inactive">No data available</p>
+                </div>
+            </PageWrapper>
+        )
+    }
+
     return (
         <PageWrapper className="gap-5">
             <FlowsTable etf={ETFs.BTC} data={flows} tickers={tickers} />

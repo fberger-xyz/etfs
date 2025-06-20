@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactNode, useState } from 'react'
+import { ReactNode, useState, useMemo, useCallback, memo } from 'react'
 import { ETFs, IconIds } from '@/enums'
 import dayjs from 'dayjs'
 import weekOfYear from 'dayjs/plugin/weekOfYear'
@@ -13,107 +13,123 @@ import CopyOrDownloadDataModal from './CopyOrDownloadDataModal'
 import { ETFsTickers, FarsideFlows } from '@/interfaces'
 dayjs.extend(weekOfYear)
 
-function TableRow(props: { activateHover?: boolean; date: ReactNode; tickers: ReactNode[]; total: ReactNode; rank: ReactNode; className?: string }) {
-    return (
-        <div className={cn('flex items-center sm:gap-1 px-1 md:px-2', { 'hover:bg-very-light-hover': props.activateHover }, props.className)}>
-            <div className="flex w-[95px] justify-start overflow-hidden md:w-32">{props.date}</div>
-            {...props.tickers}
-            <div className="flex w-20 justify-end overflow-hidden md:w-24">{props.total}</div>
-            <div className="flex w-12 justify-end overflow-hidden pr-0.5 md:w-24">{props.rank}</div>
-        </div>
-    )
-}
+const TableRow = memo(
+    (props: { activateHover?: boolean; date: ReactNode; tickers: ReactNode[]; total: ReactNode; rank: ReactNode; className?: string }) => {
+        return (
+            <div className={cn('flex items-center sm:gap-1 px-1 md:px-2', { 'hover:bg-very-light-hover': props.activateHover }, props.className)}>
+                <div className="flex w-[95px] justify-start overflow-hidden md:w-32">{props.date}</div>
+                {...props.tickers}
+                <div className="flex w-20 justify-end overflow-hidden md:w-24">{props.total}</div>
+                <div className="flex w-12 justify-end overflow-hidden pr-0.5 md:w-24">{props.rank}</div>
+            </div>
+        )
+    },
+)
 
-export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: FarsideFlows[]; tickers: ETFsTickers[] }) {
+TableRow.displayName = 'TableRow'
+
+const FlowsTable = memo(({ etf, data, tickers }: { etf: ETFs; data: FarsideFlows[]; tickers: ETFsTickers[] }) => {
     const [totalsToShow, setTotalsToShow] = useState({
         perMonth: false,
         perYear: false,
         inception: true,
     })
 
-    // apply rank for days
-    const daysSortedByTotal = [...data].sort((curr, next) => cleanFlow(next.total) - cleanFlow(curr.total))
-    for (let sortedDayIndex = 0; sortedDayIndex < daysSortedByTotal.length; sortedDayIndex++) {
-        const dayIndex = data.findIndex((day) => day.xata_id === daysSortedByTotal[sortedDayIndex].xata_id)
-        if (dayIndex >= 0) data[dayIndex].rank = sortedDayIndex + 1
-    }
+    // Memoize expensive data processing
+    const processedData = useMemo(() => {
+        const dataCopy = [...data]
 
-    // group by month / week
-    const farsideDataGroupedBy: {
-        rank: number
-        index: number
-        totalPeriod: number
-        totalPerEtfs: Record<ETFsTickers, number>
-        months: {
-            year: number
+        // apply rank for days
+        const daysSortedByTotal = [...dataCopy].sort((curr, next) => cleanFlow(next.total) - cleanFlow(curr.total))
+        for (let sortedDayIndex = 0; sortedDayIndex < daysSortedByTotal.length; sortedDayIndex++) {
+            const dayIndex = dataCopy.findIndex((day) => day.xata_id === daysSortedByTotal[sortedDayIndex].xata_id)
+            if (dayIndex >= 0) dataCopy[dayIndex].rank = sortedDayIndex + 1
+        }
+
+        return dataCopy
+    }, [data])
+
+    // Memoize grouped data structure
+    const farsideDataGroupedBy = useMemo(() => {
+        const grouped: {
+            rank: number
             index: number
             totalPeriod: number
-            rank: number
-            weeks: { index: number; totalPeriod: number; days: FarsideFlows[] }[]
-        }[]
-    }[] = []
-    for (let dayIndex = 0; dayIndex < data.length; dayIndex++) {
-        // year
-        const dayAsDayjs = dayjs(data[dayIndex].day)
-        const dayYear = dayAsDayjs.year()
-        let yearIndex = farsideDataGroupedBy.findIndex((year) => year.index === dayYear)
-        if (yearIndex < 0) {
-            farsideDataGroupedBy.unshift({ rank: 0, index: dayAsDayjs.year(), months: [], totalPeriod: 0, totalPerEtfs: {} })
-            yearIndex = farsideDataGroupedBy.findIndex((year) => year.index === dayYear)
+            totalPerEtfs: Record<ETFsTickers, number>
+            months: {
+                year: number
+                index: number
+                totalPeriod: number
+                rank: number
+                weeks: { index: number; totalPeriod: number; days: FarsideFlows[] }[]
+            }[]
+        }[] = []
+
+        for (let dayIndex = 0; dayIndex < processedData.length; dayIndex++) {
+            // year
+            const dayAsDayjs = dayjs(processedData[dayIndex].day)
+            const dayYear = dayAsDayjs.year()
+            let yearIndex = grouped.findIndex((year) => year.index === dayYear)
+            if (yearIndex < 0) {
+                grouped.unshift({ rank: 0, index: dayAsDayjs.year(), months: [], totalPeriod: 0, totalPerEtfs: {} })
+                yearIndex = grouped.findIndex((year) => year.index === dayYear)
+            }
+
+            // month
+            const dayMonth = dayAsDayjs.month()
+            let monthIndex = grouped[yearIndex].months.findIndex((month) => month.index === dayMonth)
+            if (monthIndex < 0) {
+                grouped[yearIndex].months.unshift({ year: dayYear, index: dayMonth, weeks: [], rank: 0, totalPeriod: 0 })
+                monthIndex = grouped[yearIndex].months.findIndex((month) => month.index === dayMonth)
+            }
+
+            // week
+            const dayWeek = dayAsDayjs.week()
+            let weekIndex = grouped[yearIndex].months[monthIndex].weeks.findIndex((week) => week.index === dayWeek)
+            if (weekIndex < 0) {
+                grouped[yearIndex].months[monthIndex].weeks.unshift({ index: dayWeek, days: [], totalPeriod: 0 })
+                weekIndex = grouped[yearIndex].months[monthIndex].weeks.findIndex((week) => week.index === dayWeek)
+            }
+
+            // store
+            grouped[yearIndex].months[monthIndex].weeks[weekIndex].days.unshift(processedData[dayIndex])
+            grouped[yearIndex].months[monthIndex].weeks[weekIndex].totalPeriod += Number(processedData[dayIndex].total)
+            grouped[yearIndex].months[monthIndex].totalPeriod += Number(processedData[dayIndex].total)
+            grouped[yearIndex].totalPeriod += Number(processedData[dayIndex].total)
+
+            // total per year
+            for (let tickerIndex = 0; tickerIndex < tickers.length; tickerIndex++) {
+                if (!grouped[yearIndex].totalPerEtfs[tickers[tickerIndex]]) grouped[yearIndex].totalPerEtfs[tickers[tickerIndex]] = 0
+                const flow = Number(processedData[dayIndex][tickers[tickerIndex] as keyof FarsideFlows])
+                if (isNaN(flow)) continue
+                grouped[yearIndex].totalPerEtfs[tickers[tickerIndex]] += flow
+            }
         }
 
-        // month
-        const dayMonth = dayAsDayjs.month()
-        let monthIndex = farsideDataGroupedBy[yearIndex].months.findIndex((month) => month.index === dayMonth)
-        if (monthIndex < 0) {
-            farsideDataGroupedBy[yearIndex].months.unshift({ year: dayYear, index: dayMonth, weeks: [], rank: 0, totalPeriod: 0 })
-            monthIndex = farsideDataGroupedBy[yearIndex].months.findIndex((month) => month.index === dayMonth)
+        // apply ranks for month
+        const monthsSortedByTotal = grouped
+            .map((year) => year.months)
+            .flat()
+            .sort((curr, next) => next.totalPeriod - curr.totalPeriod)
+        for (let sortedMonthIndex = 0; sortedMonthIndex < monthsSortedByTotal.length; sortedMonthIndex++) {
+            const yearIndex = grouped.findIndex((year) => year.index === monthsSortedByTotal[sortedMonthIndex].year)
+            const monthIndex = grouped[yearIndex].months.findIndex((month) => month.index === monthsSortedByTotal[sortedMonthIndex].index)
+            if (yearIndex >= 0 && monthIndex >= 0) grouped[yearIndex].months[monthIndex].rank = sortedMonthIndex + 1
         }
 
-        // week
-        const dayWeek = dayAsDayjs.week()
-        let weekIndex = farsideDataGroupedBy[yearIndex].months[monthIndex].weeks.findIndex((week) => week.index === dayWeek)
-        if (weekIndex < 0) {
-            farsideDataGroupedBy[yearIndex].months[monthIndex].weeks.unshift({ index: dayWeek, days: [], totalPeriod: 0 })
-            weekIndex = farsideDataGroupedBy[yearIndex].months[monthIndex].weeks.findIndex((week) => week.index === dayWeek)
-        }
+        return grouped
+    }, [processedData, tickers])
 
-        // store
-        farsideDataGroupedBy[yearIndex].months[monthIndex].weeks[weekIndex].days.unshift(data[dayIndex])
-        farsideDataGroupedBy[yearIndex].months[monthIndex].weeks[weekIndex].totalPeriod += Number(data[dayIndex].total)
-        farsideDataGroupedBy[yearIndex].months[monthIndex].totalPeriod += Number(data[dayIndex].total)
-        farsideDataGroupedBy[yearIndex].totalPeriod += Number(data[dayIndex].total)
+    // Memoize filtered and sorted tickers
+    const filteredTickers = useMemo(
+        () => tickers.filter((curr) => getConfig(etf, curr)).sort((curr, next) => getConfig(etf, curr).index - getConfig(etf, next).index),
+        [tickers, etf],
+    )
 
-        // total per month
-        // for (let tickerIndex = 0; tickerIndex < tickers.length; tickerIndex++) {
-        //     if (!farsideDataGroupedBy[yearIndex].totalPerEtfs[tickers[tickerIndex]])
-        //         farsideDataGroupedBy[yearIndex].totalPerEtfs[tickers[tickerIndex]] = 0
-        //     const flow = Number(data[dayIndex][tickers[tickerIndex] as keyof FarsideFlows])
-        //     if (isNaN(flow)) continue
-        //     farsideDataGroupedBy[yearIndex].totalPerEtfs[tickers[tickerIndex]] += flow
-        // }
-
-        // total per year
-        // todo total since inception
-        for (let tickerIndex = 0; tickerIndex < tickers.length; tickerIndex++) {
-            if (!farsideDataGroupedBy[yearIndex].totalPerEtfs[tickers[tickerIndex]])
-                farsideDataGroupedBy[yearIndex].totalPerEtfs[tickers[tickerIndex]] = 0
-            const flow = Number(data[dayIndex][tickers[tickerIndex] as keyof FarsideFlows])
-            if (isNaN(flow)) continue
-            farsideDataGroupedBy[yearIndex].totalPerEtfs[tickers[tickerIndex]] += flow
-        }
-    }
-
-    // apply ranks for month
-    const monthsSortedByTotal = farsideDataGroupedBy
-        .map((year) => year.months)
-        .flat()
-        .sort((curr, next) => next.totalPeriod - curr.totalPeriod)
-    for (let sortedMonthIndex = 0; sortedMonthIndex < monthsSortedByTotal.length; sortedMonthIndex++) {
-        const yearIndex = farsideDataGroupedBy.findIndex((year) => year.index === monthsSortedByTotal[sortedMonthIndex].year)
-        const monthIndex = farsideDataGroupedBy[yearIndex].months.findIndex((month) => month.index === monthsSortedByTotal[sortedMonthIndex].index)
-        if (yearIndex >= 0 && monthIndex >= 0) farsideDataGroupedBy[yearIndex].months[monthIndex].rank = sortedMonthIndex + 1
-    }
+    // Memoize event handlers
+    const handleInceptionToggle = useCallback(() => {
+        setTotalsToShow((prev) => ({ ...prev, inception: !prev.inception }))
+    }, [])
 
     // html
     return (
@@ -136,7 +152,7 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
                         <p className="hidden truncate group-hover:flex">To code</p>
                     </button>
                     <button
-                        onClick={() => setTotalsToShow({ ...totalsToShow, inception: !totalsToShow.inception })}
+                        onClick={handleInceptionToggle}
                         className={cn('w-10', { 'text-inactive line-through': !totalsToShow.inception, 'text-default': totalsToShow.inception })}
                     >
                         <p>Inception</p>
@@ -148,22 +164,19 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
             <TableRow
                 className="border-x border-t border-inactive bg-light-hover text-2xs md:text-sm lg:text-sm xl:text-base"
                 date={<p>Date</p>}
-                tickers={tickers
-                    .filter((curr) => getConfig(etf, curr))
-                    .sort((curr, next) => getConfig(etf, curr).index - getConfig(etf, next).index)
-                    .map((ticker) => (
-                        <LinkWrapper
-                            href={getConfig(etf, ticker).url}
-                            key={ticker}
-                            className="group flex h-9 w-12 -rotate-45 items-center justify-center overflow-visible hover:rotate-0 sm:rotate-0 md:w-16"
-                            target="_blank"
-                        >
-                            <TextWithTickerColor className="w-full text-center group-hover:hidden" etf={etf} ticker={ticker}>
-                                {ticker}
-                            </TextWithTickerColor>
-                            <IconWrapper icon={IconIds.IC_BASELINE_OPEN_IN_NEW} className="hidden h-4 w-4 text-primary group-hover:flex" />
-                        </LinkWrapper>
-                    ))}
+                tickers={filteredTickers.map((ticker) => (
+                    <LinkWrapper
+                        href={getConfig(etf, ticker).url}
+                        key={ticker}
+                        className="group flex h-9 w-12 -rotate-45 items-center justify-center overflow-visible hover:rotate-0 sm:rotate-0 md:w-16"
+                        target="_blank"
+                    >
+                        <TextWithTickerColor className="w-full text-center group-hover:hidden" etf={etf} ticker={ticker}>
+                            {ticker}
+                        </TextWithTickerColor>
+                        <IconWrapper icon={IconIds.IC_BASELINE_OPEN_IN_NEW} className="hidden h-4 w-4 text-primary group-hover:flex" />
+                    </LinkWrapper>
+                ))}
                 total={
                     <>
                         <p className="hidden text-nowrap sm:flex">Total</p>
@@ -200,7 +213,9 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
                                                   </TextWithTickerColor>
                                               </div>
                                           ))
-                                    : tickers.map((ticker, tickerIndex) => <div key={`${ticker}-${tickerIndex}`} className="flex w-12 md:w-16" />)
+                                    : filteredTickers.map((ticker, tickerIndex) => (
+                                          <div key={`${ticker}-${tickerIndex}`} className="flex w-12 md:w-16" />
+                                      ))
                             }
                             total={<p className="text-inactive">{formatFlows(year.totalPeriod)}</p>}
                             rank={null}
@@ -217,7 +232,7 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
                                             {monthName(month.index).slice(0, 3)} {String(year.index).slice(2)}
                                         </p>
                                     }
-                                    tickers={tickers.map(() => (
+                                    tickers={filteredTickers.map(() => (
                                         <div className="flex w-12 items-center justify-center overflow-hidden text-inactive md:w-16" />
                                     ))}
                                     total={<p className="text-inactive">{formatFlows(month.totalPeriod)}</p>}
@@ -234,13 +249,10 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
                                             <TableRow
                                                 className="mb-0.5 mt-1 border-b border-dashed border-light-hover leading-5 md:mb-1 md:mt-2"
                                                 date={<p className="w-fit">Week {week.index}</p>}
-                                                tickers={tickers.map((ticker, tickerIndex) => (
+                                                tickers={filteredTickers.map((ticker, tickerIndex) => (
                                                     <div key={`${ticker}-${tickerIndex}`} className="flex w-12 md:w-16" />
                                                 ))}
-                                                total={
-                                                    null
-                                                    // <p className="text-inactive">{numeral(week.totalPeriod).format('0,0')}</p>
-                                                }
+                                                total={null}
                                                 rank={null}
                                             />
                                         )}
@@ -258,27 +270,24 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
                                                         </p>
                                                     </>
                                                 }
-                                                tickers={tickers
-                                                    .filter((curr) => getConfig(etf, curr))
-                                                    .sort((curr, next) => getConfig(etf, curr).index - getConfig(etf, next).index)
-                                                    .map((ticker) => (
-                                                        <div
-                                                            key={`${yearIndex}-${year.index}-${monthIndex}-${month.index}-${weekIndex}-${week.index}-${dayIndex}-${day.day}-${ticker}`}
-                                                            className="flex w-12 items-center justify-center md:w-16"
-                                                        >
-                                                            {day[ticker as keyof typeof day] ? (
-                                                                <TextWithTickerColor
-                                                                    etf={etf}
-                                                                    className="w-full text-center group-hover:hidden"
-                                                                    ticker={ticker}
-                                                                >
-                                                                    {formatFlows(Number(day[ticker as keyof typeof day]))}
-                                                                </TextWithTickerColor>
-                                                            ) : (
-                                                                <p className="text-center text-inactive group-hover:hidden">.</p>
-                                                            )}
-                                                        </div>
-                                                    ))}
+                                                tickers={filteredTickers.map((ticker) => (
+                                                    <div
+                                                        key={`${yearIndex}-${year.index}-${monthIndex}-${month.index}-${weekIndex}-${week.index}-${dayIndex}-${day.day}-${ticker}`}
+                                                        className="flex w-12 items-center justify-center md:w-16"
+                                                    >
+                                                        {day[ticker as keyof typeof day] ? (
+                                                            <TextWithTickerColor
+                                                                etf={etf}
+                                                                className="w-full text-center group-hover:hidden"
+                                                                ticker={ticker}
+                                                            >
+                                                                {formatFlows(Number(day[ticker as keyof typeof day]))}
+                                                            </TextWithTickerColor>
+                                                        ) : (
+                                                            <p className="text-center text-inactive group-hover:hidden">.</p>
+                                                        )}
+                                                    </div>
+                                                ))}
                                                 total={
                                                     <p
                                                         className={cn('text-nowrap', {
@@ -326,4 +335,8 @@ export default function FlowsTable({ etf, data, tickers }: { etf: ETFs; data: Fa
             </div>
         </div>
     )
-}
+})
+
+FlowsTable.displayName = 'FlowsTable'
+
+export default FlowsTable

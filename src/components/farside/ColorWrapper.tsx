@@ -3,9 +3,9 @@
 import { AppThemes, ETFs } from '@/enums'
 import { cn, getConfig } from '@/utils'
 import { useTheme } from 'next-themes'
-import { ReactNode, useEffect, useState } from 'react'
+import { ReactNode, useEffect, useState, memo } from 'react'
 
-export default function TextWithTickerColor(props: { etf: ETFs; ticker: string; children: ReactNode; className?: string }) {
+const TextWithTickerColor = memo((props: { etf: ETFs; ticker: string; children: ReactNode; className?: string }) => {
     const [mounted, setMounted] = useState(false)
     const { resolvedTheme } = useTheme()
     useEffect(() => setMounted(true), [])
@@ -15,4 +15,8 @@ export default function TextWithTickerColor(props: { etf: ETFs; ticker: string; 
             {props.children}
         </p>
     )
-}
+})
+
+TextWithTickerColor.displayName = 'TextWithTickerColor'
+
+export default TextWithTickerColor

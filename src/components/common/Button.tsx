@@ -2,7 +2,7 @@
 
 import { IconIds } from '@/enums'
 import { cn } from '@/utils'
-import { useState } from 'react'
+import { useState, memo, useCallback } from 'react'
 import IconWrapper from './IconWrapper'
 
 interface InterfaceButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -16,9 +16,10 @@ interface InterfaceButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElem
     onClickFn?: () => void
 }
 
-export default function Button(props: InterfaceButtonProps) {
+const Button = memo((props: InterfaceButtonProps) => {
     const [loading, setLoading] = useState(false)
-    const handleClick = async () => {
+
+    const handleClick = useCallback(async () => {
         setLoading(() => true)
         try {
             if (props.onClickFn) props.onClickFn()
@@ -28,7 +29,7 @@ export default function Button(props: InterfaceButtonProps) {
         } finally {
             setLoading(() => false)
         }
-    }
+    }, [props.onClickFn])
 
     return (
         <button
@@ -51,4 +52,8 @@ export default function Button(props: InterfaceButtonProps) {
             )}
         </button>
     )
-}
+})
+
+Button.displayName = 'Button'
+
+export default Button

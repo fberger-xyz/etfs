@@ -9,7 +9,7 @@ import { Backdrop } from '../common/Backdrop'
 import Button from '../common/Button'
 import { APP_METADATA } from '@/config/app.config'
 import LinkWithIcon from '../common/LinkWithIcon'
-import { useRef } from 'react'
+import { useRef, useCallback, memo } from 'react'
 import { useClickOutside } from '@/hooks/useClickOutside'
 import { FarsideFlows, ETFsTickers } from '@/interfaces'
 import { getConfig } from '@/utils'
@@ -20,19 +20,16 @@ interface CopyOrDownloadDataModalProps {
     tickers: ETFsTickers[]
 }
 
-export default function CopyOrDownloadDataModal({ etf, data, tickers }: CopyOrDownloadDataModalProps) {
+const CopyOrDownloadDataModal = memo(({ etf, data, tickers }: CopyOrDownloadDataModalProps) => {
     const modalRef = useRef<HTMLDivElement>(null)
     const router = useRouter()
     const searchParams = useSearchParams()
     const showModal = searchParams.get('copy-or-download') === 'true'
 
-    // Debug logging
-    console.log('CopyOrDownloadDataModal:', { showModal, etf, dataLength: data?.length, tickersLength: tickers?.length })
-
     useKeyboardShortcut({ key: 'Escape', onKeyPressed: () => router.back() })
     useClickOutside(modalRef, () => router.back())
 
-    const copyToClipboard = async () => {
+    const copyToClipboard = useCallback(async () => {
         try {
             if (!data || !tickers) {
                 console.error('No data or tickers available')
@@ -43,8 +40,6 @@ export default function CopyOrDownloadDataModal({ etf, data, tickers }: CopyOrDo
             const filteredTickers = tickers
                 .filter((ticker) => getConfig(etf, ticker))
                 .sort((curr, next) => getConfig(etf, curr).index - getConfig(etf, next).index)
-
-            console.log('Copying data:', { filteredTickers, dataLength: data.length })
 
             // Prepare JSON data
             const jsonData = data.map((day) => {
@@ -64,15 +59,13 @@ export default function CopyOrDownloadDataModal({ etf, data, tickers }: CopyOrDo
             })
 
             await navigator.clipboard.writeText(JSON.stringify(jsonData, null, 2))
-
-            // You could add a toast notification here
             console.log('Data copied to clipboard')
         } catch (error) {
             console.error('Failed to copy data:', error)
         }
-    }
+    }, [data, tickers, etf])
 
-    const downloadCSV = () => {
+    const downloadCSV = useCallback(() => {
         try {
             if (!data || !tickers) {
                 console.error('No data or tickers available')
@@ -83,8 +76,6 @@ export default function CopyOrDownloadDataModal({ etf, data, tickers }: CopyOrDo
             const filteredTickers = tickers
                 .filter((ticker) => getConfig(etf, ticker))
                 .sort((curr, next) => getConfig(etf, curr).index - getConfig(etf, next).index)
-
-            console.log('Downloading CSV:', { filteredTickers, dataLength: data.length })
 
             // Prepare CSV headers
             const headers = ['Date', 'Total', 'Rank', ...filteredTickers]
@@ -122,7 +113,7 @@ export default function CopyOrDownloadDataModal({ etf, data, tickers }: CopyOrDo
         } catch (error) {
             console.error('Failed to download CSV:', error)
         }
-    }
+    }, [data, tickers, etf])
 
     if (!showModal) return null
 
@@ -161,4 +152,8 @@ export default function CopyOrDownloadDataModal({ etf, data, tickers }: CopyOrDo
             </motion.div>
         </Backdrop>
     )
-}
+})
+
+CopyOrDownloadDataModal.displayName = 'CopyOrDownloadDataModal'
+
+export default CopyOrDownloadDataModal
